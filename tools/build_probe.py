@@ -3,6 +3,13 @@
 question the manual does not: does TouchOSC tell a script when the device is
 rotated?
 
+ANSWERED (iPad Air 4, TouchOSC control surface mode, Rotation = AUTO): no.
+The script runs and the readout displays, but rotating the device changes
+neither the reported frame nor the resize counter. A layout therefore cannot
+rearrange itself on rotation, which is why this project ships one file per
+orientation. Kept so the result can be re-checked against a future TouchOSC
+release — if the counter ever moves, a single adaptive layout becomes viable.
+
 TouchOSC's scripting API has a `resize()` callback, but a document has a fixed
 size and the app's AUTO rotation only rotates the rendered surface. If
 `resize()` fires on rotation and reports swapped dimensions, a single layout

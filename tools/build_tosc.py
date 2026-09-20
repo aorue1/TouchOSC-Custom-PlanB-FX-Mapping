@@ -244,12 +244,24 @@ class Builder:
                 layer = (c if self.portrait else r) + 1
                 fx = fx_list[r if self.portrait else c]
                 x = gutter + c * col_w
+                cell_w = col_w - 2 * pad
                 knob_h = row_h - 2 * pad - byp_h - 2
-                page.add(self.radial((x + pad, y + pad, col_w - 2 * pad, knob_h),
-                                     f"L{layer}_{fx['fx']}",
-                                     res["fx_param"].format(layer=layer, fx=fx["fx"],
-                                                            param=fx["param"]),
-                                     self.res_conn, color="panel"))
+                addr = res["fx_param"].format(layer=layer, fx=fx["fx"],
+                                              param=fx["param"])
+                name = f"L{layer}_{fx['fx']}"
+                if cell_w > knob_h * 1.4:
+                    # A wide, short cell (portrait) makes a poor dial; a
+                    # horizontal fader uses the width and reads at a glance.
+                    page.add(self.fader((x + pad, y + pad, cell_w, knob_h), name,
+                                        addr, self.res_conn, horizontal=True,
+                                        color="panel"))
+                else:
+                    # Keep dials circular: square them and centre in the cell.
+                    size = min(cell_w, knob_h)
+                    page.add(self.radial((x + pad + (cell_w - size) // 2,
+                                          y + pad + (knob_h - size) // 2,
+                                          size, size), name, addr,
+                                         self.res_conn, color="panel"))
                 self.add_button(page, (x + pad, y + pad + knob_h + 2,
                                        col_w - 2 * pad, byp_h),
                                 f"L{layer}_{fx['fx']}_byp",

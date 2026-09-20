@@ -7905,7 +7905,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="75659b2d-dc21-506a-9ee6-ae96c226ccd8" type="RADIAL">
+              <node ID="75659b2d-dc21-506a-9ee6-ae96c226ccd8" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -7935,6 +7935,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -8117,7 +8121,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="f92c21a1-95ce-50cf-bf86-5f22aa80702c" type="RADIAL">
+              <node ID="f92c21a1-95ce-50cf-bf86-5f22aa80702c" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -8147,6 +8151,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -8329,7 +8337,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="84bd840f-43bf-5355-878e-b986d0fdcc9a" type="RADIAL">
+              <node ID="84bd840f-43bf-5355-878e-b986d0fdcc9a" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -8359,6 +8367,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -8541,7 +8553,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="7dd23738-af25-5868-b105-6849dc47689a" type="RADIAL">
+              <node ID="7dd23738-af25-5868-b105-6849dc47689a" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -8571,6 +8583,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -8814,7 +8830,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="d74737ec-4a76-5bd6-9c7f-0877d0b53886" type="RADIAL">
+              <node ID="d74737ec-4a76-5bd6-9c7f-0877d0b53886" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -8844,6 +8860,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -9026,7 +9046,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="a1a9d14d-4776-5b4f-a6b1-616b35a5c833" type="RADIAL">
+              <node ID="a1a9d14d-4776-5b4f-a6b1-616b35a5c833" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -9056,6 +9076,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -9238,7 +9262,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="627a7445-4313-586b-a03a-d68718c1fcb6" type="RADIAL">
+              <node ID="627a7445-4313-586b-a03a-d68718c1fcb6" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -9268,6 +9292,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -9450,7 +9478,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="e017cff6-fcc6-5246-9428-8394a72a370d" type="RADIAL">
+              <node ID="e017cff6-fcc6-5246-9428-8394a72a370d" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -9480,6 +9508,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -9723,7 +9755,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="4424c6d3-8f93-588d-9484-8dbebc36c9e1" type="RADIAL">
+              <node ID="4424c6d3-8f93-588d-9484-8dbebc36c9e1" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -9753,6 +9785,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -9935,7 +9971,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="61cafc66-e7e3-5d42-b24d-ae289f8a0e50" type="RADIAL">
+              <node ID="61cafc66-e7e3-5d42-b24d-ae289f8a0e50" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -9965,6 +10001,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -10147,7 +10187,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="e4949966-be7b-5041-b8a2-88a480cea890" type="RADIAL">
+              <node ID="e4949966-be7b-5041-b8a2-88a480cea890" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -10177,6 +10217,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -10359,7 +10403,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="ac399173-271a-59ba-80ed-51d9c4554006" type="RADIAL">
+              <node ID="ac399173-271a-59ba-80ed-51d9c4554006" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -10389,6 +10433,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -10632,7 +10680,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="e42f4db3-caa0-551e-a65b-6a6177f3a7bf" type="RADIAL">
+              <node ID="e42f4db3-caa0-551e-a65b-6a6177f3a7bf" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -10662,6 +10710,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -10844,7 +10896,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="89a22a3f-a6b8-5266-a2c4-4bfe18bbe041" type="RADIAL">
+              <node ID="89a22a3f-a6b8-5266-a2c4-4bfe18bbe041" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -10874,6 +10926,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -11056,7 +11112,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="0f00bee0-a7de-5282-b72a-d242f6651bf0" type="RADIAL">
+              <node ID="0f00bee0-a7de-5282-b72a-d242f6651bf0" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -11086,6 +11142,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -11268,7 +11328,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="e4c1c095-7591-50c3-934b-3322c2e91963" type="RADIAL">
+              <node ID="e4c1c095-7591-50c3-934b-3322c2e91963" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -11298,6 +11358,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -11541,7 +11605,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="4b27a4fb-a4f2-569f-8b51-8bb2ca9173eb" type="RADIAL">
+              <node ID="4b27a4fb-a4f2-569f-8b51-8bb2ca9173eb" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -11571,6 +11635,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -11753,7 +11821,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="90be71b5-2500-54e1-bf38-c3986062eba7" type="RADIAL">
+              <node ID="90be71b5-2500-54e1-bf38-c3986062eba7" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -11783,6 +11851,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -11965,7 +12037,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="530bdf5b-69e5-507e-9fe6-c5f05687dcd0" type="RADIAL">
+              <node ID="530bdf5b-69e5-507e-9fe6-c5f05687dcd0" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -11995,6 +12067,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -12177,7 +12253,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="08ee808c-9f8e-58b1-8d8e-40167ee94624" type="RADIAL">
+              <node ID="08ee808c-9f8e-58b1-8d8e-40167ee94624" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -12207,6 +12283,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -12450,7 +12530,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="93a2a69b-eb88-5868-a5bf-16709fc24640" type="RADIAL">
+              <node ID="93a2a69b-eb88-5868-a5bf-16709fc24640" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -12480,6 +12560,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -12662,7 +12746,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="aa8359e1-6101-5176-a0a8-b75e70e62003" type="RADIAL">
+              <node ID="aa8359e1-6101-5176-a0a8-b75e70e62003" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -12692,6 +12776,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -12874,7 +12962,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="901a1ce8-a050-5b44-a942-dd9065fc9ea5" type="RADIAL">
+              <node ID="901a1ce8-a050-5b44-a942-dd9065fc9ea5" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -12904,6 +12992,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -13086,7 +13178,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="5da09cac-f727-5b77-a340-5f4ea6bf4c0a" type="RADIAL">
+              <node ID="5da09cac-f727-5b77-a340-5f4ea6bf4c0a" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -13116,6 +13208,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -13359,7 +13455,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="bf4b8e7e-547e-5374-8d47-5d85113f2b26" type="RADIAL">
+              <node ID="bf4b8e7e-547e-5374-8d47-5d85113f2b26" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -13389,6 +13485,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -13571,7 +13671,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="3ec5e095-1ef6-5c71-8e4b-eb3ddaaab971" type="RADIAL">
+              <node ID="3ec5e095-1ef6-5c71-8e4b-eb3ddaaab971" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -13601,6 +13701,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -13783,7 +13887,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="b422ebe5-3dd6-506b-8fa0-45b8be8bdb24" type="RADIAL">
+              <node ID="b422ebe5-3dd6-506b-8fa0-45b8be8bdb24" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -13813,6 +13917,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -13995,7 +14103,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="463b23bb-234f-5e64-be90-5ae5417bf433" type="RADIAL">
+              <node ID="463b23bb-234f-5e64-be90-5ae5417bf433" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -14025,6 +14133,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -14268,7 +14380,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="57da142e-c01d-56bc-9648-485cce2bd1bc" type="RADIAL">
+              <node ID="57da142e-c01d-56bc-9648-485cce2bd1bc" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -14298,6 +14410,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -14480,7 +14596,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="13918db3-aa63-5207-98a2-5d496c99c6aa" type="RADIAL">
+              <node ID="13918db3-aa63-5207-98a2-5d496c99c6aa" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -14510,6 +14626,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -14692,7 +14812,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="5dcda59c-1f1b-5c4c-aee6-2c36fe0ca24f" type="RADIAL">
+              <node ID="5dcda59c-1f1b-5c4c-aee6-2c36fe0ca24f" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -14722,6 +14842,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>
@@ -14904,7 +15028,7 @@
                 <messages />
                 <children />
               </node>
-              <node ID="a3a55384-42c8-5d13-8c61-4cf6aa0fa678" type="RADIAL">
+              <node ID="a3a55384-42c8-5d13-8c61-4cf6aa0fa678" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -14934,6 +15058,10 @@
                   </property>
                   <property type="b">
                     <key>outline</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>orientation</key>
                     <value>1</value>
                   </property>
                 </properties>

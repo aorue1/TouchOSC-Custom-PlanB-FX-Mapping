@@ -73,25 +73,28 @@ Air 4's 1180x820 points so neither letterboxes:
 * `build/vj-control-landscape.tosc`
 * `build/vj-control-portrait.tosc`
 
-The pages rearrange to suit the aspect ratio — in portrait the FX matrix
-transposes (layers across, effects down) and the TouchDesigner page stacks the
-fader bank above the XY pads instead of placing them side by side. Every OSC
+The pages rearrange to suit the aspect ratio. In portrait the FX matrix
+transposes (layers across, effects down) and its cells become wide, so the
+dials turn into horizontal faders; the TouchDesigner page stacks the fader bank
+above the XY pads instead of placing them side by side. Landscape keeps
+circular dials, squared and centred in their cells. Every OSC
 address is identical in both, so the two files are interchangeable: load the
 other one and carry on, no re-mapping on either host.
 
-Keep both on the iPad and switch from TouchOSC's layout list. A truly
-self-reflowing single layout would need the scripting API to report device
-rotation; `make probe` builds `build/orientation-probe.tosc` to find out
-whether it does — see [`docs/setup.md`](docs/setup.md#the-rotation-probe).
+Keep both on the iPad and switch from TouchOSC's layout list.
+
+A self-reflowing single layout would need the scripting API to report device
+rotation. It does not: the probe in `tools/build_probe.py` runs a script that
+prints the root frame and a resize counter, and on the iPad Air 4 with Rotation
+set to AUTO neither moves when the tablet is turned. Two files is the design,
+not a workaround — see [`docs/setup.md`](docs/setup.md#why-two-files-settled).
 
 ## Status
 
-The generated `.tosc` opens in the TouchOSC desktop editor and control surface
-mode. Captions were wrong in the first build (written as properties rather than
-values, so everything read "Label") and are now written as values, with button
-captions as non-interactive overlay labels — that fix is built but not yet
-confirmed on the iPad. What each control *does* against a live Resolume
-composition and TD network is still unconfirmed.
+Confirmed on the iPad Air 4: the layouts open, captions render, and Lua
+scripts run. What each control *does* against a live Resolume composition and
+TouchDesigner network is still unconfirmed — the addresses are written from the
+Resolume OSC convention, not yet tested against a running composition.
 
 ## Docs
 

@@ -31,23 +31,20 @@ values, and `Builder.add_button` lays a non-interactive LABEL over each button
 so touches still reach the button underneath. If a caption ever goes back to
 reading "Label", that is the property-vs-value mistake returning.
 
-### The rotation probe
+### Why two files, settled
 
-Whether a single self-reflowing layout is possible comes down to one unknown:
-does the scripting API's `resize()` callback fire when the device is rotated?
+The open question was whether the scripting API's `resize()` callback fires on
+device rotation — if it did, one layout could rearrange itself in Lua.
 
-```sh
-make probe      # -> build/orientation-probe.tosc
-```
+`make probe` builds `build/orientation-probe.tosc`, which prints the root
+frame and a resize counter. Tested on the iPad Air 4 in control surface mode
+with Rotation set to AUTO: **the script runs and the readout displays, but
+rotating the device changes neither the frame nor the counter.** TouchOSC does
+not report rotation to scripts, so a self-reflowing layout is not possible and
+two files is the correct design, not a compromise.
 
-Open it on the iPad, enter control surface mode, set Rotation to **AUTO** and
-turn the tablet. The readout prints the root frame and a resize counter.
-
-* If the numbers swap or the counter climbs, one layout could rearrange itself
-  in Lua, and the two-file approach becomes optional.
-* If nothing moves, two files is the only honest answer and the probe can go.
-
-Tell me which happens and I will act on it.
+The probe stays in the repo so the result can be re-checked against a future
+TouchOSC release.
 
 ### Verifying the layout
 
