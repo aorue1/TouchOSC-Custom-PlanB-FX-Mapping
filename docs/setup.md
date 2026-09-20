@@ -39,6 +39,11 @@ out — it is how the caption bug below should have been found.
 
 ### Captions
 
+A LABEL's `color` is its **background fill**, not its text colour — captions
+render light regardless, which is why the orange LAYER headers come out white
+on the device. Anything meant to read as coloured text has to be done with the
+fill behind it.
+
 A LABEL's caption is a **value** named `text`, not a property, and a BUTTON
 draws no text at all. The first build got both wrong, so every label showed the
 default "Label" and buttons were bare. `tools/tosc.py` now writes captions as

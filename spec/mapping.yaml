@@ -9,7 +9,7 @@
 # ---------------------------------------------------------------------------
 
 layout:
-  name: VJ Control
+  name: PlanB-FX
   tabbar_height: 60
   # iPad Air (4th gen) is 1180x820 points. TouchOSC scales a layout
   # proportionally to the screen, so matching the aspect ratio exactly means no
@@ -38,6 +38,14 @@ connections:
     note: TouchDesigner OSC In
 
 # Palette (r,g,b,a floats 0-1).
+# Branding shown in the top-left of the global strip. TouchOSC draws controls
+# as vector primitives and cannot load an image, so the mark is a monogram
+# badge rather than the full logo.
+branding:
+  wordmark: PlanB-FX
+  monogram: B
+  badge: 44            # square badge size in points
+
 colors:
   bg:        [0.11, 0.11, 0.13, 1.0]
   panel:     [0.16, 0.16, 0.19, 1.0]
@@ -46,6 +54,7 @@ colors:
   accent:    [0.95, 0.80, 0.20, 1.0]
   danger:    [0.85, 0.15, 0.25, 1.0]
   text:      [0.92, 0.92, 0.94, 1.0]
+  brand:     [0.90, 0.90, 0.90, 1.0]
 
 # Geometry knobs used by the page builders.
 grid:

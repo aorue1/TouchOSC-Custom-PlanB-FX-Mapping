@@ -97,6 +97,35 @@ class Builder:
         return pad
 
     # -- global strip ------------------------------------------------------
+    def brand_mark(self, parent: Node, x: int, y: int, height: int) -> int:
+        """Monogram badge plus wordmark in the top-left. Returns its right edge.
+
+        TouchOSC draws controls as vector primitives and cannot load an image,
+        so the logo is approximated: a filled, outlined square carrying the
+        monogram, set beside the wordmark in the brand grey.
+        """
+        brand = self.spec["branding"]
+        size = min(brand["badge"], height - 8)
+        badge_y = y + (height - size) // 2
+
+        # A LABEL's colour fills its background; the caption itself draws light
+        # whatever the colour is (the orange LAYER headers render white on
+        # device). So the badge is a dark tile with a light monogram, not a
+        # light tile that would leave the monogram unreadable.
+        badge = Node(LABEL, (x, badge_y, size, size), name="brand_badge",
+                     text=brand["monogram"], text_size=max(14, size - 18),
+                     color=self.colors["panel"], background=True, outline=True,
+                     interactive=False)
+        parent.add(badge)
+
+        word_w = 0 if self.portrait else 150
+        if word_w:
+            parent.add(Node(LABEL, (x + size + 8, y + 8, word_w, height - 16),
+                            name="brand_wordmark", text=brand["wordmark"],
+                            text_size=19, color=self.colors["brand"],
+                            background=False, outline=False, interactive=False))
+        return x + size + (word_w + 8 if word_w else 0)
+
     def global_strip(self, width: int, height: int) -> Node:
         res, td = self.spec["resolume"], self.spec["touchdesigner"]
         strip = Node(GROUP, (0, 0, width, height), name="globals",
@@ -104,11 +133,8 @@ class Builder:
         pad = 8
         btn_w = 150 if self.portrait else 178
 
-        # Portrait is too narrow for the wordmark; the tab bar names the layout.
-        title_w = 0 if self.portrait else 220
-        if title_w:
-            strip.add(self.label((12, 8, title_w, height - 16),
-                                 self.spec["layout"]["name"], size=22))
+        # Portrait is too narrow for the wordmark, so the badge stands alone.
+        title_w = self.brand_mark(strip, 12, 0, height)
 
         blackout_frame = (width - btn_w - pad, 8, btn_w, height - 16)
         blackout = Node(BUTTON, blackout_frame, name="blackout",
@@ -125,7 +151,7 @@ class Builder:
                         color="accent", text="TAP", text_size=16,
                         constant_args=(1.0,))
 
-        fader_x = title_w + pad + (4 if title_w else 4)
+        fader_x = title_w + 2 * pad
         fader_w = width - 2 * btn_w - 3 * pad - fader_x
         strip.add(self.fader((fader_x, 14, fader_w, height - 28), "master_global",
                              res["master"], self.res_conn, horizontal=True,

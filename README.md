@@ -1,12 +1,16 @@
 # TouchOSC → Resolume Arena + TouchDesigner
 
-A custom TouchOSC control surface that drives **Resolume Arena** and
-**TouchDesigner** from one tablet, with a tab bar to switch between views.
-Built for an iPad Air (4th gen), in both portrait and landscape.
+A custom TouchOSC control surface for **PlanB-FX** that drives **Resolume
+Arena** and **TouchDesigner** from one tablet, with a tab bar to switch between
+views. Built for an iPad Air (4th gen), in both portrait and landscape.
+
+The wordmark, monogram and badge size live under `branding:` in
+`spec/mapping.yaml`. TouchOSC draws controls as vector primitives and cannot
+load an image, so the mark is a monogram badge rather than the logo artwork.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  VJ Control   [ master ─────────── ]   [TAP]  [BLACKOUT] │  always visible
+│ [B] PlanB-FX  [ master ─────────── ]   [TAP]  [BLACKOUT] │  always visible
 ├──────────────────────────────────────────────────────────┤
 │  RESOLUME  │  FX  │  TOUCHDESIGNER                       │  pager tabs
 │                                                          │
