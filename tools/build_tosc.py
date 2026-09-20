@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Build the VJ control surface from spec/mapping.yaml.
 
-    python3 tools/build_tosc.py [-o build/vj-control.tosc]
+    python3 tools/build_tosc.py                     # both orientations
+    python3 tools/build_tosc.py -r portrait         # just one
 
-Emits the .tosc next to an uncompressed .xml of the same name so layout
-changes stay reviewable in git diffs.
+A TouchOSC document has a single fixed size, so one file cannot reflow when
+the iPad is rotated. Instead both orientations are generated from the same
+spec: the pages rearrange themselves to suit the aspect ratio, and the OSC
+addresses are identical, so the two files are interchangeable mid-set.
 """
 
 from __future__ import annotations
@@ -21,9 +24,12 @@ from tosc import BUTTON, FADER, GROUP, LABEL, PAGER, RADIAL, XY, Node, OscMessag
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "mapping.yaml")
+BUILD = os.path.join(ROOT, "build")
 
 # Momentary vs latching, in TouchOSC's buttonType encoding.
 MOMENTARY, TOGGLE = 0, 1
+# Smallest comfortable touch target; tools/verify.py enforces the same number.
+MIN_TOUCH = 28
 
 
 def load_spec(path: str = SPEC) -> dict:
@@ -32,58 +38,33 @@ def load_spec(path: str = SPEC) -> dict:
 
 
 class Builder:
-    def __init__(self, spec: dict):
+    def __init__(self, spec: dict, orientation: str = "landscape"):
         self.spec = spec
+        self.orientation = orientation
+        size = spec["layout"]["orientations"][orientation]
+        self.width, self.height = size["width"], size["height"]
+        self.portrait = self.height > self.width
         self.colors = {k: tuple(v) for k, v in spec["colors"].items()}
         self.res_conn = tosc.connections(spec["connections"]["resolume"]["slot"])
         self.td_conn = tosc.connections(spec["connections"]["touchdesigner"]["slot"])
-        self.both_conn = tosc.connections(
-            spec["connections"]["resolume"]["slot"],
-            spec["connections"]["touchdesigner"]["slot"],
-        )
 
     # -- small control factories ------------------------------------------
     def label(self, frame, text, size=14, color="text") -> Node:
-        return Node(
-            LABEL,
-            frame,
-            name=f"lbl_{text}",
-            text=text,
-            text_size=size,
-            color=self.colors[color],
-            background=False,
-            outline=False,
-        )
+        return Node(LABEL, frame, name=f"lbl_{text}", text=text, text_size=size,
+                    color=self.colors[color], background=False, outline=False)
 
     def button(self, frame, name, path, conns, *, toggle=False, color="panel",
                text="", constant_args=()) -> Node:
-        btn = Node(
-            BUTTON,
-            frame,
-            name=name,
-            text=text,
-            color=self.colors[color],
-            button_type=TOGGLE if toggle else MOMENTARY,
-        )
-        btn.messages.append(
-            OscMessage(
-                path,
-                conns,
-                send_value=not constant_args,
-                constant_args=constant_args,
-                trigger="ANY" if toggle else "RISE",
-            )
-        )
+        btn = Node(BUTTON, frame, name=name, text=text, color=self.colors[color],
+                   button_type=TOGGLE if toggle else MOMENTARY)
+        btn.messages.append(OscMessage(path, conns, send_value=not constant_args,
+                                       constant_args=constant_args,
+                                       trigger="ANY" if toggle else "RISE"))
         return btn
 
     def fader(self, frame, name, path, conns, *, horizontal=False, color="panel") -> Node:
-        fdr = Node(
-            FADER,
-            frame,
-            name=name,
-            color=self.colors[color],
-            orientation=1 if horizontal else 0,
-        )
+        fdr = Node(FADER, frame, name=name, color=self.colors[color],
+                   orientation=1 if horizontal else 0)
         fdr.messages.append(OscMessage(path, conns))
         return fdr
 
@@ -98,84 +79,100 @@ class Builder:
         pad.messages.append(OscMessage(path_y, conns))
         return pad
 
-    # -- pages -------------------------------------------------------------
+    # -- global strip ------------------------------------------------------
     def global_strip(self, width: int, height: int) -> Node:
-        res = self.spec["resolume"]
-        td = self.spec["touchdesigner"]
+        res, td = self.spec["resolume"], self.spec["touchdesigner"]
         strip = Node(GROUP, (0, 0, width, height), name="globals",
                      color=self.colors["bg"], outline=False)
-        strip.add(self.label((12, 8, 220, height - 16), self.spec["layout"]["name"], size=22))
+        pad = 8
+        btn_w = 150 if self.portrait else 178
 
-        # Blackout drives Resolume master and the TD intensity bus at once.
-        blackout = Node(BUTTON, (width - 190, 8, 178, height - 16), name="blackout",
-                        text="BLACKOUT", color=self.colors["danger"], button_type=TOGGLE)
-        blackout.messages.append(OscMessage(res["master"], self.res_conn, send_value=False,
-                                            constant_args=(0.0,), trigger="RISE"))
+        # Portrait is too narrow for the wordmark; the tab bar names the layout.
+        title_w = 0 if self.portrait else 220
+        if title_w:
+            strip.add(self.label((12, 8, title_w, height - 16),
+                                 self.spec["layout"]["name"], size=22))
+
+        blackout = Node(BUTTON, (width - btn_w - pad, 8, btn_w, height - 16),
+                        name="blackout", text="BLACKOUT", color=self.colors["danger"],
+                        button_type=TOGGLE)
+        blackout.messages.append(OscMessage(res["master"], self.res_conn,
+                                            send_value=False, constant_args=(0.0,),
+                                            trigger="RISE"))
         blackout.messages.append(OscMessage(td["blackout"], self.td_conn))
         strip.add(blackout)
 
-        strip.add(self.button((width - 380, 8, 178, height - 16), "tap",
-                              res["tempo_tap"], self.res_conn,
+        strip.add(self.button((width - 2 * btn_w - 2 * pad, 8, btn_w, height - 16),
+                              "tap", res["tempo_tap"], self.res_conn,
                               color="accent", text="TAP", constant_args=(1.0,)))
-        strip.add(self.fader((250, 14, width - 650, height - 28), "master_global",
-                             res["master"], self.res_conn, horizontal=True, color="resolume"))
+
+        fader_x = title_w + pad + (4 if title_w else 4)
+        fader_w = width - 2 * btn_w - 3 * pad - fader_x
+        strip.add(self.fader((fader_x, 14, fader_w, height - 28), "master_global",
+                             res["master"], self.res_conn, horizontal=True,
+                             color="resolume"))
         return strip
 
+    # -- pages -------------------------------------------------------------
     def resolume_page(self, width: int, height: int) -> Node:
-        res = self.spec["resolume"]
-        grid = self.spec["grid"]
+        """Layer columns with a clip stack each; master column on the right.
+
+        The shape holds up in both orientations — portrait just makes the
+        columns narrower and the clip buttons taller.
+        """
+        res, grid = self.spec["resolume"], self.spec["grid"]
         layers, clips = grid["layers"], grid["clips"]
         page = Node(GROUP, (0, 0, width, height), name="RESOLUME",
                     color=self.colors["bg"], outline=False)
 
-        col_w = width // (layers + 1)          # last column holds master + speed
+        col_w = width // (layers + 1)
         pad = 6
-        header_h = 30
-        strip_h = 44                            # bypass / solo / clear row
-        fader_h = 150
+        header_h = 26
+        strip_h = 44
+        fader_h = 200 if self.portrait else 150
         clip_area = height - header_h - strip_h - fader_h - 5 * pad
         clip_h = clip_area // clips
 
         for li in range(layers):
             layer = li + 1
             x = li * col_w
-            page.add(self.label((x, 2, col_w, header_h), f"LAYER {layer}", size=16,
+            page.add(self.label((x, 2, col_w, header_h), f"LAYER {layer}", size=15,
                                 color="resolume"))
             y = header_h + pad
             for ci in range(clips):
-                clip = ci + 1
-                path = res["clip_connect"].format(layer=layer, clip=clip)
                 page.add(self.button(
                     (x + pad, y + ci * clip_h, col_w - 2 * pad, clip_h - pad),
-                    f"L{layer}C{clip}", path, self.res_conn,
-                    color="panel", text=str(clip), constant_args=(1.0,)))
+                    f"L{layer}C{ci + 1}",
+                    res["clip_connect"].format(layer=layer, clip=ci + 1),
+                    self.res_conn, color="panel", text=str(ci + 1),
+                    constant_args=(1.0,)))
 
             y = header_h + pad + clip_area + pad
             btn_w = (col_w - 4 * pad) // 3
             for i, (key, text) in enumerate((
                 ("layer_bypass", "BYP"), ("layer_solo", "SOLO"), ("layer_clear", "CLR"),
             )):
-                path = res[key].format(layer=layer)
                 toggle = key != "layer_clear"
                 page.add(self.button(
                     (x + pad + i * (btn_w + pad), y, btn_w, strip_h - pad),
-                    f"L{layer}_{text}", path, self.res_conn,
+                    f"L{layer}_{text}", res[key].format(layer=layer), self.res_conn,
                     toggle=toggle, color="panel", text=text,
                     constant_args=() if toggle else (1.0,)))
 
             y += strip_h
-            page.add(self.fader(
-                (x + pad, y, col_w - 2 * pad, fader_h - pad),
-                f"L{layer}_opacity", res["layer_opacity"].format(layer=layer),
-                self.res_conn, color="resolume"))
+            page.add(self.fader((x + pad, y, col_w - 2 * pad, fader_h - pad),
+                                f"L{layer}_opacity",
+                                res["layer_opacity"].format(layer=layer),
+                                self.res_conn, color="resolume"))
 
-        # Master column.
+        # Master column: speed fader over RESYNC and a TAP within thumb reach
+        # of the clip grid (the strip TAP is a long stretch on a big screen).
         x = layers * col_w
-        page.add(self.label((x, 2, col_w, header_h), "MASTER", size=16, color="accent"))
+        page.add(self.label((x, 2, col_w, header_h), "MASTER", size=15, color="accent"))
         y = header_h + pad
-        page.add(self.label((x + pad, y, col_w - 2 * pad, 24), "SPEED", size=12))
+        page.add(self.label((x + pad, y, col_w - 2 * pad, 22), "SPEED", size=12))
         fader_bottom = height - 2 * 52 - pad
-        page.add(self.fader((x + pad, y + 24, col_w - 2 * pad, fader_bottom - y - 24),
+        page.add(self.fader((x + pad, y + 22, col_w - 2 * pad, fader_bottom - y - 22),
                             "speed", res["speed"], self.res_conn, color="accent"))
         page.add(self.button((x + pad, fader_bottom + 4, col_w - 2 * pad, 48),
                              "resync", res["tempo_resync"], self.res_conn,
@@ -186,64 +183,94 @@ class Builder:
         return page
 
     def fx_page(self, width: int, height: int) -> Node:
-        res = self.spec["resolume"]
-        grid = self.spec["grid"]
+        """Knob matrix of effects against layers.
+
+        Landscape runs effects across and layers down; portrait transposes so
+        the knobs stay roughly square instead of stretching into thin columns.
+        """
+        res, grid = self.spec["resolume"], self.spec["grid"]
         layers = grid["layers"]
         fx_list = res["fx_names"][: grid["fx_params"]]
         page = Node(GROUP, (0, 0, width, height), name="FX",
                     color=self.colors["bg"], outline=False)
 
-        label_w = 90
-        col_w = (width - label_w) // len(fx_list)
-        row_h = height // layers
         pad = 6
+        head_h = 22
+        byp_h = 32
+        gutter = 70 if self.portrait else 90
 
-        for i, fx in enumerate(fx_list):
-            page.add(self.label((label_w + i * col_w, 0, col_w, 22), fx["name"],
+        # cols x rows: effects across in landscape, layers across in portrait.
+        across = layers if self.portrait else len(fx_list)
+        down = len(fx_list) if self.portrait else layers
+        col_w = (width - gutter) // across
+        row_h = (height - head_h) // down
+
+        def across_title(i):
+            return f"L{i + 1}" if self.portrait else fx_list[i]["name"]
+
+        def down_title(i):
+            return fx_list[i]["name"] if self.portrait else f"L{i + 1}"
+
+        for i in range(across):
+            page.add(self.label((gutter + i * col_w, 0, col_w, head_h), across_title(i),
                                 size=12, color="resolume"))
 
-        for li in range(layers):
-            layer = li + 1
-            y = li * row_h + 22
-            page.add(self.label((0, y + row_h // 3, label_w, 24), f"L{layer}", size=16,
-                                color="resolume"))
-            for i, fx in enumerate(fx_list):
-                x = label_w + i * col_w
-                path = res["fx_param"].format(layer=layer, fx=fx["fx"], param=fx["param"])
-                byp_h = 32
-                knob_h = row_h - 22 - 2 * pad - byp_h - 2
-                page.add(self.radial((x + pad, y, col_w - 2 * pad, knob_h),
-                                     f"L{layer}_{fx['fx']}", path, self.res_conn,
-                                     color="panel"))
-                bypass = res["fx_bypass"].format(layer=layer, fx=fx["fx"])
-                page.add(self.button((x + pad, y + knob_h + 2, col_w - 2 * pad, byp_h),
-                                     f"L{layer}_{fx['fx']}_byp", bypass, self.res_conn,
-                                     toggle=True, color="panel", text="byp"))
+        for r in range(down):
+            y = head_h + r * row_h
+            page.add(self.label((0, y + row_h // 3, gutter, 24), down_title(r),
+                                size=13, color="resolume"))
+            for c in range(across):
+                layer = (c if self.portrait else r) + 1
+                fx = fx_list[r if self.portrait else c]
+                x = gutter + c * col_w
+                knob_h = row_h - 2 * pad - byp_h - 2
+                page.add(self.radial((x + pad, y + pad, col_w - 2 * pad, knob_h),
+                                     f"L{layer}_{fx['fx']}",
+                                     res["fx_param"].format(layer=layer, fx=fx["fx"],
+                                                            param=fx["param"]),
+                                     self.res_conn, color="panel"))
+                page.add(self.button((x + pad, y + pad + knob_h + 2,
+                                      col_w - 2 * pad, byp_h),
+                                     f"L{layer}_{fx['fx']}_byp",
+                                     res["fx_bypass"].format(layer=layer, fx=fx["fx"]),
+                                     self.res_conn, toggle=True, color="panel",
+                                     text="byp"))
         return page
 
     def td_page(self, width: int, height: int) -> Node:
-        td = self.spec["touchdesigner"]
-        grid = self.spec["grid"]
+        """Param bank and XY pads.
+
+        Landscape puts them side by side; portrait stacks the bank above the
+        pads, which suits the taller aspect better than two narrow halves.
+        """
+        td, grid = self.spec["touchdesigner"], self.spec["grid"]
         page = Node(GROUP, (0, 0, width, height), name="TOUCHDESIGNER",
                     color=self.colors["bg"], outline=False)
         pad = 8
-
-        # Left half: fader bank with toggles underneath.
-        bank_w = width // 2
         n = grid["td_faders"]
-        col_w = bank_w // n
-        fader_h = height - 150
-        page.add(self.label((0, 0, bank_w, 24), "PARAM BANK", size=14, color="td"))
+
+        if self.portrait:
+            bank = (0, 0, width, int(height * 0.58))
+            side = (0, bank[3], width, height - bank[3])
+        else:
+            bank = (0, 0, width // 2, height)
+            side = (width // 2, 0, width - width // 2, height)
+
+        # --- fader bank with toggles and triggers beneath ---
+        bx, by, bw, bh = bank
+        col_w = bw // n
+        rows_h = 2 * 48 + 4 + 24            # toggle + trigger + label
+        fader_h = bh - rows_h - 26
+        page.add(self.label((bx, by, bw, 24), "PARAM BANK", size=14, color="td"))
         for i in range(n):
-            x = i * col_w
-            page.add(self.fader((x + pad, 26, col_w - 2 * pad, fader_h - 26),
+            x = bx + i * col_w
+            page.add(self.fader((x + pad, by + 26, col_w - 2 * pad, fader_h),
                                 f"td_fader_{i + 1}", td["fader"].format(n=i + 1),
                                 self.td_conn, color="td"))
-            page.add(self.label((x, fader_h + 2, col_w, 20), str(i + 1), size=12))
-
-        tog_y = fader_h + 24
+            page.add(self.label((x, by + 26 + fader_h, col_w, 22), str(i + 1), size=12))
+        tog_y = by + 26 + fader_h + 24
         for i in range(grid["td_toggles"]):
-            x = i * col_w
+            x = bx + i * col_w
             page.add(self.button((x + pad, tog_y, col_w - 2 * pad, 48),
                                  f"td_toggle_{i + 1}", td["toggle"].format(n=i + 1),
                                  self.td_conn, toggle=True, color="td", text=str(i + 1)))
@@ -252,52 +279,48 @@ class Builder:
                                  self.td_conn, color="panel", text=f"T{i + 1}",
                                  constant_args=(1.0,)))
 
-        # Right half: XY pads plus scene / intensity.
-        rx = bank_w
-        page.add(self.label((rx, 0, bank_w, 24), "XY / SCENE", size=14, color="td"))
+        # --- XY pads plus intensity and scene ---
+        sx, sy, sw, sh = side
+        page.add(self.label((sx, sy, sw, 24), "XY / SCENE", size=14, color="td"))
         pads = grid["td_pads"]
-        pad_w = (bank_w - (pads + 1) * pad) // pads
-        pad_h = height - 200
+        strips_h = 2 * 56
+        pad_w = (sw - (pads + 1) * pad) // pads
+        pad_h = sh - strips_h - 26 - 24
         for i in range(pads):
-            x = rx + pad + i * (pad_w + pad)
-            page.add(self.xy((x, 26, pad_w, pad_h), f"td_pad_{i + 1}",
+            x = sx + pad + i * (pad_w + pad)
+            page.add(self.xy((x, sy + 26, pad_w, pad_h), f"td_pad_{i + 1}",
                              td["pad"].format(n=i + 1) + "/x",
-                             td["pad"].format(n=i + 1) + "/y",
-                             self.td_conn))
-            page.add(self.label((x, 26 + pad_h + 2, pad_w, 20), f"PAD {i + 1}", size=12))
+                             td["pad"].format(n=i + 1) + "/y", self.td_conn))
+            page.add(self.label((x, sy + 26 + pad_h, pad_w, 22), f"PAD {i + 1}", size=12))
 
-        y = 26 + pad_h + 28
-        page.add(self.label((rx + pad, y, 120, 24), "INTENSITY", size=12))
-        page.add(self.fader((rx + 130, y, bank_w - 150, 48), "td_intensity",
-                            td["intensity"], self.td_conn, horizontal=True, color="td"))
-        y += 56
-        page.add(self.label((rx + pad, y, 120, 24), "SCENE", size=12))
-        page.add(self.fader((rx + 130, y, bank_w - 150, 48), "td_scene",
-                            td["scene"], self.td_conn, horizontal=True, color="td"))
+        y = sy + 26 + pad_h + 24
+        for label_text, path, name in (("INTENSITY", td["intensity"], "td_intensity"),
+                                       ("SCENE", td["scene"], "td_scene")):
+            page.add(self.label((sx + pad, y, 110, 24), label_text, size=12))
+            page.add(self.fader((sx + 120, y, sw - 130 - pad, 48), name, path,
+                                self.td_conn, horizontal=True, color="td"))
+            y += 56
         return page
 
     # -- assembly ----------------------------------------------------------
     def build(self) -> Node:
         layout = self.spec["layout"]
-        w, h = layout["width"], layout["height"]
+        w, h = self.width, self.height
         strip_h = layout["tabbar_height"]
 
-        root = Node(GROUP, (0, 0, w, h), name="root", color=self.colors["bg"], outline=False)
+        root = Node(GROUP, (0, 0, w, h), name="root", color=self.colors["bg"],
+                    outline=False)
         root.add(self.global_strip(w, strip_h))
 
         pager_h = h - strip_h
         page_h = pager_h - layout["tabbar_height"]
-        pager = Node(
-            PAGER,
-            (0, strip_h, w, pager_h),
-            name="views",
-            color=self.colors["panel"],
-            extra_props={
-                "tabLabels": ("b", 1),
-                "tabbarDoubleTap": ("b", 0),
-                "tabbarSize": ("i", layout["tabbar_height"]),
-            },
-        )
+        pager = Node(PAGER, (0, strip_h, w, pager_h), name="views",
+                     color=self.colors["panel"],
+                     extra_props={
+                         "tabLabels": ("b", 1),
+                         "tabbarDoubleTap": ("b", 0),
+                         "tabbarSize": ("i", layout["tabbar_height"]),
+                     })
         pager.add(self.resolume_page(w, page_h))
         pager.add(self.fx_page(w, page_h))
         pager.add(self.td_page(w, page_h))
@@ -305,19 +328,29 @@ class Builder:
         return root
 
 
+def build_one(spec: dict, orientation: str, outdir: str) -> str:
+    root = Builder(spec, orientation).build()
+    os.makedirs(outdir, exist_ok=True)
+    out = os.path.join(outdir, f"vj-control-{orientation}.tosc")
+    tosc.write(root, out, os.path.splitext(out)[0] + ".xml")
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("-s", "--spec", default=SPEC)
-    ap.add_argument("-o", "--out", default=os.path.join(ROOT, "build", "vj-control.tosc"))
+    ap.add_argument("-d", "--outdir", default=BUILD)
+    ap.add_argument("-r", "--orientation", choices=("landscape", "portrait", "both"),
+                    default="both")
     args = ap.parse_args()
 
     spec = load_spec(args.spec)
-    root = Builder(spec).build()
-    os.makedirs(os.path.dirname(args.out), exist_ok=True)
-    xml_out = os.path.splitext(args.out)[0] + ".xml"
-    tosc.write(root, args.out, xml_out)
-    print(f"wrote {args.out}")
-    print(f"wrote {xml_out}")
+    wanted = (["landscape", "portrait"] if args.orientation == "both"
+              else [args.orientation])
+    for orientation in wanted:
+        out = build_one(spec, orientation, args.outdir)
+        print(f"wrote {out}")
+        print(f"wrote {os.path.splitext(out)[0] + '.xml'}")
     return 0
 
 

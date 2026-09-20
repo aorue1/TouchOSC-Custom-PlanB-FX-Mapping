@@ -6,8 +6,39 @@
 make
 ```
 
-Copy `build/vj-control.tosc` to the tablet (AirDrop, the TouchOSC editor's
-*Send to device*, or a file share) and open it in TouchOSC.
+This writes both orientations:
+
+* `build/vj-control-landscape.tosc` — 1180x820
+* `build/vj-control-portrait.tosc` — 820x1180
+
+Copy both to the iPad (AirDrop, the TouchOSC editor's *Send to device*, or a
+file share). Keep both loaded and switch between them from TouchOSC's layout
+list when you turn the tablet — a document has a fixed size, so one file cannot
+reflow on rotation. The addresses are identical in both, so nothing on the
+Resolume or TouchDesigner side needs to change when you switch.
+
+In *Preferences -> Control Surface -> Rotation*, leave the setting on **NORTH**.
+AUTO would rotate a layout to fill the screen when you turn the iPad, which
+fights the two-file approach — you would get the landscape layout sideways
+rather than the portrait one.
+
+### The rotation probe
+
+Whether a single self-reflowing layout is possible comes down to one unknown:
+does the scripting API's `resize()` callback fire when the device is rotated?
+
+```sh
+make probe      # -> build/orientation-probe.tosc
+```
+
+Open it on the iPad, enter control surface mode, set Rotation to **AUTO** and
+turn the tablet. The readout prints the root frame and a resize counter.
+
+* If the numbers swap or the counter climbs, one layout could rearrange itself
+  in Lua, and the two-file approach becomes optional.
+* If nothing moves, two files is the only honest answer and the probe can go.
+
+Tell me which happens and I will act on it.
 
 ### Verifying the layout
 

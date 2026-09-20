@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lexml version="3">
+  <node ID="08a3860d-4b09-53e5-acd1-2df3287d1e24" type="GROUP">
+    <properties>
+      <property type="s">
+        <key>name</key>
+        <value>root</value>
+      </property>
+      <property type="r">
+        <key>frame</key>
+        <value>
+          <x>0</x>
+          <y>0</y>
+          <w>800</w>
+          <h>800</h>
+        </value>
+      </property>
+      <property type="c">
+        <key>color</key>
+        <value>
+          <r>0.110000</r>
+          <g>0.110000</g>
+          <b>0.130000</b>
+          <a>1.000000</a>
+        </value>
+      </property>
+      <property type="b">
+        <key>background</key>
+        <value>1</value>
+      </property>
+      <property type="b">
+        <key>outline</key>
+        <value>0</value>
+      </property>
+    </properties>
+    <values>
+      <value>
+        <key>touch</key>
+        <locked>0</locked>
+        <lockedDefaultCurrent>0</lockedDefaultCurrent>
+        <default>false</default>
+        <defaultPull>0</defaultPull>
+      </value>
+    </values>
+    <messages />
+    <children>
+      <node ID="8d1b4d84-9f1a-507a-b30b-9e242760caec" type="LABEL">
+        <properties>
+          <property type="s">
+            <key>name</key>
+            <value>title</value>
+          </property>
+          <property type="r">
+            <key>frame</key>
+            <value>
+              <x>20</x>
+              <y>20</y>
+              <w>760</w>
+              <h>80</h>
+            </value>
+          </property>
+          <property type="c">
+            <key>color</key>
+            <value>
+              <r>0.920000</r>
+              <g>0.920000</g>
+              <b>0.940000</b>
+              <a>1.000000</a>
+            </value>
+          </property>
+          <property type="b">
+            <key>background</key>
+            <value>0</value>
+          </property>
+          <property type="b">
+            <key>outline</key>
+            <value>0</value>
+          </property>
+          <property type="s">
+            <key>text</key>
+            <value>Rotate the iPad. Does the readout change?</value>
+          </property>
+          <property type="i">
+            <key>textSize</key>
+            <value>20</value>
+          </property>
+          <property type="i">
+            <key>textAlignH</key>
+            <value>2</value>
+          </property>
+        </properties>
+        <values>
+          <value>
+            <key>touch</key>
+            <locked>0</locked>
+            <lockedDefaultCurrent>0</lockedDefaultCurrent>
+            <default>false</default>
+            <defaultPull>0</defaultPull>
+          </value>
+        </values>
+        <messages />
+        <children />
+      </node>
+      <node ID="81c80924-6cf4-57eb-a160-17dd3336cbb4" type="LABEL">
+        <properties>
+          <property type="s">
+            <key>name</key>
+            <value>readout</value>
+          </property>
+          <property type="r">
+            <key>frame</key>
+            <value>
+              <x>20</x>
+              <y>120</y>
+              <w>760</w>
+              <h>120</h>
+            </value>
+          </property>
+          <property type="c">
+            <key>color</key>
+            <value>
+              <r>0.950000</r>
+              <g>0.800000</g>
+              <b>0.200000</b>
+              <a>1.000000</a>
+            </value>
+          </property>
+          <property type="b">
+            <key>background</key>
+            <value>1</value>
+          </property>
+          <property type="b">
+            <key>outline</key>
+            <value>1</value>
+          </property>
+          <property type="s">
+            <key>text</key>
+            <value>(script has not run)</value>
+          </property>
+          <property type="i">
+            <key>textSize</key>
+            <value>18</value>
+          </property>
+          <property type="i">
+            <key>textAlignH</key>
+            <value>2</value>
+          </property>
+          <property type="s">
+            <key>script</key>
+            <value>-- Probe: report the layout's own idea of its size, and count resize events.
+local resizes = 0
+
+local function readout()
+  local r = root.frame
+  local s = self.frame
+  self.properties.text = string.format(
+    "root %dx%d | self %dx%d | resize events: %d", r.w, r.h, s.w, s.h, resizes)
+end
+
+function init()
+  readout()
+end
+
+function resize()
+  resizes = resizes + 1
+  readout()
+end
+
+function update()
+  readout()
+end</value>
+          </property>
+        </properties>
+        <values>
+          <value>
+            <key>touch</key>
+            <locked>0</locked>
+            <lockedDefaultCurrent>0</lockedDefaultCurrent>
+            <default>false</default>
+            <defaultPull>0</defaultPull>
+          </value>
+        </values>
+        <messages />
+        <children />
+      </node>
+    </children>
+  </node>
+</lexml>

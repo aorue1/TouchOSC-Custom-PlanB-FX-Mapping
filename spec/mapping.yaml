@@ -10,9 +10,18 @@
 
 layout:
   name: VJ Control
-  width: 1024
-  height: 768
   tabbar_height: 60
+  # iPad Air (4th gen) is 1180x820 points. TouchOSC scales a layout
+  # proportionally to the screen, so matching the aspect ratio exactly means no
+  # letterboxing in either orientation. One file per orientation: a TouchOSC
+  # document has a single fixed size, so a layout cannot reflow on rotation.
+  orientations:
+    landscape:
+      width: 1180
+      height: 820
+    portrait:
+      width: 820
+      height: 1180
 
 # TouchOSC connection slots. The connection string in a message is 5 chars,
 # one per slot, e.g. "10000" = slot 1 only, "01000" = slot 2 only.

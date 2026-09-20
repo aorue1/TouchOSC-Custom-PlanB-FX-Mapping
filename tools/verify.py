@@ -5,7 +5,7 @@ Catches the mistakes that are invisible in code but obvious on a tablet:
 controls hanging outside their parent, controls sitting on top of each other,
 zero/negative sizes, and duplicate OSC addresses.
 
-    python3 tools/verify.py            # checks build/vj-control.xml
+    python3 tools/verify.py            # checks every layout in build/
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from collections import defaultdict
 from xml.etree import ElementTree as ET
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT = os.path.join(ROOT, "build", "vj-control.xml")
+BUILD = os.path.join(ROOT, "build")
 
 # Controls smaller than this are hard to hit accurately on a tablet.
 MIN_TOUCH_PX = 28
@@ -125,14 +125,23 @@ def check(path: str) -> list[str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("xml", nargs="?", default=DEFAULT)
+    ap.add_argument("xml", nargs="*", help="defaults to every .xml in build/")
     args = ap.parse_args()
 
-    problems = check(args.xml)
-    for p in problems:
-        print(p)
-    print(f"\n{len(problems)} problem(s) in {os.path.relpath(args.xml, ROOT)}")
-    return 1 if problems else 0
+    targets = args.xml or sorted(
+        os.path.join(BUILD, f) for f in os.listdir(BUILD) if f.endswith(".xml"))
+    if not targets:
+        print("nothing to verify; run tools/build_tosc.py first")
+        return 1
+
+    total = 0
+    for target in targets:
+        problems = check(target)
+        total += len(problems)
+        for p in problems:
+            print(p)
+        print(f"{len(problems)} problem(s) in {os.path.relpath(target, ROOT)}")
+    return 1 if total else 0
 
 
 if __name__ == "__main__":

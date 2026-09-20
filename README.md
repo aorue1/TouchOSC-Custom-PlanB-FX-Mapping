@@ -2,6 +2,7 @@
 
 A custom TouchOSC control surface that drives **Resolume Arena** and
 **TouchDesigner** from one tablet, with a tab bar to switch between views.
+Built for an iPad Air (4th gen), in both portrait and landscape.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -32,8 +33,10 @@ connection 1 (port 7000), TouchDesigner on connection 2 (port 7001).
 | `tools/dump_map.py` | Regenerates `docs/osc-map.md` from the spec |
 | `tools/verify.py` | Geometry and address checks on the built layout |
 | `touchdesigner/osc_router.py` | OSC In DAT callbacks for the TouchDesigner side |
-| `build/vj-control.tosc` | The layout to open in TouchOSC |
-| `build/vj-control.xml` | Same layout uncompressed, so diffs are reviewable |
+| `tools/build_probe.py` | Builds the rotation probe described below |
+| `build/vj-control-landscape.tosc` | 1180x820 layout |
+| `build/vj-control-portrait.tosc` | 820x1180 layout |
+| `build/*.xml` | Same layouts uncompressed, so diffs are reviewable |
 
 ## Build
 
@@ -44,9 +47,10 @@ make            # build the .tosc, regenerate the address map, verify the layout
 or directly:
 
 ```sh
-python3 tools/build_tosc.py     # -> build/vj-control.tosc
-python3 tools/dump_map.py       # -> docs/osc-map.md
-python3 tools/verify.py         # non-zero exit if anything is off
+python3 tools/build_tosc.py                 # both orientations
+python3 tools/build_tosc.py -r portrait     # just one
+python3 tools/dump_map.py                   # -> docs/osc-map.md
+python3 tools/verify.py                     # non-zero exit if anything is off
 ```
 
 `verify.py` reads the generated XML and fails on controls that escape their
@@ -54,6 +58,31 @@ parent, overlap a sibling, fall below a 28px touch target, or stream their
 value to an address another control already owns.
 
 Only dependency is PyYAML (`pip install pyyaml`).
+
+## Orientation
+
+A TouchOSC document has **one fixed size and orientation** ([layout
+properties](https://hexler.net/touchosc/manual/editor-layout)), and the app's
+AUTO rotation setting only rotates the rendered surface to fill the screen — it
+does not rearrange controls. So a single file cannot reflow when the iPad is
+turned.
+
+Both orientations are therefore generated from the same spec, sized to the iPad
+Air 4's 1180x820 points so neither letterboxes:
+
+* `build/vj-control-landscape.tosc`
+* `build/vj-control-portrait.tosc`
+
+The pages rearrange to suit the aspect ratio — in portrait the FX matrix
+transposes (layers across, effects down) and the TouchDesigner page stacks the
+fader bank above the XY pads instead of placing them side by side. Every OSC
+address is identical in both, so the two files are interchangeable: load the
+other one and carry on, no re-mapping on either host.
+
+Keep both on the iPad and switch from TouchOSC's layout list. A truly
+self-reflowing single layout would need the scripting API to report device
+rotation; `make probe` builds `build/orientation-probe.tosc` to find out
+whether it does — see [`docs/setup.md`](docs/setup.md#the-rotation-probe).
 
 ## Status
 
