@@ -76,10 +76,6 @@
             <key>outline</key>
             <value>0</value>
           </property>
-          <property type="s">
-            <key>text</key>
-            <value>Rotate the iPad. Does the readout change?</value>
-          </property>
           <property type="i">
             <key>textSize</key>
             <value>20</value>
@@ -88,13 +84,17 @@
             <key>textAlignH</key>
             <value>2</value>
           </property>
+          <property type="i">
+            <key>textAlignV</key>
+            <value>2</value>
+          </property>
         </properties>
         <values>
           <value>
-            <key>touch</key>
+            <key>text</key>
             <locked>0</locked>
             <lockedDefaultCurrent>0</lockedDefaultCurrent>
-            <default>false</default>
+            <default>Rotate the iPad. Does the readout change?</default>
             <defaultPull>0</defaultPull>
           </value>
         </values>
@@ -133,16 +133,16 @@
             <key>outline</key>
             <value>1</value>
           </property>
-          <property type="s">
-            <key>text</key>
-            <value>(script has not run)</value>
-          </property>
           <property type="i">
             <key>textSize</key>
             <value>18</value>
           </property>
           <property type="i">
             <key>textAlignH</key>
+            <value>2</value>
+          </property>
+          <property type="i">
+            <key>textAlignV</key>
             <value>2</value>
           </property>
           <property type="s">
@@ -153,7 +153,7 @@ local resizes = 0
 local function readout()
   local r = root.frame
   local s = self.frame
-  self.properties.text = string.format(
+  self.values.text = string.format(
     "root %dx%d | self %dx%d | resize events: %d", r.w, r.h, s.w, s.h, resizes)
 end
 
@@ -173,10 +173,10 @@ end</value>
         </properties>
         <values>
           <value>
-            <key>touch</key>
+            <key>text</key>
             <locked>0</locked>
             <lockedDefaultCurrent>0</lockedDefaultCurrent>
-            <default>false</default>
+            <default>probe: script has not run</default>
             <defaultPull>0</defaultPull>
           </value>
         </values>

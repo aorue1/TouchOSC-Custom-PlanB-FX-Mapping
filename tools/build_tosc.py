@@ -51,11 +51,28 @@ class Builder:
     # -- small control factories ------------------------------------------
     def label(self, frame, text, size=14, color="text") -> Node:
         return Node(LABEL, frame, name=f"lbl_{text}", text=text, text_size=size,
-                    color=self.colors[color], background=False, outline=False)
+                    color=self.colors[color], background=False, outline=False,
+                    interactive=False)
+
+    def add_button(self, parent: Node, frame, name, path, conns, *, toggle=False,
+                   color="panel", text="", text_size=14, constant_args=()) -> Node:
+        """Place a button and, if it has a caption, a label on top of it.
+
+        A TouchOSC BUTTON draws no text of its own, so the caption is a
+        separate non-interactive LABEL sharing the button's frame — added
+        after the button so it draws over it, and non-interactive so touches
+        fall through to the button underneath.
+        """
+        btn = self.button(frame, name, path, conns, toggle=toggle, color=color,
+                          constant_args=constant_args)
+        parent.add(btn)
+        if text:
+            parent.add(self.label(frame, text, size=text_size))
+        return btn
 
     def button(self, frame, name, path, conns, *, toggle=False, color="panel",
-               text="", constant_args=()) -> Node:
-        btn = Node(BUTTON, frame, name=name, text=text, color=self.colors[color],
+               constant_args=()) -> Node:
+        btn = Node(BUTTON, frame, name=name, color=self.colors[color],
                    button_type=TOGGLE if toggle else MOMENTARY)
         btn.messages.append(OscMessage(path, conns, send_value=not constant_args,
                                        constant_args=constant_args,
@@ -93,18 +110,20 @@ class Builder:
             strip.add(self.label((12, 8, title_w, height - 16),
                                  self.spec["layout"]["name"], size=22))
 
-        blackout = Node(BUTTON, (width - btn_w - pad, 8, btn_w, height - 16),
-                        name="blackout", text="BLACKOUT", color=self.colors["danger"],
-                        button_type=TOGGLE)
+        blackout_frame = (width - btn_w - pad, 8, btn_w, height - 16)
+        blackout = Node(BUTTON, blackout_frame, name="blackout",
+                        color=self.colors["danger"], button_type=TOGGLE)
         blackout.messages.append(OscMessage(res["master"], self.res_conn,
                                             send_value=False, constant_args=(0.0,),
                                             trigger="RISE"))
         blackout.messages.append(OscMessage(td["blackout"], self.td_conn))
         strip.add(blackout)
+        strip.add(self.label(blackout_frame, "BLACKOUT", size=15))
 
-        strip.add(self.button((width - 2 * btn_w - 2 * pad, 8, btn_w, height - 16),
-                              "tap", res["tempo_tap"], self.res_conn,
-                              color="accent", text="TAP", constant_args=(1.0,)))
+        self.add_button(strip, (width - 2 * btn_w - 2 * pad, 8, btn_w, height - 16),
+                        "tap", res["tempo_tap"], self.res_conn,
+                        color="accent", text="TAP", text_size=16,
+                        constant_args=(1.0,))
 
         fader_x = title_w + pad + (4 if title_w else 4)
         fader_w = width - 2 * btn_w - 3 * pad - fader_x
@@ -140,12 +159,12 @@ class Builder:
                                 color="resolume"))
             y = header_h + pad
             for ci in range(clips):
-                page.add(self.button(
-                    (x + pad, y + ci * clip_h, col_w - 2 * pad, clip_h - pad),
+                self.add_button(
+                    page, (x + pad, y + ci * clip_h, col_w - 2 * pad, clip_h - pad),
                     f"L{layer}C{ci + 1}",
                     res["clip_connect"].format(layer=layer, clip=ci + 1),
                     self.res_conn, color="panel", text=str(ci + 1),
-                    constant_args=(1.0,)))
+                    constant_args=(1.0,))
 
             y = header_h + pad + clip_area + pad
             btn_w = (col_w - 4 * pad) // 3
@@ -153,11 +172,11 @@ class Builder:
                 ("layer_bypass", "BYP"), ("layer_solo", "SOLO"), ("layer_clear", "CLR"),
             )):
                 toggle = key != "layer_clear"
-                page.add(self.button(
-                    (x + pad + i * (btn_w + pad), y, btn_w, strip_h - pad),
+                self.add_button(
+                    page, (x + pad + i * (btn_w + pad), y, btn_w, strip_h - pad),
                     f"L{layer}_{text}", res[key].format(layer=layer), self.res_conn,
-                    toggle=toggle, color="panel", text=text,
-                    constant_args=() if toggle else (1.0,)))
+                    toggle=toggle, color="panel", text=text, text_size=11,
+                    constant_args=() if toggle else (1.0,))
 
             y += strip_h
             page.add(self.fader((x + pad, y, col_w - 2 * pad, fader_h - pad),
@@ -174,12 +193,14 @@ class Builder:
         fader_bottom = height - 2 * 52 - pad
         page.add(self.fader((x + pad, y + 22, col_w - 2 * pad, fader_bottom - y - 22),
                             "speed", res["speed"], self.res_conn, color="accent"))
-        page.add(self.button((x + pad, fader_bottom + 4, col_w - 2 * pad, 48),
-                             "resync", res["tempo_resync"], self.res_conn,
-                             color="accent", text="RESYNC", constant_args=(1.0,)))
-        page.add(self.button((x + pad, fader_bottom + 56, col_w - 2 * pad, 48),
-                             "tap_page", res["tempo_tap"], self.res_conn,
-                             color="accent", text="TAP", constant_args=(1.0,)))
+        self.add_button(page, (x + pad, fader_bottom + 4, col_w - 2 * pad, 48),
+                        "resync", res["tempo_resync"], self.res_conn,
+                        color="accent", text="RESYNC", text_size=12,
+                        constant_args=(1.0,))
+        self.add_button(page, (x + pad, fader_bottom + 56, col_w - 2 * pad, 48),
+                        "tap_page", res["tempo_tap"], self.res_conn,
+                        color="accent", text="TAP", text_size=15,
+                        constant_args=(1.0,))
         return page
 
     def fx_page(self, width: int, height: int) -> Node:
@@ -229,12 +250,12 @@ class Builder:
                                      res["fx_param"].format(layer=layer, fx=fx["fx"],
                                                             param=fx["param"]),
                                      self.res_conn, color="panel"))
-                page.add(self.button((x + pad, y + pad + knob_h + 2,
-                                      col_w - 2 * pad, byp_h),
-                                     f"L{layer}_{fx['fx']}_byp",
-                                     res["fx_bypass"].format(layer=layer, fx=fx["fx"]),
-                                     self.res_conn, toggle=True, color="panel",
-                                     text="byp"))
+                self.add_button(page, (x + pad, y + pad + knob_h + 2,
+                                       col_w - 2 * pad, byp_h),
+                                f"L{layer}_{fx['fx']}_byp",
+                                res["fx_bypass"].format(layer=layer, fx=fx["fx"]),
+                                self.res_conn, toggle=True, color="panel",
+                                text="byp", text_size=11)
         return page
 
     def td_page(self, width: int, height: int) -> Node:
@@ -271,13 +292,13 @@ class Builder:
         tog_y = by + 26 + fader_h + 24
         for i in range(grid["td_toggles"]):
             x = bx + i * col_w
-            page.add(self.button((x + pad, tog_y, col_w - 2 * pad, 48),
-                                 f"td_toggle_{i + 1}", td["toggle"].format(n=i + 1),
-                                 self.td_conn, toggle=True, color="td", text=str(i + 1)))
-            page.add(self.button((x + pad, tog_y + 52, col_w - 2 * pad, 48),
-                                 f"td_trigger_{i + 1}", td["trigger"].format(n=i + 1),
-                                 self.td_conn, color="panel", text=f"T{i + 1}",
-                                 constant_args=(1.0,)))
+            self.add_button(page, (x + pad, tog_y, col_w - 2 * pad, 48),
+                            f"td_toggle_{i + 1}", td["toggle"].format(n=i + 1),
+                            self.td_conn, toggle=True, color="td", text=str(i + 1))
+            self.add_button(page, (x + pad, tog_y + 52, col_w - 2 * pad, 48),
+                            f"td_trigger_{i + 1}", td["trigger"].format(n=i + 1),
+                            self.td_conn, color="panel", text=f"T{i + 1}",
+                            text_size=12, constant_args=(1.0,))
 
         # --- XY pads plus intensity and scene ---
         sx, sy, sw, sh = side

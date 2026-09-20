@@ -86,8 +86,11 @@ whether it does — see [`docs/setup.md`](docs/setup.md#the-rotation-probe).
 
 ## Status
 
-The generated `.tosc` opens in the TouchOSC desktop editor, so the writer emits
-a valid layout. What each control *does* once connected to a live Resolume
+The generated `.tosc` opens in the TouchOSC desktop editor and control surface
+mode. Captions were wrong in the first build (written as properties rather than
+values, so everything read "Label") and are now written as values, with button
+captions as non-interactive overlay labels — that fix is built but not yet
+confirmed on the iPad. What each control *does* against a live Resolume
 composition and TD network is still unconfirmed.
 
 ## Docs

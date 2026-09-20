@@ -150,6 +150,7 @@ class Node:
     text_size: int = 14
     outline: bool = True
     background: bool = True
+    interactive: bool = True
     button_type: int | None = None     # 0 momentary, 1 toggle-release, 2 toggle-press
     response: int | None = None
     orientation: int | None = None     # FADER: 0 vertical, 1 horizontal
@@ -172,10 +173,12 @@ class Node:
             _prop(props, "c", "color", self.color)
         _prop(props, "b", "background", 1 if self.background else 0)
         _prop(props, "b", "outline", 1 if self.outline else 0)
-        if self.type == LABEL or self.text:
-            _prop(props, "s", "text", self.text)
+        if self.type == LABEL:
             _prop(props, "i", "textSize", self.text_size)
             _prop(props, "i", "textAlignH", 2)  # centre
+            _prop(props, "i", "textAlignV", 2)
+        if not self.interactive:
+            _prop(props, "b", "interactive", 0)
         if self.button_type is not None:
             _prop(props, "i", "buttonType", self.button_type)
         if self.response is not None:
@@ -186,27 +189,25 @@ class Node:
             _prop(props, ptype, key, value)
 
         values = ET.SubElement(el, "values")
-        val = ET.SubElement(values, "value")
-        key = "touch" if self.type in (BUTTON, LABEL, GROUP, PAGER) else "x"
-        ET.SubElement(val, "key").text = key
-        ET.SubElement(val, "locked").text = "0"
-        ET.SubElement(val, "lockedDefaultCurrent").text = "0"
-        ET.SubElement(val, "default").text = "false" if key == "touch" else "0.0"
-        ET.SubElement(val, "defaultPull").text = "0"
-        if self.type in (BUTTON, FADER, XY, RADIAL):
-            xval = ET.SubElement(values, "value")
-            ET.SubElement(xval, "key").text = "x"
-            ET.SubElement(xval, "locked").text = "0"
-            ET.SubElement(xval, "lockedDefaultCurrent").text = "0"
-            ET.SubElement(xval, "default").text = "0.0"
-            ET.SubElement(xval, "defaultPull").text = "0"
-        if self.type == XY:
-            yval = ET.SubElement(values, "value")
-            ET.SubElement(yval, "key").text = "y"
-            ET.SubElement(yval, "locked").text = "0"
-            ET.SubElement(yval, "lockedDefaultCurrent").text = "0"
-            ET.SubElement(yval, "default").text = "0.0"
-            ET.SubElement(yval, "defaultPull").text = "0"
+
+        def _value(key: str, default: str) -> None:
+            v = ET.SubElement(values, "value")
+            ET.SubElement(v, "key").text = key
+            ET.SubElement(v, "locked").text = "0"
+            ET.SubElement(v, "lockedDefaultCurrent").text = "0"
+            ET.SubElement(v, "default").text = default
+            ET.SubElement(v, "defaultPull").text = "0"
+
+        if self.type == LABEL:
+            # The caption lives here. Writing it as a property leaves the
+            # control showing its default "Label" text.
+            _value("text", self.text)
+        else:
+            _value("touch", "false")
+            if self.type in (BUTTON, FADER, XY, RADIAL):
+                _value("x", "0.0")
+            if self.type == XY:
+                _value("y", "0.0")
 
         messages = ET.SubElement(el, "messages")
         for msg in self.messages:

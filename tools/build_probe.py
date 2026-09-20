@@ -30,7 +30,7 @@ local resizes = 0
 local function readout()
   local r = root.frame
   local s = self.frame
-  self.properties.text = string.format(
+  self.values.text = string.format(
     "root %dx%d | self %dx%d | resize events: %d", r.w, r.h, s.w, s.h, resizes)
 end
 
@@ -61,7 +61,7 @@ def main() -> int:
                   text_size=20, color=colors["text"],
                   background=False, outline=False))
     root.add(Node(LABEL, (20, 120, side - 40, 120), name="readout",
-                  text="(script has not run)", text_size=18,
+                  text="probe: script has not run", text_size=18,
                   color=colors["accent"], background=True, outline=True,
                   extra_props={"script": ("s", SCRIPT)}))
 

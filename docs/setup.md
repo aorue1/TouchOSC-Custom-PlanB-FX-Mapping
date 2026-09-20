@@ -22,6 +22,15 @@ AUTO would rotate a layout to fill the screen when you turn the iPad, which
 fights the two-file approach — you would get the landscape layout sideways
 rather than the portrait one.
 
+### Captions
+
+A LABEL's caption is a **value** named `text`, not a property, and a BUTTON
+draws no text at all. The first build got both wrong, so every label showed the
+default "Label" and buttons were bare. `tools/tosc.py` now writes captions as
+values, and `Builder.add_button` lays a non-interactive LABEL over each button
+so touches still reach the button underneath. If a caption ever goes back to
+reading "Label", that is the property-vs-value mistake returning.
+
 ### The rotation probe
 
 Whether a single self-reflowing layout is possible comes down to one unknown:
