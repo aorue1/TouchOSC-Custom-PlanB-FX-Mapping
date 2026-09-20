@@ -1,0 +1,94 @@
+# ---------------------------------------------------------------------------
+# VJ control surface — single source of truth for the TouchOSC layout.
+#
+# tools/build_tosc.py reads this file and emits build/vj-control.tosc
+# (plus build/vj-control.xml, the uncompressed form, for diffing).
+#
+# Coordinates are in layout pixels. The layout targets a 1024x768 tablet in
+# landscape; pages live inside a pager so the top tab bar switches views.
+# ---------------------------------------------------------------------------
+
+layout:
+  name: VJ Control
+  width: 1024
+  height: 768
+  tabbar_height: 60
+
+# TouchOSC connection slots. The connection string in a message is 5 chars,
+# one per slot, e.g. "10000" = slot 1 only, "01000" = slot 2 only.
+connections:
+  resolume:
+    slot: 1
+    host: 127.0.0.1
+    port: 7000          # Arena: Preferences > OSC > Incoming port
+    note: Resolume Arena 7 OSC input
+  touchdesigner:
+    slot: 2
+    host: 127.0.0.1
+    port: 7001          # TD: OSC In CHOP / OSC In DAT network port
+    note: TouchDesigner OSC In
+
+# Palette (r,g,b,a floats 0-1).
+colors:
+  bg:        [0.11, 0.11, 0.13, 1.0]
+  panel:     [0.16, 0.16, 0.19, 1.0]
+  resolume:  [0.93, 0.35, 0.16, 1.0]
+  td:        [0.20, 0.62, 0.90, 1.0]
+  accent:    [0.95, 0.80, 0.20, 1.0]
+  danger:    [0.85, 0.15, 0.25, 1.0]
+  text:      [0.92, 0.92, 0.94, 1.0]
+
+# Geometry knobs used by the page builders.
+grid:
+  layers: 4             # Resolume layers exposed
+  clips: 8              # clips per layer on the launch grid
+  fx_params: 8          # knobs on the FX page
+  td_faders: 8          # faders in the TD param bank
+  td_pads: 2            # XY pads in the TD param bank
+  td_toggles: 8         # toggle buttons in the TD param bank
+
+# ---------------------------------------------------------------------------
+# Resolume Arena 7 OSC addresses.
+# {layer} and {clip} are 1-based and substituted by the builder.
+# ---------------------------------------------------------------------------
+resolume:
+  clip_connect:   /composition/layers/{layer}/clips/{clip}/connect
+  layer_opacity:  /composition/layers/{layer}/video/opacity
+  layer_bypass:   /composition/layers/{layer}/bypassed
+  layer_solo:     /composition/layers/{layer}/solo
+  layer_clear:    /composition/layers/{layer}/clear
+  master:         /composition/master
+  speed:          /composition/speed
+  tempo_tap:      /composition/tempocontroller/tempotap
+  tempo_resync:   /composition/tempocontroller/resync
+  # Per-layer effect slots. Add the effect in Arena first, then the parameter
+  # index below lines up with its slot order in the layer's effect chain.
+  fx_param:       /composition/layers/{layer}/video/effects/{fx}/effect/{param}
+  fx_bypass:      /composition/layers/{layer}/video/effects/{fx}/bypassed
+  fx_names:
+    - {name: Blur,       fx: blur,          param: radius}
+    - {name: RGB Shift,  fx: rgbshift,      param: shift}
+    - {name: Hue,        fx: huerotate,     param: rotation}
+    - {name: Sat,        fx: saturation,    param: saturation}
+    - {name: Zoom,       fx: transform,     param: scale}
+    - {name: Kaleido,    fx: kaleidoscope,  param: segments}
+    - {name: Glitch,     fx: glitch,        param: amount}
+    - {name: Strobe,     fx: strobe,        param: speed}
+
+# ---------------------------------------------------------------------------
+# TouchDesigner addresses. Flat and predictable so an OSC In CHOP turns them
+# straight into channels (touchdesigner/osc_router.py documents the mapping).
+# ---------------------------------------------------------------------------
+touchdesigner:
+  fader:    /td/fader/{n}
+  toggle:   /td/toggle/{n}
+  pad:      /td/pad/{n}
+  trigger:  /td/trigger/{n}
+  scene:    /td/scene
+  intensity: /td/intensity
+  blackout: /td/blackout
+
+# Global strip, always visible above the pager.
+globals:
+  blackout:  {label: BLACKOUT, targets: [resolume, touchdesigner]}
+  tap:       {label: TAP,      targets: [resolume]}
