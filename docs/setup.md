@@ -126,7 +126,37 @@ mode: it shows the exact address for the control you click.
 `/td/blackout` is handled specially by the router: it drops every mapped
 parameter to its low value.
 
-## 5. The COLOUR page
+## 5. Clip banks and names
+
+TouchOSC has no scrolling control, so more clips than fit on screen are reached
+by **banking**. The clip grid sits in its own pager whose tabs are clip ranges
+(1-8, 9-16, ...), 4 banks of 8 by default — `clips:` and `banks:` in the spec.
+Banking moves every layer at once, and only the clip buttons move: opacity,
+bypass/solo/clear and the PREV/NEXT row stay where they are, so the controls
+you hold during a set never shift under your hand.
+
+Each layer also has PREV/NEXT clip buttons. **Their addresses are unverified**,
+as are the colour parameters — confirm both in Arena under Shortcuts > Edit OSC.
+
+### Names on the buttons
+
+Clip buttons show their clip number and layer headers show "LAYER n" until
+Resolume tells them otherwise. If it does, the caption is replaced by the real
+name. That needs two things:
+
+1. **Arena must be sending.** Preferences > OSC > OSC Output, enabled, pointing
+   at the iPad's IP and the port TouchOSC receives on. Without this nothing
+   arrives and the numbers simply stay.
+2. **The address must be right.** The spec guesses
+   `/composition/layers/{layer}/clips/{clip}/name` and
+   `/composition/layers/{layer}/name`. Whether Arena publishes names there is
+   unconfirmed; a wrong address costs nothing but the feature, since the label
+   keeps its built-in caption.
+
+Names arrive as OSC strings written into each label's `text` value. Set
+`feedback.enabled: false` in the spec to strip the receive messages entirely.
+
+## 6. The colour picker
 
 Each picker is an XY pad -- hue across, shade up -- over R, G and B faders,
 with a live swatch beside it. The pad only moves the faders; the faders carry
@@ -148,7 +178,7 @@ you actually want to drive; whatever address it reports goes in the spec.
 On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 `/b`, wired in `touchdesigner/osc_router.py` to a Constant TOP by default.
 
-## 6. Changing the surface
+## 7. Changing the surface
 
 Everything about the layout comes from `spec/mapping.yaml` — grid sizes,
 colours, ports, addresses. Change it and re-run `make`. The uncompressed

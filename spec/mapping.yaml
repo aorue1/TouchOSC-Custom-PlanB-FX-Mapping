@@ -110,6 +110,21 @@ touchdesigner:
   blackout: /td/blackout
 
 # ---------------------------------------------------------------------------
+# Feedback from Resolume into the surface: clip and layer names on the labels
+# instead of bare numbers.
+#
+# This only does anything if Arena is sending: Preferences > OSC > OSC Output,
+# enabled, pointing at the iPad's IP on the port TouchOSC receives on.
+# Whether Arena publishes names at these addresses is UNVERIFIED -- the
+# labels fall back to showing the clip number, so a wrong address costs
+# nothing but the feature. Confirm in Shortcuts > Edit OSC.
+# ---------------------------------------------------------------------------
+feedback:
+  enabled: true
+  clip_name:  /composition/layers/{layer}/clips/{clip}/name
+  layer_name: /composition/layers/{layer}/name
+
+# ---------------------------------------------------------------------------
 # Colour pickers. Each picker is an XY pad (hue across, shade up) over three
 # RGB faders; the faders carry the OSC, so the pad only has to move them.
 #

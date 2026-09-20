@@ -125,7 +125,14 @@ def connections(*slots: int) -> str:
 
 @dataclass
 class OscMessage:
-    """One outgoing OSC message attached to a control."""
+    """One OSC message attached to a control.
+
+    Outgoing by default. Set ``receive_key`` to make it an incoming message
+    instead: the argument is written into that value of the control, which is
+    how a LABEL picks up a name sent by the host (``receive_key="text"``,
+    ``conversion="STRING"``). Receiving needs the ``<values>`` mapping as well
+    as the argument partial — a message without it parses but lands nowhere.
+    """
 
     path: str
     conns: str
@@ -133,10 +140,14 @@ class OscMessage:
     constant_args: tuple = ()        # extra fixed float arguments, sent first
     trigger: str = "ANY"             # ANY | RISE | FALL
     receive: bool = True
+    send: bool = True
+    receive_key: str | None = None   # control value an incoming argument fills
+    conversion: str = "FLOAT"        # FLOAT | STRING | BOOLEAN
 
     def to_xml(self, parent: ET.Element) -> None:
         osc = ET.SubElement(parent, "osc", {
-            "enabled": "1", "send": "1",
+            "enabled": "1",
+            "send": "1" if self.send else "0",
             "receive": "1" if self.receive else "0",
             "feedback": "0", "connections": self.conns,
         })
@@ -158,11 +169,20 @@ class OscMessage:
                 "type": "CONSTANT", "conversion": "FLOAT",
                 "value": str(const), "scaleMin": "0", "scaleMax": "1",
             })
-        if self.send_value:
+        if self.send_value or self.receive_key:
             ET.SubElement(args, "partial", {
-                "type": "VALUE", "conversion": "FLOAT",
-                "value": "x", "scaleMin": "0", "scaleMax": "1",
+                "type": "VALUE", "conversion": self.conversion,
+                "value": self.receive_key or "x",
+                "scaleMin": "0", "scaleMax": "1",
             })
+
+        if self.receive_key:
+            values = ET.SubElement(osc, "values")
+            value = ET.SubElement(values, "value")
+            ET.SubElement(value, "type").text = "VALUE"
+            ET.SubElement(value, "key").text = self.receive_key
+            ET.SubElement(value, "scaleMin").text = "0"
+            ET.SubElement(value, "scaleMax").text = "1"
 
 
 class Raw:

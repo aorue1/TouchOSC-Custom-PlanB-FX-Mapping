@@ -18,11 +18,9 @@ logo artwork cannot be placed on the surface.
 └──────────────────────────────────────────────────────────┘
 ```
 
-* **RESOLUME** — 4 layers × 8 clip-launch buttons, per-layer bypass/solo/clear,
-  per-layer opacity faders, master + speed + resync column.
+* **RESOLUME** — 4 layers × 32 clips in banks of 8, per-layer PREV/NEXT clip,
+  bypass/solo/clear and opacity, master column with speed, colour and tempo.
 * **FX** — a knob and a bypass per effect per layer (8 effects × 4 layers).
-* **COLOR** — an XY hue/shade pad with RGB faders and a live swatch, one
-  feeding Resolume and one feeding TouchDesigner.
 * **TOUCHDESIGNER** — generic param bank: 8 faders, 8 toggles, 8 triggers,
   2 XY pads, intensity and scene faders.
 
@@ -106,9 +104,10 @@ Resolume OSC convention, not yet tested against a running composition.
 
 ## Credits
 
-The colour picker's hue/shade maths is adapted from the ColorPicker module of
+The colour picker is the ColorPicker module from
 [tshoppa/touchOSC](https://github.com/tshoppa/touchOSC), MIT licensed,
-copyright (c) 2023 Schulzki.
+copyright (c) 2023 Schulzki, vendored in `vendor/` and grafted into the layout
+at build time.
 
 The `.tosc` writer's property names and enums follow
 [NicoG60/TouchMCU](https://github.com/NicoG60/TouchMCU).

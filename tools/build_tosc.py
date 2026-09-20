@@ -81,6 +81,19 @@ class Builder:
                     text_color=self.colors[color], background=False,
                     outline=False, interactive=False)
 
+    def name_feed(self, label: Node, address: str) -> Node:
+        """Let a label take its caption from the host, if the host sends one.
+
+        The label keeps whatever it was built with until a message arrives, so
+        an address that turns out to be wrong just leaves the number showing.
+        """
+        if self.spec.get("feedback", {}).get("enabled"):
+            label.messages.append(OscMessage(address, self.res_conn,
+                                             send_value=False, send=False,
+                                             receive=True, receive_key="text",
+                                             conversion="STRING"))
+        return label
+
     def add_button(self, parent: Node, frame, name, path, conns, *, toggle=False,
                    color="panel", text="", text_size=14, constant_args=()) -> Node:
         """Place a button and, if it has a caption, a label on top of it.
@@ -182,6 +195,7 @@ class Builder:
         stay put, so the controls you hold during a set never shift under you.
         """
         res, grid = self.spec["resolume"], self.spec["grid"]
+        fb = self.spec.get("feedback", {})
         layers, clips, banks = grid["layers"], grid["clips"], grid["banks"]
         page = Node(GROUP, (0, 0, width, height), name="RESOLUME",
                     color=self.colors["resolume"], background=False, outline=False)
@@ -197,8 +211,10 @@ class Builder:
         clip_area = height - header_h - nav_h - strip_h - fader_h - 5 * pad
 
         for li in range(layers):
-            page.add(self.label((li * col_w, 2, col_w, header_h),
-                                f"LAYER {li + 1}", size=15, color="resolume"))
+            header = self.label((li * col_w, 2, col_w, header_h),
+                                f"LAYER {li + 1}", size=15, color="resolume")
+            header.name = f"L{li + 1}_name"
+            page.add(self.name_feed(header, fb["layer_name"].format(layer=li + 1)))
 
         # --- banked clip grid ---
         bank_pager = Node(PAGER, (0, header_h, grid_w, clip_area),
@@ -224,12 +240,16 @@ class Builder:
                 x = li * col_w
                 for ci in range(clips):
                     clip = first + ci
+                    frame = (x + pad, ci * clip_h, col_w - 2 * pad, clip_h - pad)
                     self.add_button(
-                        bank, (x + pad, ci * clip_h, col_w - 2 * pad, clip_h - pad),
-                        f"L{li + 1}C{clip}",
+                        bank, frame, f"L{li + 1}C{clip}",
                         res["clip_connect"].format(layer=li + 1, clip=clip),
-                        self.res_conn, color="panel", text=str(clip),
-                        constant_args=(1.0,))
+                        self.res_conn, color="panel", constant_args=(1.0,))
+                    caption = self.label(frame, str(clip), size=13)
+                    caption.name = f"L{li + 1}C{clip}_name"
+                    self.name_feed(caption, fb["clip_name"].format(
+                        layer=li + 1, clip=clip))
+                    bank.add(caption)
             bank_pager.add(bank)
         page.add(bank_pager)
 
