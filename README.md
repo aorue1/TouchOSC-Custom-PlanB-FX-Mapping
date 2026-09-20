@@ -34,6 +34,7 @@ connection 1 (port 7000), TouchDesigner on connection 2 (port 7001).
 | `tools/verify.py` | Geometry and address checks on the built layout |
 | `touchdesigner/osc_router.py` | OSC In DAT callbacks for the TouchDesigner side |
 | `tools/build_probe.py` | Builds the rotation probe described below |
+| `tools/inspect_tosc.py` | Prints the control tree / property summary of any `.tosc` |
 | `build/vj-control-landscape.tosc` | 1180x820 layout |
 | `build/vj-control-portrait.tosc` | 820x1180 layout |
 | `build/*.xml` | Same layouts uncompressed, so diffs are reviewable |

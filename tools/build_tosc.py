@@ -142,7 +142,7 @@ class Builder:
         res, grid = self.spec["resolume"], self.spec["grid"]
         layers, clips = grid["layers"], grid["clips"]
         page = Node(GROUP, (0, 0, width, height), name="RESOLUME",
-                    color=self.colors["bg"], outline=False)
+                    color=self.colors["resolume"], background=False, outline=False)
 
         col_w = width // (layers + 1)
         pad = 6
@@ -191,7 +191,8 @@ class Builder:
         y = header_h + pad
         page.add(self.label((x + pad, y, col_w - 2 * pad, 22), "SPEED", size=12))
         fader_bottom = height - 2 * 52 - pad
-        page.add(self.fader((x + pad, y + 22, col_w - 2 * pad, fader_bottom - y - 22),
+        speed_h = min(fader_bottom - y - 22, int(height * 0.45))
+        page.add(self.fader((x + pad, y + 22, col_w - 2 * pad, speed_h),
                             "speed", res["speed"], self.res_conn, color="accent"))
         self.add_button(page, (x + pad, fader_bottom + 4, col_w - 2 * pad, 48),
                         "resync", res["tempo_resync"], self.res_conn,
@@ -213,7 +214,7 @@ class Builder:
         layers = grid["layers"]
         fx_list = res["fx_names"][: grid["fx_params"]]
         page = Node(GROUP, (0, 0, width, height), name="FX",
-                    color=self.colors["bg"], outline=False)
+                    color=self.colors["accent"], background=False, outline=False)
 
         pad = 6
         head_h = 22
@@ -278,7 +279,7 @@ class Builder:
         """
         td, grid = self.spec["touchdesigner"], self.spec["grid"]
         page = Node(GROUP, (0, 0, width, height), name="TOUCHDESIGNER",
-                    color=self.colors["bg"], outline=False)
+                    color=self.colors["td"], background=False, outline=False)
         pad = 8
         n = grid["td_faders"]
 

@@ -22,6 +22,21 @@ AUTO would rotate a layout to fill the screen when you turn the iPad, which
 fights the two-file approach — you would get the landscape layout sideways
 rather than the portrait one.
 
+### Inspecting a layout
+
+`tools/inspect_tosc.py` decompresses any `.tosc` and prints its control tree,
+or a summary of which properties and values each control type carries:
+
+```sh
+python3 tools/inspect_tosc.py build/vj-control-portrait.tosc --summary
+python3 tools/inspect_tosc.py sample.tosc --type PAGER      # one type, in full
+```
+
+Point it at a layout saved by the TouchOSC editor to settle any question about
+how a property is spelled, then diff that against one of ours. This is the
+reliable way to resolve the property guesses that the manual does not spell
+out — it is how the caption bug below should have been found.
+
 ### Captions
 
 A LABEL's caption is a **value** named `text`, not a property, and a BUTTON

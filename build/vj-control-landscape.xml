@@ -579,15 +579,15 @@
               <property type="c">
                 <key>color</key>
                 <value>
-                  <r>0.110000</r>
-                  <g>0.110000</g>
-                  <b>0.130000</b>
+                  <r>0.930000</r>
+                  <g>0.350000</g>
+                  <b>0.160000</b>
                   <a>1.000000</a>
                 </value>
               </property>
               <property type="b">
                 <key>background</key>
-                <value>1</value>
+                <value>0</value>
               </property>
               <property type="b">
                 <key>outline</key>
@@ -7287,7 +7287,7 @@
                       <x>950</x>
                       <y>54</y>
                       <w>224</w>
-                      <h>536</h>
+                      <h>315</h>
                     </value>
                   </property>
                   <property type="c">
@@ -7635,15 +7635,15 @@
               <property type="c">
                 <key>color</key>
                 <value>
-                  <r>0.110000</r>
-                  <g>0.110000</g>
-                  <b>0.130000</b>
+                  <r>0.950000</r>
+                  <g>0.800000</g>
+                  <b>0.200000</b>
                   <a>1.000000</a>
                 </value>
               </property>
               <property type="b">
                 <key>background</key>
-                <value>1</value>
+                <value>0</value>
               </property>
               <property type="b">
                 <key>outline</key>
@@ -15197,15 +15197,15 @@
               <property type="c">
                 <key>color</key>
                 <value>
-                  <r>0.110000</r>
-                  <g>0.110000</g>
-                  <b>0.130000</b>
+                  <r>0.200000</r>
+                  <g>0.620000</g>
+                  <b>0.900000</b>
                   <a>1.000000</a>
                 </value>
               </property>
               <property type="b">
                 <key>background</key>
-                <value>1</value>
+                <value>0</value>
               </property>
               <property type="b">
                 <key>outline</key>
