@@ -55,10 +55,11 @@ def is_decorative(node: ET.Element) -> bool:
     """
     if node.get("type") in CONTAINERS:
         return True
-    for key, _, text in ((p.findtext("key"), p.get("type"), _prop_text(p))
-                         for p in node.findall("./properties/property")):
-        if key == "interactive":
-            return text in ("0", "false", "False")
+    for prop in node.findall("./properties/property"):
+        # interactive=0 or visible=0 both mean nothing can be tapped here.
+        if (prop.findtext("key") in ("interactive", "visible")
+                and _prop_text(prop) in ("0", "false", "False")):
+            return True
     return False
 
 

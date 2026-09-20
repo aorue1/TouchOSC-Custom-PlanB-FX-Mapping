@@ -33,19 +33,23 @@ BUILD = os.path.join(ROOT, "build")
 SWATCH_SCRIPT = """
 local base = self.name:gsub('_swatch$', '')
 local sib = self.parent.children
+local chip = sib[base .. '_chip']
 
+-- Opens on RELEASE, not press. The picker's overlay hides itself on any
+-- touch, so opening it under a finger that is still down closes it again on
+-- the spot -- which looks like the dialog flickering.
 function onValueChanged(key)
-  if key == 'x' and self.values.x == 1 then
+  if key == 'x' and self.values.x == 0 then
     root.children.ColorPicker:notify('pickColor', {
       callback = self,
-      initial = self.color
+      initial = chip.color
     })
   end
 end
 
 function onReceiveNotify(key, val)
   if key == 'colorPicked' then
-    self.color = val
+    chip.color = val
     sib[base .. '_r'].values.x = val.r
     sib[base .. '_g'].values.x = val.g
     sib[base .. '_b'].values.x = val.b
@@ -449,34 +453,34 @@ class Builder:
 
     def color_swatch(self, parent: Node, frame, name: str, addrs: dict,
                      conns: str, accent: str) -> Node:
-        """A swatch button that opens the ColorPicker, over R/G/B faders.
+        """A swatch button that opens the ColorPicker.
 
-        The picker is the vendored component from tshoppa/touchOSC: it is a
-        modal dialog that notifies its caller with `colorPicked` as the colour
-        is dragged. The caller here writes the three channels into the faders
-        below it, and those faders carry the OSC — the component itself sends
-        nothing, and TouchOSC's scripting has no OSC send of its own.
+        The three RGB faders behind it are hidden: the picker is the interface,
+        and a set of sliders saying the same thing twice is just clutter. They
+        remain because they are what sends the OSC — the vendored component
+        sends none, and TouchOSC's scripting has no OSC send — so the callback
+        writes into them and their own messages go out as usual.
         """
         x, y, w, h = frame
-        gap = 4
-        btn_h = 44
-        chan_h = max(MIN_TOUCH, (h - btn_h - 4 * gap) // 3)
         group = Node(GROUP, frame, name=f"{name}_color", background=False,
                      outline=False)
 
-        swatch = Node(BUTTON, (0, 0, w, btn_h), name=f"{name}_swatch",
-                      color=self.colors[accent], button_type=MOMENTARY,
-                      script=SWATCH_SCRIPT)
-        group.add(swatch)
-        group.add(self.label((0, 0, w, btn_h), "COLOR", size=13))
+        # The chip shows the colour; the button on top of it only catches the
+        # tap. A BUTTON draws its own fill at partial opacity while idle, so
+        # using one as the swatch shows a washed-out version of the colour --
+        # misleading when the whole point is to see what you are sending.
+        group.add(Node(BOX, (0, 0, w, h), name=f"{name}_chip",
+                       color=self.colors[accent], shape=Shape.RECTANGLE,
+                       background=True, outline=True, interactive=False))
+        group.add(Node(BUTTON, (0, 0, w, h), name=f"{name}_swatch",
+                       color=self.colors[accent], button_type=MOMENTARY,
+                       background=False, outline=False, script=SWATCH_SCRIPT))
+        group.add(self.label((0, 0, w, h), "COLOUR", size=13))
 
-        for i, (chan, letter) in enumerate((("red", "R"), ("green", "G"),
-                                            ("blue", "B"))):
-            row_y = btn_h + gap + i * (chan_h + gap)
-            group.add(self.label((0, row_y, 18, chan_h), letter, size=11))
-            group.add(self.fader((20, row_y, w - 20, chan_h),
-                                 f"{name}_{chan[0]}", addrs[chan], conns,
-                                 horizontal=True, color=accent))
+        for chan in ("red", "green", "blue"):
+            group.add(Node(FADER, (0, 0, w, h), name=f"{name}_{chan[0]}",
+                           color=self.colors[accent], visible=False,
+                           messages=[OscMessage(addrs[chan], conns)]))
         parent.add(group)
         return group
 

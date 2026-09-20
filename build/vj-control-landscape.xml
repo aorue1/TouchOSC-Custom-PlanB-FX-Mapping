@@ -41864,11 +41864,11 @@
                 </values>
                 <messages />
                 <children>
-                  <node ID="ad64bc52-8d70-59fc-9cfb-bb6fb57a6deb" type="BUTTON">
+                  <node ID="ad64bc52-8d70-59fc-9cfb-bb6fb57a6deb" type="BOX">
                     <properties>
                       <property type="s">
                         <key>name</key>
-                        <value>resolume_swatch</value>
+                        <value>resolume_chip</value>
                       </property>
                       <property type="s">
                         <key>tag</key>
@@ -41880,7 +41880,7 @@
                           <x>0</x>
                           <y>0</y>
                           <w>224</w>
-                          <h>44</h>
+                          <h>286</h>
                         </value>
                       </property>
                       <property type="c">
@@ -41898,7 +41898,7 @@
                       </property>
                       <property type="b">
                         <key>interactive</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>background</key>
@@ -41930,21 +41930,110 @@
                       </property>
                       <property type="s">
                         <key>script</key>
+                        <value />
+                      </property>
+                      <property type="i">
+                        <key>shape</key>
+                        <value>1</value>
+                      </property>
+                    </properties>
+                    <values>
+                      <value>
+                        <key>touch</key>
+                        <locked>0</locked>
+                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
+                        <defaultPull>0</defaultPull>
+                        <default>false</default>
+                      </value>
+                    </values>
+                    <messages />
+                    <children />
+                  </node>
+                  <node ID="531c2b62-0de3-502b-949a-6088c6d9fe51" type="BUTTON">
+                    <properties>
+                      <property type="s">
+                        <key>name</key>
+                        <value>resolume_swatch</value>
+                      </property>
+                      <property type="s">
+                        <key>tag</key>
+                        <value />
+                      </property>
+                      <property type="r">
+                        <key>frame</key>
+                        <value>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>224</w>
+                          <h>286</h>
+                        </value>
+                      </property>
+                      <property type="c">
+                        <key>color</key>
+                        <value>
+                          <r>0.930000</r>
+                          <g>0.350000</g>
+                          <b>0.160000</b>
+                          <a>1.000000</a>
+                        </value>
+                      </property>
+                      <property type="b">
+                        <key>visible</key>
+                        <value>1</value>
+                      </property>
+                      <property type="b">
+                        <key>interactive</key>
+                        <value>1</value>
+                      </property>
+                      <property type="b">
+                        <key>background</key>
+                        <value>0</value>
+                      </property>
+                      <property type="b">
+                        <key>outline</key>
+                        <value>0</value>
+                      </property>
+                      <property type="i">
+                        <key>outlineStyle</key>
+                        <value>1</value>
+                      </property>
+                      <property type="b">
+                        <key>grabFocus</key>
+                        <value>0</value>
+                      </property>
+                      <property type="i">
+                        <key>pointerPriority</key>
+                        <value>0</value>
+                      </property>
+                      <property type="i">
+                        <key>cornerRadius</key>
+                        <value>1</value>
+                      </property>
+                      <property type="i">
+                        <key>orientation</key>
+                        <value>0</value>
+                      </property>
+                      <property type="s">
+                        <key>script</key>
                         <value>local base = self.name:gsub('_swatch$', '')
 local sib = self.parent.children
+local chip = sib[base .. '_chip']
 
+-- Opens on RELEASE, not press. The picker's overlay hides itself on any
+-- touch, so opening it under a finger that is still down closes it again on
+-- the spot -- which looks like the dialog flickering.
 function onValueChanged(key)
-  if key == 'x' and self.values.x == 1 then
+  if key == 'x' and self.values.x == 0 then
     root.children.ColorPicker:notify('pickColor', {
       callback = self,
-      initial = self.color
+      initial = chip.color
     })
   end
 end
 
 function onReceiveNotify(key, val)
   if key == 'colorPicked' then
-    self.color = val
+    chip.color = val
     sib[base .. '_r'].values.x = val.r
     sib[base .. '_g'].values.x = val.g
     sib[base .. '_b'].values.x = val.b
@@ -41987,11 +42076,11 @@ end</value>
                     <messages />
                     <children />
                   </node>
-                  <node ID="531c2b62-0de3-502b-949a-6088c6d9fe51" type="LABEL">
+                  <node ID="7d5f68d0-3bdc-56e3-b222-a0ea9ba8a253" type="LABEL">
                     <properties>
                       <property type="s">
                         <key>name</key>
-                        <value>lbl_COLOR</value>
+                        <value>lbl_COLOUR</value>
                       </property>
                       <property type="s">
                         <key>tag</key>
@@ -42003,7 +42092,7 @@ end</value>
                           <x>0</x>
                           <y>0</y>
                           <w>224</w>
-                          <h>44</h>
+                          <h>286</h>
                         </value>
                       </property>
                       <property type="c">
@@ -42095,121 +42184,7 @@ end</value>
                         <locked>0</locked>
                         <lockedDefaultCurrent>0</lockedDefaultCurrent>
                         <defaultPull>0</defaultPull>
-                        <default>COLOR</default>
-                      </value>
-                    </values>
-                    <messages />
-                    <children />
-                  </node>
-                  <node ID="7d5f68d0-3bdc-56e3-b222-a0ea9ba8a253" type="LABEL">
-                    <properties>
-                      <property type="s">
-                        <key>name</key>
-                        <value>lbl_R</value>
-                      </property>
-                      <property type="s">
-                        <key>tag</key>
-                        <value />
-                      </property>
-                      <property type="r">
-                        <key>frame</key>
-                        <value>
-                          <x>0</x>
-                          <y>48</y>
-                          <w>18</w>
-                          <h>75</h>
-                        </value>
-                      </property>
-                      <property type="c">
-                        <key>color</key>
-                        <value>
-                          <r>0.250000</r>
-                          <g>0.250000</g>
-                          <b>0.250000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>visible</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>interactive</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>background</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>outline</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>outlineStyle</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>grabFocus</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>pointerPriority</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>cornerRadius</key>
-                        <value>1</value>
-                      </property>
-                      <property type="i">
-                        <key>orientation</key>
-                        <value>0</value>
-                      </property>
-                      <property type="s">
-                        <key>script</key>
-                        <value />
-                      </property>
-                      <property type="i">
-                        <key>font</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textSize</key>
-                        <value>11</value>
-                      </property>
-                      <property type="i">
-                        <key>textLength</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignH</key>
-                        <value>2</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignV</key>
-                        <value>2</value>
-                      </property>
-                      <property type="c">
-                        <key>textColor</key>
-                        <value>
-                          <r>0.920000</r>
-                          <g>0.920000</g>
-                          <b>0.940000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>textClip</key>
-                        <value>1</value>
-                      </property>
-                    </properties>
-                    <values>
-                      <value>
-                        <key>text</key>
-                        <locked>0</locked>
-                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
-                        <defaultPull>0</defaultPull>
-                        <default>R</default>
+                        <default>COLOUR</default>
                       </value>
                     </values>
                     <messages />
@@ -42228,10 +42203,10 @@ end</value>
                       <property type="r">
                         <key>frame</key>
                         <value>
-                          <x>20</x>
-                          <y>48</y>
-                          <w>204</w>
-                          <h>75</h>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>224</w>
+                          <h>286</h>
                         </value>
                       </property>
                       <property type="c">
@@ -42245,7 +42220,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>visible</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>interactive</key>
@@ -42277,7 +42252,7 @@ end</value>
                       </property>
                       <property type="i">
                         <key>orientation</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="s">
                         <key>script</key>
@@ -42326,121 +42301,7 @@ end</value>
                     </messages>
                     <children />
                   </node>
-                  <node ID="4b7d0c87-f393-592a-a934-9ba774c2f5e2" type="LABEL">
-                    <properties>
-                      <property type="s">
-                        <key>name</key>
-                        <value>lbl_G</value>
-                      </property>
-                      <property type="s">
-                        <key>tag</key>
-                        <value />
-                      </property>
-                      <property type="r">
-                        <key>frame</key>
-                        <value>
-                          <x>0</x>
-                          <y>127</y>
-                          <w>18</w>
-                          <h>75</h>
-                        </value>
-                      </property>
-                      <property type="c">
-                        <key>color</key>
-                        <value>
-                          <r>0.250000</r>
-                          <g>0.250000</g>
-                          <b>0.250000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>visible</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>interactive</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>background</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>outline</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>outlineStyle</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>grabFocus</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>pointerPriority</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>cornerRadius</key>
-                        <value>1</value>
-                      </property>
-                      <property type="i">
-                        <key>orientation</key>
-                        <value>0</value>
-                      </property>
-                      <property type="s">
-                        <key>script</key>
-                        <value />
-                      </property>
-                      <property type="i">
-                        <key>font</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textSize</key>
-                        <value>11</value>
-                      </property>
-                      <property type="i">
-                        <key>textLength</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignH</key>
-                        <value>2</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignV</key>
-                        <value>2</value>
-                      </property>
-                      <property type="c">
-                        <key>textColor</key>
-                        <value>
-                          <r>0.920000</r>
-                          <g>0.920000</g>
-                          <b>0.940000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>textClip</key>
-                        <value>1</value>
-                      </property>
-                    </properties>
-                    <values>
-                      <value>
-                        <key>text</key>
-                        <locked>0</locked>
-                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
-                        <defaultPull>0</defaultPull>
-                        <default>G</default>
-                      </value>
-                    </values>
-                    <messages />
-                    <children />
-                  </node>
-                  <node ID="a625fed0-227d-5c64-8c1c-141ebebb7a01" type="FADER">
+                  <node ID="4b7d0c87-f393-592a-a934-9ba774c2f5e2" type="FADER">
                     <properties>
                       <property type="s">
                         <key>name</key>
@@ -42453,10 +42314,10 @@ end</value>
                       <property type="r">
                         <key>frame</key>
                         <value>
-                          <x>20</x>
-                          <y>127</y>
-                          <w>204</w>
-                          <h>75</h>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>224</w>
+                          <h>286</h>
                         </value>
                       </property>
                       <property type="c">
@@ -42470,7 +42331,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>visible</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>interactive</key>
@@ -42502,7 +42363,7 @@ end</value>
                       </property>
                       <property type="i">
                         <key>orientation</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="s">
                         <key>script</key>
@@ -42551,121 +42412,7 @@ end</value>
                     </messages>
                     <children />
                   </node>
-                  <node ID="dbbbc0e2-1515-57ac-8c0f-9d6f895abdbf" type="LABEL">
-                    <properties>
-                      <property type="s">
-                        <key>name</key>
-                        <value>lbl_B</value>
-                      </property>
-                      <property type="s">
-                        <key>tag</key>
-                        <value />
-                      </property>
-                      <property type="r">
-                        <key>frame</key>
-                        <value>
-                          <x>0</x>
-                          <y>206</y>
-                          <w>18</w>
-                          <h>75</h>
-                        </value>
-                      </property>
-                      <property type="c">
-                        <key>color</key>
-                        <value>
-                          <r>0.250000</r>
-                          <g>0.250000</g>
-                          <b>0.250000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>visible</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>interactive</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>background</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>outline</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>outlineStyle</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>grabFocus</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>pointerPriority</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>cornerRadius</key>
-                        <value>1</value>
-                      </property>
-                      <property type="i">
-                        <key>orientation</key>
-                        <value>0</value>
-                      </property>
-                      <property type="s">
-                        <key>script</key>
-                        <value />
-                      </property>
-                      <property type="i">
-                        <key>font</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textSize</key>
-                        <value>11</value>
-                      </property>
-                      <property type="i">
-                        <key>textLength</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignH</key>
-                        <value>2</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignV</key>
-                        <value>2</value>
-                      </property>
-                      <property type="c">
-                        <key>textColor</key>
-                        <value>
-                          <r>0.920000</r>
-                          <g>0.920000</g>
-                          <b>0.940000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>textClip</key>
-                        <value>1</value>
-                      </property>
-                    </properties>
-                    <values>
-                      <value>
-                        <key>text</key>
-                        <locked>0</locked>
-                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
-                        <defaultPull>0</defaultPull>
-                        <default>B</default>
-                      </value>
-                    </values>
-                    <messages />
-                    <children />
-                  </node>
-                  <node ID="86f7d263-7d79-564d-b4e2-91fd8b3f1d8c" type="FADER">
+                  <node ID="a625fed0-227d-5c64-8c1c-141ebebb7a01" type="FADER">
                     <properties>
                       <property type="s">
                         <key>name</key>
@@ -42678,10 +42425,10 @@ end</value>
                       <property type="r">
                         <key>frame</key>
                         <value>
-                          <x>20</x>
-                          <y>206</y>
-                          <w>204</w>
-                          <h>75</h>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>224</w>
+                          <h>286</h>
                         </value>
                       </property>
                       <property type="c">
@@ -42695,7 +42442,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>visible</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>interactive</key>
@@ -42727,7 +42474,7 @@ end</value>
                       </property>
                       <property type="i">
                         <key>orientation</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="s">
                         <key>script</key>
@@ -42778,7 +42525,7 @@ end</value>
                   </node>
                 </children>
               </node>
-              <node ID="f6c41c1a-7afd-5eff-a198-21a56b48686c" type="BUTTON">
+              <node ID="dbbbc0e2-1515-57ac-8c0f-9d6f895abdbf" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -42899,7 +42646,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="691e62b5-9974-5a94-9cb2-e3d04e8bd36e" type="LABEL">
+              <node ID="86f7d263-7d79-564d-b4e2-91fd8b3f1d8c" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43013,7 +42760,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="b5ffbc5b-bbcb-5cdc-bca5-78d61516af79" type="BUTTON">
+              <node ID="f6c41c1a-7afd-5eff-a198-21a56b48686c" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43134,7 +42881,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="015026e5-dca4-5a99-855a-05eb5fe033cd" type="LABEL">
+              <node ID="691e62b5-9974-5a94-9cb2-e3d04e8bd36e" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43250,7 +42997,7 @@ end</value>
               </node>
             </children>
           </node>
-          <node ID="07070c8c-3b34-5241-aa9f-96940a7dd98b" type="GROUP">
+          <node ID="b5ffbc5b-bbcb-5cdc-bca5-78d61516af79" type="GROUP">
             <properties>
               <property type="s">
                 <key>name</key>
@@ -43370,7 +43117,7 @@ end</value>
             </values>
             <messages />
             <children>
-              <node ID="fbbdcb4f-072a-5d51-acd5-bdc8c96493e7" type="LABEL">
+              <node ID="015026e5-dca4-5a99-855a-05eb5fe033cd" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43484,7 +43231,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="d3fe227b-e8ac-5068-bd3d-471d283d5f9e" type="LABEL">
+              <node ID="07070c8c-3b34-5241-aa9f-96940a7dd98b" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43598,7 +43345,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="acfba275-c957-5f5f-a55e-7c2605a41b67" type="LABEL">
+              <node ID="fbbdcb4f-072a-5d51-acd5-bdc8c96493e7" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43712,7 +43459,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="cc7dbd5e-5c21-5970-922c-6b1bf3c59055" type="LABEL">
+              <node ID="d3fe227b-e8ac-5068-bd3d-471d283d5f9e" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43826,7 +43573,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="828394ec-8bba-52b7-b7d8-b6c96c0c0652" type="LABEL">
+              <node ID="acfba275-c957-5f5f-a55e-7c2605a41b67" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -43940,7 +43687,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="4528e391-c3b4-591c-9e40-47ff4356044b" type="LABEL">
+              <node ID="cc7dbd5e-5c21-5970-922c-6b1bf3c59055" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44054,7 +43801,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="66ce5da9-8e8b-5a2f-8a03-bca9969743e6" type="LABEL">
+              <node ID="828394ec-8bba-52b7-b7d8-b6c96c0c0652" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44168,7 +43915,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="9d5f79e0-5786-5aa5-98b3-98c1014b84b6" type="LABEL">
+              <node ID="4528e391-c3b4-591c-9e40-47ff4356044b" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44282,7 +44029,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="3bf9b5d4-15ab-5cac-81a6-d5f4be87dd74" type="LABEL">
+              <node ID="66ce5da9-8e8b-5a2f-8a03-bca9969743e6" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44396,7 +44143,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="5d538265-76e7-578d-9312-b9efbfce3fc5" type="RADIAL">
+              <node ID="9d5f79e0-5786-5aa5-98b3-98c1014b84b6" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44506,7 +44253,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="1cdb5466-7964-5443-a6e0-197fb2cd12a0" type="BUTTON">
+              <node ID="3bf9b5d4-15ab-5cac-81a6-d5f4be87dd74" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44631,7 +44378,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="9e0d4087-9ff2-5a4a-9326-dcbff58111b8" type="LABEL">
+              <node ID="5d538265-76e7-578d-9312-b9efbfce3fc5" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44745,7 +44492,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="f53c8883-4c6f-5adb-aa51-03379af4076e" type="RADIAL">
+              <node ID="1cdb5466-7964-5443-a6e0-197fb2cd12a0" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44855,7 +44602,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="137708c9-982f-562b-8f83-9c86207ea924" type="BUTTON">
+              <node ID="9e0d4087-9ff2-5a4a-9326-dcbff58111b8" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -44980,7 +44727,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="2685ff7d-ad55-5398-9b3f-b18509757673" type="LABEL">
+              <node ID="f53c8883-4c6f-5adb-aa51-03379af4076e" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45094,7 +44841,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="a5680fcf-5923-535b-9001-81b273e881f0" type="RADIAL">
+              <node ID="137708c9-982f-562b-8f83-9c86207ea924" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45204,7 +44951,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="301516a8-65ea-5571-8785-20754f6d6853" type="BUTTON">
+              <node ID="2685ff7d-ad55-5398-9b3f-b18509757673" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45329,7 +45076,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="69964b49-1f15-5871-812e-47867ecf3d6e" type="LABEL">
+              <node ID="a5680fcf-5923-535b-9001-81b273e881f0" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45443,7 +45190,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="19e81d36-420d-5a0d-99df-922552b1b8cf" type="RADIAL">
+              <node ID="301516a8-65ea-5571-8785-20754f6d6853" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45553,7 +45300,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="9ba84c8c-c196-525d-8c0c-1ec3bbb4b436" type="BUTTON">
+              <node ID="69964b49-1f15-5871-812e-47867ecf3d6e" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45678,7 +45425,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="1050bf70-f01f-52c7-a227-c88e43e06d36" type="LABEL">
+              <node ID="19e81d36-420d-5a0d-99df-922552b1b8cf" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45792,7 +45539,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="1af1458a-3d1f-560b-b7ef-c5fb466a4d4f" type="RADIAL">
+              <node ID="9ba84c8c-c196-525d-8c0c-1ec3bbb4b436" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -45902,7 +45649,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="81ff18a4-a4ae-57d6-b5d1-9acdb94d8a68" type="BUTTON">
+              <node ID="1050bf70-f01f-52c7-a227-c88e43e06d36" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46027,7 +45774,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="317dfb38-57f9-5754-ab79-820c2b7b48df" type="LABEL">
+              <node ID="1af1458a-3d1f-560b-b7ef-c5fb466a4d4f" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46141,7 +45888,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="daede1e9-4be9-59ab-9e76-2f96ccd5a37b" type="RADIAL">
+              <node ID="81ff18a4-a4ae-57d6-b5d1-9acdb94d8a68" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46251,7 +45998,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="1f569560-0a24-5560-b1b7-5463ce8c8585" type="BUTTON">
+              <node ID="317dfb38-57f9-5754-ab79-820c2b7b48df" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46376,7 +46123,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="d70aebfa-1a58-5338-ad9f-d482a8ec117e" type="LABEL">
+              <node ID="daede1e9-4be9-59ab-9e76-2f96ccd5a37b" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46490,7 +46237,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="d68642ce-e8c9-5d22-8097-15393c4fe849" type="RADIAL">
+              <node ID="1f569560-0a24-5560-b1b7-5463ce8c8585" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46600,7 +46347,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="72642d50-b57f-5a48-967e-2655b5eec2f5" type="BUTTON">
+              <node ID="d70aebfa-1a58-5338-ad9f-d482a8ec117e" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46725,7 +46472,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="227b6803-5840-58cb-96aa-cf5c2a1196d1" type="LABEL">
+              <node ID="d68642ce-e8c9-5d22-8097-15393c4fe849" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46839,7 +46586,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="2a348ae0-4b5a-558a-b9ee-95a42c1112ad" type="RADIAL">
+              <node ID="72642d50-b57f-5a48-967e-2655b5eec2f5" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -46949,7 +46696,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="979e0a78-5c75-5ac4-b2b2-9d6336aa5e04" type="BUTTON">
+              <node ID="227b6803-5840-58cb-96aa-cf5c2a1196d1" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47074,7 +46821,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="a01d1d0c-4d23-5821-989d-70f4ba6c72d3" type="LABEL">
+              <node ID="2a348ae0-4b5a-558a-b9ee-95a42c1112ad" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47188,7 +46935,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="dd00bde7-7f5a-580a-ad12-f0e3fde2d673" type="LABEL">
+              <node ID="979e0a78-5c75-5ac4-b2b2-9d6336aa5e04" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47302,7 +47049,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="3ab3bb6c-e407-5b16-a28e-2c98a895ea5b" type="RADIAL">
+              <node ID="a01d1d0c-4d23-5821-989d-70f4ba6c72d3" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47412,7 +47159,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="738dffce-5b1c-5c2d-b1e5-2ac44e3edd20" type="BUTTON">
+              <node ID="dd00bde7-7f5a-580a-ad12-f0e3fde2d673" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47537,7 +47284,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="83925052-f7fd-50d4-9fe7-f58671a0da5a" type="LABEL">
+              <node ID="3ab3bb6c-e407-5b16-a28e-2c98a895ea5b" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47651,7 +47398,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="2034f660-395b-52d8-826e-05f15c316d9d" type="RADIAL">
+              <node ID="738dffce-5b1c-5c2d-b1e5-2ac44e3edd20" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47761,7 +47508,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="0f192881-add5-5ff2-9897-9b0f86aa7cb6" type="BUTTON">
+              <node ID="83925052-f7fd-50d4-9fe7-f58671a0da5a" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -47886,7 +47633,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="b984e884-022e-5887-99f4-744077c50af4" type="LABEL">
+              <node ID="2034f660-395b-52d8-826e-05f15c316d9d" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48000,7 +47747,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="a126bb95-ac00-5a1a-a9cb-96e728311c25" type="RADIAL">
+              <node ID="0f192881-add5-5ff2-9897-9b0f86aa7cb6" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48110,7 +47857,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="8e219e84-d427-554b-89ec-60a101d004f6" type="BUTTON">
+              <node ID="b984e884-022e-5887-99f4-744077c50af4" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48235,7 +47982,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="115ab2c2-77ce-5b60-9e0d-dda438ae2e9c" type="LABEL">
+              <node ID="a126bb95-ac00-5a1a-a9cb-96e728311c25" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48349,7 +48096,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="319c1be1-c829-5fa9-b2cc-d51f91463e7f" type="RADIAL">
+              <node ID="8e219e84-d427-554b-89ec-60a101d004f6" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48459,7 +48206,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="414d728b-962f-5f22-9c22-a98e041849bf" type="BUTTON">
+              <node ID="115ab2c2-77ce-5b60-9e0d-dda438ae2e9c" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48584,7 +48331,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="357e4a11-0663-546a-82d3-187900702d0d" type="LABEL">
+              <node ID="319c1be1-c829-5fa9-b2cc-d51f91463e7f" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48698,7 +48445,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="72a33034-c1b7-5dcb-8d41-74e8bb43a562" type="RADIAL">
+              <node ID="414d728b-962f-5f22-9c22-a98e041849bf" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48808,7 +48555,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="bd0458f1-4490-5292-abee-34fba7c55bba" type="BUTTON">
+              <node ID="357e4a11-0663-546a-82d3-187900702d0d" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -48933,7 +48680,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="afa8dca8-69f3-5513-9f71-bdbfd2cee7e0" type="LABEL">
+              <node ID="72a33034-c1b7-5dcb-8d41-74e8bb43a562" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49047,7 +48794,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="84ccd66d-1c9f-513b-9a66-2df9db1cff6f" type="RADIAL">
+              <node ID="bd0458f1-4490-5292-abee-34fba7c55bba" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49157,7 +48904,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="5153e28c-6c36-505f-9e31-f5127bde55b9" type="BUTTON">
+              <node ID="afa8dca8-69f3-5513-9f71-bdbfd2cee7e0" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49282,7 +49029,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="272c0e39-0d73-53a3-bd88-33361f496490" type="LABEL">
+              <node ID="84ccd66d-1c9f-513b-9a66-2df9db1cff6f" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49396,7 +49143,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="91b83a9c-13a2-54a4-a09e-6068943b4ced" type="RADIAL">
+              <node ID="5153e28c-6c36-505f-9e31-f5127bde55b9" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49506,7 +49253,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="8c992d5a-250c-5c01-9a30-78da52dd859d" type="BUTTON">
+              <node ID="272c0e39-0d73-53a3-bd88-33361f496490" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49631,7 +49378,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="ba4bc596-8df9-5d73-b740-d9ec0f9ccd21" type="LABEL">
+              <node ID="91b83a9c-13a2-54a4-a09e-6068943b4ced" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49745,7 +49492,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="7e7976c6-1fd9-567e-823c-9eb2c292faf0" type="RADIAL">
+              <node ID="8c992d5a-250c-5c01-9a30-78da52dd859d" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49855,7 +49602,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="f3189825-b0d3-5302-82de-dcf872e6619d" type="BUTTON">
+              <node ID="ba4bc596-8df9-5d73-b740-d9ec0f9ccd21" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -49980,7 +49727,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="48035ed6-7c94-57ce-bba4-2ea8dee77461" type="LABEL">
+              <node ID="7e7976c6-1fd9-567e-823c-9eb2c292faf0" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50094,7 +49841,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="289ca182-5926-5faf-9e0e-383bc9ceb761" type="LABEL">
+              <node ID="f3189825-b0d3-5302-82de-dcf872e6619d" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50208,7 +49955,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="59c4847a-0865-5a64-9023-4cca7596393e" type="RADIAL">
+              <node ID="48035ed6-7c94-57ce-bba4-2ea8dee77461" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50318,7 +50065,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="2375409f-101b-5ac5-982a-ce982b8e4421" type="BUTTON">
+              <node ID="289ca182-5926-5faf-9e0e-383bc9ceb761" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50443,7 +50190,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="4ced1f83-d1d8-5d77-86b5-db5d6efdd68d" type="LABEL">
+              <node ID="59c4847a-0865-5a64-9023-4cca7596393e" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50557,7 +50304,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="48eb48c2-b75d-5594-b262-7300c27e8f98" type="RADIAL">
+              <node ID="2375409f-101b-5ac5-982a-ce982b8e4421" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50667,7 +50414,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="30c0636e-9dd3-5581-af29-c4c7ff274af5" type="BUTTON">
+              <node ID="4ced1f83-d1d8-5d77-86b5-db5d6efdd68d" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50792,7 +50539,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="21588478-3969-5dea-9623-c6d1a0751299" type="LABEL">
+              <node ID="48eb48c2-b75d-5594-b262-7300c27e8f98" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -50906,7 +50653,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="f6fc3edb-0aad-5b80-9a17-3e65abfea8be" type="RADIAL">
+              <node ID="30c0636e-9dd3-5581-af29-c4c7ff274af5" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51016,7 +50763,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="d1edb6b8-4844-5991-9290-4952e56ec574" type="BUTTON">
+              <node ID="21588478-3969-5dea-9623-c6d1a0751299" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51141,7 +50888,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="d0c9a1ef-4540-51c7-bdba-c423aa8cd16b" type="LABEL">
+              <node ID="f6fc3edb-0aad-5b80-9a17-3e65abfea8be" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51255,7 +51002,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="fae49368-7e81-505e-81ca-b76e4d65f09b" type="RADIAL">
+              <node ID="d1edb6b8-4844-5991-9290-4952e56ec574" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51365,7 +51112,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="75a844b7-3262-5599-96b9-14b0ee4c2f5e" type="BUTTON">
+              <node ID="d0c9a1ef-4540-51c7-bdba-c423aa8cd16b" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51490,7 +51237,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="e8a09dcd-03b8-53c6-a71a-f46065a48563" type="LABEL">
+              <node ID="fae49368-7e81-505e-81ca-b76e4d65f09b" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51604,7 +51351,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="76f087fa-7585-5c7a-81b6-2f2c599dbf68" type="RADIAL">
+              <node ID="75a844b7-3262-5599-96b9-14b0ee4c2f5e" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51714,7 +51461,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="3e53de6e-400d-5b7c-ae13-67f16779b029" type="BUTTON">
+              <node ID="e8a09dcd-03b8-53c6-a71a-f46065a48563" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51839,7 +51586,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="bef59fca-98de-5d72-a553-9fb7f5b5504f" type="LABEL">
+              <node ID="76f087fa-7585-5c7a-81b6-2f2c599dbf68" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -51953,7 +51700,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="237aac39-f785-5a75-950c-14048298071a" type="RADIAL">
+              <node ID="3e53de6e-400d-5b7c-ae13-67f16779b029" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52063,7 +51810,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="2ae6f75e-cc7a-5ae0-8e33-bef300f285b7" type="BUTTON">
+              <node ID="bef59fca-98de-5d72-a553-9fb7f5b5504f" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52188,7 +51935,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="03cc525f-e20e-5567-b664-eb5955e46af3" type="LABEL">
+              <node ID="237aac39-f785-5a75-950c-14048298071a" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52302,7 +52049,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="10f73407-48b2-58ee-bb26-b5f2703e9944" type="RADIAL">
+              <node ID="2ae6f75e-cc7a-5ae0-8e33-bef300f285b7" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52412,7 +52159,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="cd814b69-0293-50cf-9351-e58b542360bf" type="BUTTON">
+              <node ID="03cc525f-e20e-5567-b664-eb5955e46af3" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52537,7 +52284,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="277db227-f7ca-53f3-956d-7cc4b96b0c3f" type="LABEL">
+              <node ID="10f73407-48b2-58ee-bb26-b5f2703e9944" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52651,7 +52398,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="ae9908c7-1e07-5011-b829-864dba7e1b20" type="RADIAL">
+              <node ID="cd814b69-0293-50cf-9351-e58b542360bf" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52761,7 +52508,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="cd4290ac-fa8b-5caa-b466-8db2f7dae4d7" type="BUTTON">
+              <node ID="277db227-f7ca-53f3-956d-7cc4b96b0c3f" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -52886,7 +52633,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="7e0a9ee0-faa6-5b81-8976-a11e63f6b249" type="LABEL">
+              <node ID="ae9908c7-1e07-5011-b829-864dba7e1b20" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53000,7 +52747,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="9f768f56-849b-5fef-acc7-108c560491d6" type="LABEL">
+              <node ID="cd4290ac-fa8b-5caa-b466-8db2f7dae4d7" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53114,7 +52861,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="f3666445-08bc-5f5a-8505-5a5ff6827293" type="RADIAL">
+              <node ID="7e0a9ee0-faa6-5b81-8976-a11e63f6b249" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53224,7 +52971,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="cd9e9632-e474-5376-a297-eade7a8a15d8" type="BUTTON">
+              <node ID="9f768f56-849b-5fef-acc7-108c560491d6" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53349,7 +53096,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="164a8fcc-f035-5d88-aec8-287661e2212f" type="LABEL">
+              <node ID="f3666445-08bc-5f5a-8505-5a5ff6827293" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53463,7 +53210,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="a9694980-618b-5422-a0c0-cda481befb6b" type="RADIAL">
+              <node ID="cd9e9632-e474-5376-a297-eade7a8a15d8" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53573,7 +53320,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="bfeb1b8d-db27-5769-8148-98cbfe8f2023" type="BUTTON">
+              <node ID="164a8fcc-f035-5d88-aec8-287661e2212f" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53698,7 +53445,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="8ab382f4-8461-5dba-82ae-38e3911c292b" type="LABEL">
+              <node ID="a9694980-618b-5422-a0c0-cda481befb6b" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53812,7 +53559,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="cf1a3356-14fe-5bc0-a870-4cc5eab2e1fb" type="RADIAL">
+              <node ID="bfeb1b8d-db27-5769-8148-98cbfe8f2023" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -53922,7 +53669,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="ced19f4a-69e2-59e7-b8c5-4c2a8d122075" type="BUTTON">
+              <node ID="8ab382f4-8461-5dba-82ae-38e3911c292b" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54047,7 +53794,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="b2e7c13a-395b-52fa-b1a6-1fcae9643482" type="LABEL">
+              <node ID="cf1a3356-14fe-5bc0-a870-4cc5eab2e1fb" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54161,7 +53908,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="96e362c1-b954-5eab-be54-4ec81783ebbe" type="RADIAL">
+              <node ID="ced19f4a-69e2-59e7-b8c5-4c2a8d122075" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54271,7 +54018,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="a285a74d-e3f4-50a5-bcca-25325091d288" type="BUTTON">
+              <node ID="b2e7c13a-395b-52fa-b1a6-1fcae9643482" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54396,7 +54143,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="a145c897-bf5b-5544-ba43-baebf0dde1c0" type="LABEL">
+              <node ID="96e362c1-b954-5eab-be54-4ec81783ebbe" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54510,7 +54257,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="9297b4b2-b2d1-5f2b-a6e9-4cf6b161c320" type="RADIAL">
+              <node ID="a285a74d-e3f4-50a5-bcca-25325091d288" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54620,7 +54367,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="d98c6037-e09b-50f1-be99-1b757a4bca83" type="BUTTON">
+              <node ID="a145c897-bf5b-5544-ba43-baebf0dde1c0" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54745,7 +54492,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="182671e3-413f-5963-9513-034d83084d3e" type="LABEL">
+              <node ID="9297b4b2-b2d1-5f2b-a6e9-4cf6b161c320" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54859,7 +54606,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="52d0abc2-8c91-524a-b7f8-8d68897d39b2" type="RADIAL">
+              <node ID="d98c6037-e09b-50f1-be99-1b757a4bca83" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -54969,7 +54716,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="4995796a-69d2-5cb7-969a-db61eb02d3d7" type="BUTTON">
+              <node ID="182671e3-413f-5963-9513-034d83084d3e" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55094,7 +54841,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="15e5da4b-491f-5f57-93da-fcc7600bd87d" type="LABEL">
+              <node ID="52d0abc2-8c91-524a-b7f8-8d68897d39b2" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55208,7 +54955,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="83c466fd-c660-5da7-bb03-e070d2896750" type="RADIAL">
+              <node ID="4995796a-69d2-5cb7-969a-db61eb02d3d7" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55318,7 +55065,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="ec6dbb4e-f524-5292-9612-80ca43c4b524" type="BUTTON">
+              <node ID="15e5da4b-491f-5f57-93da-fcc7600bd87d" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55443,7 +55190,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="a8d9fcce-7e34-5ef3-8ed1-5946d5175766" type="LABEL">
+              <node ID="83c466fd-c660-5da7-bb03-e070d2896750" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55557,7 +55304,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="63336f1f-eb74-5347-b28e-c379982d0037" type="RADIAL">
+              <node ID="ec6dbb4e-f524-5292-9612-80ca43c4b524" type="RADIAL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55667,7 +55414,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="e0f607be-f880-5afc-b515-a8d7485fdd18" type="BUTTON">
+              <node ID="a8d9fcce-7e34-5ef3-8ed1-5946d5175766" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55792,7 +55539,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="0efab5ab-f039-5b13-b79e-485d500f7d22" type="LABEL">
+              <node ID="63336f1f-eb74-5347-b28e-c379982d0037" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -55908,7 +55655,7 @@ end</value>
               </node>
             </children>
           </node>
-          <node ID="c1194d09-e4e1-56b9-a6a4-a52a1197a08d" type="GROUP">
+          <node ID="e0f607be-f880-5afc-b515-a8d7485fdd18" type="GROUP">
             <properties>
               <property type="s">
                 <key>name</key>
@@ -56028,7 +55775,7 @@ end</value>
             </values>
             <messages />
             <children>
-              <node ID="821fd8f6-9acb-5520-8f37-53b02b29e4b9" type="LABEL">
+              <node ID="0efab5ab-f039-5b13-b79e-485d500f7d22" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56142,7 +55889,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="31ad4514-c1ed-5ae9-b7ed-7df8973cc249" type="FADER">
+              <node ID="c1194d09-e4e1-56b9-a6a4-a52a1197a08d" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56247,7 +55994,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="2d5916e8-4e98-5ba7-b4e5-8d4202559e0b" type="LABEL">
+              <node ID="821fd8f6-9acb-5520-8f37-53b02b29e4b9" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56361,7 +56108,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="b3002226-01af-5e0e-9957-efea42081afc" type="FADER">
+              <node ID="31ad4514-c1ed-5ae9-b7ed-7df8973cc249" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56466,7 +56213,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="1a71fe1e-d869-50c2-aabf-a893723f2719" type="LABEL">
+              <node ID="2d5916e8-4e98-5ba7-b4e5-8d4202559e0b" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56580,7 +56327,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="2fa7971c-07c7-5070-beac-4f62e5b96938" type="FADER">
+              <node ID="b3002226-01af-5e0e-9957-efea42081afc" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56685,7 +56432,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="8680a4bf-60d3-546b-973d-46a6578fc57d" type="LABEL">
+              <node ID="1a71fe1e-d869-50c2-aabf-a893723f2719" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56799,7 +56546,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="274718bd-64ed-57b3-9980-e052a8d35229" type="FADER">
+              <node ID="2fa7971c-07c7-5070-beac-4f62e5b96938" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -56904,7 +56651,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="367e1dd4-0dd7-5332-aab4-dc74f779a96f" type="LABEL">
+              <node ID="8680a4bf-60d3-546b-973d-46a6578fc57d" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57018,7 +56765,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="127996f6-c737-5a54-9604-f465103ab6cf" type="FADER">
+              <node ID="274718bd-64ed-57b3-9980-e052a8d35229" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57123,7 +56870,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="4d6e9500-4b8a-5aba-819b-e875f9971550" type="LABEL">
+              <node ID="367e1dd4-0dd7-5332-aab4-dc74f779a96f" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57237,7 +56984,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="31ebbfa8-4b04-52f9-b9a1-44a9dbba7ee3" type="FADER">
+              <node ID="127996f6-c737-5a54-9604-f465103ab6cf" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57342,7 +57089,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="8dfb4282-523f-51ab-85a6-8a4bd15cad17" type="LABEL">
+              <node ID="4d6e9500-4b8a-5aba-819b-e875f9971550" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57456,7 +57203,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="f3e9e58b-947d-5172-81b8-5a88264c0702" type="FADER">
+              <node ID="31ebbfa8-4b04-52f9-b9a1-44a9dbba7ee3" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57561,7 +57308,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="bfefbd33-0b0b-538b-a72e-bff92d8d2c92" type="LABEL">
+              <node ID="8dfb4282-523f-51ab-85a6-8a4bd15cad17" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57675,7 +57422,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="b8b01884-3cb2-5cac-b364-ade54aaa9f1d" type="FADER">
+              <node ID="f3e9e58b-947d-5172-81b8-5a88264c0702" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57780,7 +57527,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="39c88f99-cff9-562a-8407-e92de53881b6" type="LABEL">
+              <node ID="bfefbd33-0b0b-538b-a72e-bff92d8d2c92" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -57894,7 +57641,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="712a53fc-532a-5bfb-9f84-459289146d59" type="BUTTON">
+              <node ID="b8b01884-3cb2-5cac-b364-ade54aaa9f1d" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58015,7 +57762,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="488c3fbb-2b1d-5545-a5de-9e95abd113b9" type="LABEL">
+              <node ID="39c88f99-cff9-562a-8407-e92de53881b6" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58129,7 +57876,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="0753c541-7ef0-5854-9ab5-09d2d226c9be" type="BUTTON">
+              <node ID="712a53fc-532a-5bfb-9f84-459289146d59" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58250,7 +57997,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="4350da55-13c8-5ce1-ad43-433cfc256f05" type="LABEL">
+              <node ID="488c3fbb-2b1d-5545-a5de-9e95abd113b9" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58364,7 +58111,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="98f935a4-62ea-5664-9c01-d1c3771f4e8b" type="BUTTON">
+              <node ID="0753c541-7ef0-5854-9ab5-09d2d226c9be" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58485,7 +58232,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="07043cd9-22a0-56bf-9cb9-4c375e5d3051" type="LABEL">
+              <node ID="4350da55-13c8-5ce1-ad43-433cfc256f05" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58599,7 +58346,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="9d2f3d96-b77f-5330-96c5-9af54a8ecc64" type="BUTTON">
+              <node ID="98f935a4-62ea-5664-9c01-d1c3771f4e8b" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58720,7 +58467,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="bd78da75-c75e-5644-9f13-f9c1cc5dfbf9" type="LABEL">
+              <node ID="07043cd9-22a0-56bf-9cb9-4c375e5d3051" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58834,7 +58581,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="371077d8-9b76-5194-a4fe-145fb7e36bc4" type="BUTTON">
+              <node ID="9d2f3d96-b77f-5330-96c5-9af54a8ecc64" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -58955,7 +58702,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="73d892fa-ca34-59b7-94ba-71f38ba39f67" type="LABEL">
+              <node ID="bd78da75-c75e-5644-9f13-f9c1cc5dfbf9" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59069,7 +58816,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="adbb247e-e84d-5947-86da-351042034290" type="BUTTON">
+              <node ID="371077d8-9b76-5194-a4fe-145fb7e36bc4" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59190,7 +58937,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="2a768c45-b0d2-5edb-b69a-b70133c3b8d9" type="LABEL">
+              <node ID="73d892fa-ca34-59b7-94ba-71f38ba39f67" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59304,7 +59051,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="30ba9dd1-2ef8-52a4-b505-dfbc0dce17c4" type="BUTTON">
+              <node ID="adbb247e-e84d-5947-86da-351042034290" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59425,7 +59172,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="db7c724a-4302-509b-83d9-d09dd9e818d6" type="LABEL">
+              <node ID="2a768c45-b0d2-5edb-b69a-b70133c3b8d9" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59539,7 +59286,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="4ebdaeba-b9a3-5289-99d6-fe50188564dc" type="BUTTON">
+              <node ID="30ba9dd1-2ef8-52a4-b505-dfbc0dce17c4" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59660,7 +59407,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="240bcd15-c1ec-5da0-a15b-dbd9a0bb68ee" type="LABEL">
+              <node ID="db7c724a-4302-509b-83d9-d09dd9e818d6" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59774,7 +59521,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="fb4ce5b9-70af-5f90-946e-d313fe386c04" type="BUTTON">
+              <node ID="4ebdaeba-b9a3-5289-99d6-fe50188564dc" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -59895,7 +59642,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="7c3f36ae-ade6-5835-bb9c-88f4003887ec" type="LABEL">
+              <node ID="240bcd15-c1ec-5da0-a15b-dbd9a0bb68ee" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60009,7 +59756,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="43e8a406-5a92-51a4-88b2-928f0651c083" type="BUTTON">
+              <node ID="fb4ce5b9-70af-5f90-946e-d313fe386c04" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60130,7 +59877,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="2ef9b2f5-6c20-50f3-a183-7e33377d6954" type="LABEL">
+              <node ID="7c3f36ae-ade6-5835-bb9c-88f4003887ec" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60244,7 +59991,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="fa17f7dd-c58c-5f49-bb1c-21b715f69565" type="BUTTON">
+              <node ID="43e8a406-5a92-51a4-88b2-928f0651c083" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60365,7 +60112,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="8c8e149f-6b05-5d47-9e38-47b865faa1bd" type="LABEL">
+              <node ID="2ef9b2f5-6c20-50f3-a183-7e33377d6954" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60479,7 +60226,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="d79d3ce3-93d6-5425-912e-22193a4c2fd5" type="BUTTON">
+              <node ID="fa17f7dd-c58c-5f49-bb1c-21b715f69565" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60600,7 +60347,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="76d90d12-54ba-55dd-b366-40e85f20ac0e" type="LABEL">
+              <node ID="8c8e149f-6b05-5d47-9e38-47b865faa1bd" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60714,7 +60461,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="37a18787-9069-5097-944c-73ff83588db3" type="BUTTON">
+              <node ID="d79d3ce3-93d6-5425-912e-22193a4c2fd5" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60835,7 +60582,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="93c23ba4-7e19-531c-8996-3a7efbaa9fbc" type="LABEL">
+              <node ID="76d90d12-54ba-55dd-b366-40e85f20ac0e" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -60949,7 +60696,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="4ce8a971-9882-52fa-b770-981b7c444e7d" type="BUTTON">
+              <node ID="37a18787-9069-5097-944c-73ff83588db3" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61070,7 +60817,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="7b8838cf-3f93-569f-8181-995b33fa1097" type="LABEL">
+              <node ID="93c23ba4-7e19-531c-8996-3a7efbaa9fbc" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61184,7 +60931,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="df0b53d8-f09e-5f06-ab59-6f3e8f2125c4" type="BUTTON">
+              <node ID="4ce8a971-9882-52fa-b770-981b7c444e7d" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61305,7 +61052,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="460f3198-000d-5571-a938-140e4e9ebd89" type="LABEL">
+              <node ID="7b8838cf-3f93-569f-8181-995b33fa1097" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61419,7 +61166,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="833df8ea-c52f-5847-b129-a4f8251c402a" type="BUTTON">
+              <node ID="df0b53d8-f09e-5f06-ab59-6f3e8f2125c4" type="BUTTON">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61540,7 +61287,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="be4fdb03-1ecd-57e0-b615-c18d9ca63eec" type="LABEL">
+              <node ID="460f3198-000d-5571-a938-140e4e9ebd89" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61654,7 +61401,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="9c1b792d-76d7-507e-9bca-ba2112e7e9d9" type="LABEL">
+              <node ID="833df8ea-c52f-5847-b129-a4f8251c402a" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61768,7 +61515,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="5a308f23-949a-5109-8d40-7b40dceb8d1f" type="XY">
+              <node ID="be4fdb03-1ecd-57e0-b615-c18d9ca63eec" type="XY">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -61898,7 +61645,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="8e32334d-f782-555f-be10-6192a63b3ca1" type="LABEL">
+              <node ID="9c1b792d-76d7-507e-9bca-ba2112e7e9d9" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -62012,7 +61759,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="b4a8f7cf-4578-5cbf-93d4-031ffe941193" type="XY">
+              <node ID="5a308f23-949a-5109-8d40-7b40dceb8d1f" type="XY">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -62142,7 +61889,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="ab30412d-79f8-52fc-8ac1-3d98bcb77fa4" type="LABEL">
+              <node ID="8e32334d-f782-555f-be10-6192a63b3ca1" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -62256,7 +62003,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="c1c28fe3-56cd-5f82-abfd-aabca99d131e" type="GROUP">
+              <node ID="b4a8f7cf-4578-5cbf-93d4-031ffe941193" type="GROUP">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -62336,11 +62083,11 @@ end</value>
                 </values>
                 <messages />
                 <children>
-                  <node ID="cf183f21-d994-583d-8313-8c49838a7e57" type="BUTTON">
+                  <node ID="ab30412d-79f8-52fc-8ac1-3d98bcb77fa4" type="BOX">
                     <properties>
                       <property type="s">
                         <key>name</key>
-                        <value>touchdesigner_swatch</value>
+                        <value>touchdesigner_chip</value>
                       </property>
                       <property type="s">
                         <key>tag</key>
@@ -62352,7 +62099,7 @@ end</value>
                           <x>0</x>
                           <y>0</y>
                           <w>574</w>
-                          <h>44</h>
+                          <h>156</h>
                         </value>
                       </property>
                       <property type="c">
@@ -62370,7 +62117,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>interactive</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>background</key>
@@ -62402,21 +62149,110 @@ end</value>
                       </property>
                       <property type="s">
                         <key>script</key>
+                        <value />
+                      </property>
+                      <property type="i">
+                        <key>shape</key>
+                        <value>1</value>
+                      </property>
+                    </properties>
+                    <values>
+                      <value>
+                        <key>touch</key>
+                        <locked>0</locked>
+                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
+                        <defaultPull>0</defaultPull>
+                        <default>false</default>
+                      </value>
+                    </values>
+                    <messages />
+                    <children />
+                  </node>
+                  <node ID="c1c28fe3-56cd-5f82-abfd-aabca99d131e" type="BUTTON">
+                    <properties>
+                      <property type="s">
+                        <key>name</key>
+                        <value>touchdesigner_swatch</value>
+                      </property>
+                      <property type="s">
+                        <key>tag</key>
+                        <value />
+                      </property>
+                      <property type="r">
+                        <key>frame</key>
+                        <value>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>574</w>
+                          <h>156</h>
+                        </value>
+                      </property>
+                      <property type="c">
+                        <key>color</key>
+                        <value>
+                          <r>0.200000</r>
+                          <g>0.620000</g>
+                          <b>0.900000</b>
+                          <a>1.000000</a>
+                        </value>
+                      </property>
+                      <property type="b">
+                        <key>visible</key>
+                        <value>1</value>
+                      </property>
+                      <property type="b">
+                        <key>interactive</key>
+                        <value>1</value>
+                      </property>
+                      <property type="b">
+                        <key>background</key>
+                        <value>0</value>
+                      </property>
+                      <property type="b">
+                        <key>outline</key>
+                        <value>0</value>
+                      </property>
+                      <property type="i">
+                        <key>outlineStyle</key>
+                        <value>1</value>
+                      </property>
+                      <property type="b">
+                        <key>grabFocus</key>
+                        <value>0</value>
+                      </property>
+                      <property type="i">
+                        <key>pointerPriority</key>
+                        <value>0</value>
+                      </property>
+                      <property type="i">
+                        <key>cornerRadius</key>
+                        <value>1</value>
+                      </property>
+                      <property type="i">
+                        <key>orientation</key>
+                        <value>0</value>
+                      </property>
+                      <property type="s">
+                        <key>script</key>
                         <value>local base = self.name:gsub('_swatch$', '')
 local sib = self.parent.children
+local chip = sib[base .. '_chip']
 
+-- Opens on RELEASE, not press. The picker's overlay hides itself on any
+-- touch, so opening it under a finger that is still down closes it again on
+-- the spot -- which looks like the dialog flickering.
 function onValueChanged(key)
-  if key == 'x' and self.values.x == 1 then
+  if key == 'x' and self.values.x == 0 then
     root.children.ColorPicker:notify('pickColor', {
       callback = self,
-      initial = self.color
+      initial = chip.color
     })
   end
 end
 
 function onReceiveNotify(key, val)
   if key == 'colorPicked' then
-    self.color = val
+    chip.color = val
     sib[base .. '_r'].values.x = val.r
     sib[base .. '_g'].values.x = val.g
     sib[base .. '_b'].values.x = val.b
@@ -62459,11 +62295,11 @@ end</value>
                     <messages />
                     <children />
                   </node>
-                  <node ID="503cb2d6-aa24-5e1b-ad5c-e106f6657568" type="LABEL">
+                  <node ID="cf183f21-d994-583d-8313-8c49838a7e57" type="LABEL">
                     <properties>
                       <property type="s">
                         <key>name</key>
-                        <value>lbl_COLOR</value>
+                        <value>lbl_COLOUR</value>
                       </property>
                       <property type="s">
                         <key>tag</key>
@@ -62475,7 +62311,7 @@ end</value>
                           <x>0</x>
                           <y>0</y>
                           <w>574</w>
-                          <h>44</h>
+                          <h>156</h>
                         </value>
                       </property>
                       <property type="c">
@@ -62567,127 +62403,13 @@ end</value>
                         <locked>0</locked>
                         <lockedDefaultCurrent>0</lockedDefaultCurrent>
                         <defaultPull>0</defaultPull>
-                        <default>COLOR</default>
+                        <default>COLOUR</default>
                       </value>
                     </values>
                     <messages />
                     <children />
                   </node>
-                  <node ID="6a66fe99-6ecd-543f-ba5c-f789657238ce" type="LABEL">
-                    <properties>
-                      <property type="s">
-                        <key>name</key>
-                        <value>lbl_R</value>
-                      </property>
-                      <property type="s">
-                        <key>tag</key>
-                        <value />
-                      </property>
-                      <property type="r">
-                        <key>frame</key>
-                        <value>
-                          <x>0</x>
-                          <y>48</y>
-                          <w>18</w>
-                          <h>32</h>
-                        </value>
-                      </property>
-                      <property type="c">
-                        <key>color</key>
-                        <value>
-                          <r>0.250000</r>
-                          <g>0.250000</g>
-                          <b>0.250000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>visible</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>interactive</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>background</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>outline</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>outlineStyle</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>grabFocus</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>pointerPriority</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>cornerRadius</key>
-                        <value>1</value>
-                      </property>
-                      <property type="i">
-                        <key>orientation</key>
-                        <value>0</value>
-                      </property>
-                      <property type="s">
-                        <key>script</key>
-                        <value />
-                      </property>
-                      <property type="i">
-                        <key>font</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textSize</key>
-                        <value>11</value>
-                      </property>
-                      <property type="i">
-                        <key>textLength</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignH</key>
-                        <value>2</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignV</key>
-                        <value>2</value>
-                      </property>
-                      <property type="c">
-                        <key>textColor</key>
-                        <value>
-                          <r>0.920000</r>
-                          <g>0.920000</g>
-                          <b>0.940000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>textClip</key>
-                        <value>1</value>
-                      </property>
-                    </properties>
-                    <values>
-                      <value>
-                        <key>text</key>
-                        <locked>0</locked>
-                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
-                        <defaultPull>0</defaultPull>
-                        <default>R</default>
-                      </value>
-                    </values>
-                    <messages />
-                    <children />
-                  </node>
-                  <node ID="1f75b53d-a2c1-5146-a9e7-022683349b31" type="FADER">
+                  <node ID="503cb2d6-aa24-5e1b-ad5c-e106f6657568" type="FADER">
                     <properties>
                       <property type="s">
                         <key>name</key>
@@ -62700,10 +62422,10 @@ end</value>
                       <property type="r">
                         <key>frame</key>
                         <value>
-                          <x>20</x>
-                          <y>48</y>
-                          <w>554</w>
-                          <h>32</h>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>574</w>
+                          <h>156</h>
                         </value>
                       </property>
                       <property type="c">
@@ -62717,7 +62439,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>visible</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>interactive</key>
@@ -62749,7 +62471,7 @@ end</value>
                       </property>
                       <property type="i">
                         <key>orientation</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="s">
                         <key>script</key>
@@ -62792,121 +62514,7 @@ end</value>
                     </messages>
                     <children />
                   </node>
-                  <node ID="dd7d7044-9a96-5948-9fd7-2d1552a9b038" type="LABEL">
-                    <properties>
-                      <property type="s">
-                        <key>name</key>
-                        <value>lbl_G</value>
-                      </property>
-                      <property type="s">
-                        <key>tag</key>
-                        <value />
-                      </property>
-                      <property type="r">
-                        <key>frame</key>
-                        <value>
-                          <x>0</x>
-                          <y>84</y>
-                          <w>18</w>
-                          <h>32</h>
-                        </value>
-                      </property>
-                      <property type="c">
-                        <key>color</key>
-                        <value>
-                          <r>0.250000</r>
-                          <g>0.250000</g>
-                          <b>0.250000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>visible</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>interactive</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>background</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>outline</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>outlineStyle</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>grabFocus</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>pointerPriority</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>cornerRadius</key>
-                        <value>1</value>
-                      </property>
-                      <property type="i">
-                        <key>orientation</key>
-                        <value>0</value>
-                      </property>
-                      <property type="s">
-                        <key>script</key>
-                        <value />
-                      </property>
-                      <property type="i">
-                        <key>font</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textSize</key>
-                        <value>11</value>
-                      </property>
-                      <property type="i">
-                        <key>textLength</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignH</key>
-                        <value>2</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignV</key>
-                        <value>2</value>
-                      </property>
-                      <property type="c">
-                        <key>textColor</key>
-                        <value>
-                          <r>0.920000</r>
-                          <g>0.920000</g>
-                          <b>0.940000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>textClip</key>
-                        <value>1</value>
-                      </property>
-                    </properties>
-                    <values>
-                      <value>
-                        <key>text</key>
-                        <locked>0</locked>
-                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
-                        <defaultPull>0</defaultPull>
-                        <default>G</default>
-                      </value>
-                    </values>
-                    <messages />
-                    <children />
-                  </node>
-                  <node ID="3f36d699-1b57-53a3-a176-c0b2d94936fd" type="FADER">
+                  <node ID="6a66fe99-6ecd-543f-ba5c-f789657238ce" type="FADER">
                     <properties>
                       <property type="s">
                         <key>name</key>
@@ -62919,10 +62527,10 @@ end</value>
                       <property type="r">
                         <key>frame</key>
                         <value>
-                          <x>20</x>
-                          <y>84</y>
-                          <w>554</w>
-                          <h>32</h>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>574</w>
+                          <h>156</h>
                         </value>
                       </property>
                       <property type="c">
@@ -62936,7 +62544,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>visible</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>interactive</key>
@@ -62968,7 +62576,7 @@ end</value>
                       </property>
                       <property type="i">
                         <key>orientation</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="s">
                         <key>script</key>
@@ -63011,121 +62619,7 @@ end</value>
                     </messages>
                     <children />
                   </node>
-                  <node ID="ff76dcca-9bbe-5ae0-944b-497f9b2843fa" type="LABEL">
-                    <properties>
-                      <property type="s">
-                        <key>name</key>
-                        <value>lbl_B</value>
-                      </property>
-                      <property type="s">
-                        <key>tag</key>
-                        <value />
-                      </property>
-                      <property type="r">
-                        <key>frame</key>
-                        <value>
-                          <x>0</x>
-                          <y>120</y>
-                          <w>18</w>
-                          <h>32</h>
-                        </value>
-                      </property>
-                      <property type="c">
-                        <key>color</key>
-                        <value>
-                          <r>0.250000</r>
-                          <g>0.250000</g>
-                          <b>0.250000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>visible</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>interactive</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>background</key>
-                        <value>0</value>
-                      </property>
-                      <property type="b">
-                        <key>outline</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>outlineStyle</key>
-                        <value>1</value>
-                      </property>
-                      <property type="b">
-                        <key>grabFocus</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>pointerPriority</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>cornerRadius</key>
-                        <value>1</value>
-                      </property>
-                      <property type="i">
-                        <key>orientation</key>
-                        <value>0</value>
-                      </property>
-                      <property type="s">
-                        <key>script</key>
-                        <value />
-                      </property>
-                      <property type="i">
-                        <key>font</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textSize</key>
-                        <value>11</value>
-                      </property>
-                      <property type="i">
-                        <key>textLength</key>
-                        <value>0</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignH</key>
-                        <value>2</value>
-                      </property>
-                      <property type="i">
-                        <key>textAlignV</key>
-                        <value>2</value>
-                      </property>
-                      <property type="c">
-                        <key>textColor</key>
-                        <value>
-                          <r>0.920000</r>
-                          <g>0.920000</g>
-                          <b>0.940000</b>
-                          <a>1.000000</a>
-                        </value>
-                      </property>
-                      <property type="b">
-                        <key>textClip</key>
-                        <value>1</value>
-                      </property>
-                    </properties>
-                    <values>
-                      <value>
-                        <key>text</key>
-                        <locked>0</locked>
-                        <lockedDefaultCurrent>0</lockedDefaultCurrent>
-                        <defaultPull>0</defaultPull>
-                        <default>B</default>
-                      </value>
-                    </values>
-                    <messages />
-                    <children />
-                  </node>
-                  <node ID="e41ee8e7-fcef-524f-9ceb-45357dadbc46" type="FADER">
+                  <node ID="1f75b53d-a2c1-5146-a9e7-022683349b31" type="FADER">
                     <properties>
                       <property type="s">
                         <key>name</key>
@@ -63138,10 +62632,10 @@ end</value>
                       <property type="r">
                         <key>frame</key>
                         <value>
-                          <x>20</x>
-                          <y>120</y>
-                          <w>554</w>
-                          <h>32</h>
+                          <x>0</x>
+                          <y>0</y>
+                          <w>574</w>
+                          <h>156</h>
                         </value>
                       </property>
                       <property type="c">
@@ -63155,7 +62649,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>visible</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="b">
                         <key>interactive</key>
@@ -63187,7 +62681,7 @@ end</value>
                       </property>
                       <property type="i">
                         <key>orientation</key>
-                        <value>1</value>
+                        <value>0</value>
                       </property>
                       <property type="s">
                         <key>script</key>
@@ -63232,7 +62726,7 @@ end</value>
                   </node>
                 </children>
               </node>
-              <node ID="fefebb29-c143-5953-a24b-ccf7913aa89b" type="LABEL">
+              <node ID="dd7d7044-9a96-5948-9fd7-2d1552a9b038" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -63346,7 +62840,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="9c57c9e5-de86-5432-97a7-cc1f7ce876f3" type="FADER">
+              <node ID="3f36d699-1b57-53a3-a176-c0b2d94936fd" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -63450,7 +62944,7 @@ end</value>
                 </messages>
                 <children />
               </node>
-              <node ID="6a8669c9-cd6a-5d29-98f8-31636730e9c3" type="LABEL">
+              <node ID="ff76dcca-9bbe-5ae0-944b-497f9b2843fa" type="LABEL">
                 <properties>
                   <property type="s">
                     <key>name</key>
@@ -63564,7 +63058,7 @@ end</value>
                 <messages />
                 <children />
               </node>
-              <node ID="523bd9cd-16e6-5a91-b586-68178d2e4a80" type="FADER">
+              <node ID="e41ee8e7-fcef-524f-9ceb-45357dadbc46" type="FADER">
                 <properties>
                   <property type="s">
                     <key>name</key>
