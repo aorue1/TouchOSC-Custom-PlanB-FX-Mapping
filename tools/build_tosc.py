@@ -172,17 +172,17 @@ class Builder:
         # Master column.
         x = layers * col_w
         page.add(self.label((x, 2, col_w, header_h), "MASTER", size=16, color="accent"))
-        half = (height - header_h - 3 * pad) // 2
-        page.add(self.label((x + pad, header_h + pad, col_w - 2 * pad, 24), "MASTER", size=12))
-        page.add(self.fader((x + pad, header_h + pad + 24, col_w - 2 * pad, half - 24),
-                            "master", res["master"], self.res_conn, color="accent"))
-        y = header_h + 2 * pad + half
+        y = header_h + pad
         page.add(self.label((x + pad, y, col_w - 2 * pad, 24), "SPEED", size=12))
-        page.add(self.fader((x + pad, y + 24, col_w - 2 * pad, half - 70),
+        fader_bottom = height - 2 * 52 - pad
+        page.add(self.fader((x + pad, y + 24, col_w - 2 * pad, fader_bottom - y - 24),
                             "speed", res["speed"], self.res_conn, color="accent"))
-        page.add(self.button((x + pad, height - 46 - pad, col_w - 2 * pad, 46),
+        page.add(self.button((x + pad, fader_bottom + 4, col_w - 2 * pad, 48),
                              "resync", res["tempo_resync"], self.res_conn,
                              color="accent", text="RESYNC", constant_args=(1.0,)))
+        page.add(self.button((x + pad, fader_bottom + 56, col_w - 2 * pad, 48),
+                             "tap_page", res["tempo_tap"], self.res_conn,
+                             color="accent", text="TAP", constant_args=(1.0,)))
         return page
 
     def fx_page(self, width: int, height: int) -> Node:
@@ -210,12 +210,13 @@ class Builder:
             for i, fx in enumerate(fx_list):
                 x = label_w + i * col_w
                 path = res["fx_param"].format(layer=layer, fx=fx["fx"], param=fx["param"])
-                knob_h = row_h - 22 - 2 * pad - 26
+                byp_h = 32
+                knob_h = row_h - 22 - 2 * pad - byp_h - 2
                 page.add(self.radial((x + pad, y, col_w - 2 * pad, knob_h),
                                      f"L{layer}_{fx['fx']}", path, self.res_conn,
                                      color="panel"))
                 bypass = res["fx_bypass"].format(layer=layer, fx=fx["fx"])
-                page.add(self.button((x + pad, y + knob_h + 2, col_w - 2 * pad, 24),
+                page.add(self.button((x + pad, y + knob_h + 2, col_w - 2 * pad, byp_h),
                                      f"L{layer}_{fx['fx']}_byp", bypass, self.res_conn,
                                      toggle=True, color="panel", text="byp"))
         return page

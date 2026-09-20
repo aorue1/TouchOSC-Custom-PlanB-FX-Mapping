@@ -11,16 +11,18 @@ Copy `build/vj-control.tosc` to the tablet (AirDrop, the TouchOSC editor's
 
 ### Verifying the layout
 
-The generator writes the format from spec, and has not yet been round-tripped
-through the TouchOSC editor. First run on a machine with TouchOSC installed:
+`build/vj-control.tosc` opens in the TouchOSC desktop editor — the format is
+confirmed good. `make` also runs `tools/verify.py`, which fails the build on
+controls that escape their parent, overlap a sibling, are too small to hit, or
+fight another control for an address.
 
-1. Open `build/vj-control.tosc` in the TouchOSC **editor** (desktop).
-2. If it opens: check the pager shows three tabs, and that a clip button's
-   message reads `/composition/layers/1/clips/1/connect`.
-3. If it does *not* open: save any small layout from the editor, then
-   `python3 -c "import zlib,sys; sys.stdout.buffer.write(zlib.decompress(open('sample.tosc','rb').read()))"`
-   and diff its XML against `build/vj-control.xml`. The differences are the
-   corrections `tools/tosc.py` needs.
+What neither of those can check is behaviour against live hosts. With Resolume
+and TouchDesigner running, walk the surface once:
+
+* a clip button connects the clip you expect, not a neighbour;
+* layer opacity faders move the right layers;
+* the FX knobs find their effects (they are addressed by name, see below);
+* the TD page shows up as channels on the OSC In CHOP.
 
 ## 2. TouchOSC connections
 

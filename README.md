@@ -30,6 +30,7 @@ connection 1 (port 7000), TouchDesigner on connection 2 (port 7001).
 | `tools/tosc.py` | Writer for the TouchOSC `.tosc` format (zlib-compressed `lexml` XML) |
 | `tools/build_tosc.py` | Builds the surface from the spec |
 | `tools/dump_map.py` | Regenerates `docs/osc-map.md` from the spec |
+| `tools/verify.py` | Geometry and address checks on the built layout |
 | `touchdesigner/osc_router.py` | OSC In DAT callbacks for the TouchDesigner side |
 | `build/vj-control.tosc` | The layout to open in TouchOSC |
 | `build/vj-control.xml` | Same layout uncompressed, so diffs are reviewable |
@@ -37,7 +38,7 @@ connection 1 (port 7000), TouchDesigner on connection 2 (port 7001).
 ## Build
 
 ```sh
-make            # build the .tosc and regenerate the address map
+make            # build the .tosc, regenerate the address map, verify the layout
 ```
 
 or directly:
@@ -45,18 +46,20 @@ or directly:
 ```sh
 python3 tools/build_tosc.py     # -> build/vj-control.tosc
 python3 tools/dump_map.py       # -> docs/osc-map.md
+python3 tools/verify.py         # non-zero exit if anything is off
 ```
+
+`verify.py` reads the generated XML and fails on controls that escape their
+parent, overlap a sibling, fall below a 28px touch target, or stream their
+value to an address another control already owns.
 
 Only dependency is PyYAML (`pip install pyyaml`).
 
 ## Status
 
-The `.tosc` writer is built against the documented shape of the TouchOSC
-layout format (zlib-compressed `lexml` v3). **It has not yet been opened in the
-TouchOSC editor** — that's the next verification step, see
-[`docs/setup.md`](docs/setup.md#verifying-the-layout). If the editor rejects a
-property or message, the fix belongs in `tools/tosc.py`; the spec and the page
-builders stay as they are.
+The generated `.tosc` opens in the TouchOSC desktop editor, so the writer emits
+a valid layout. What each control *does* once connected to a live Resolume
+composition and TD network is still unconfirmed.
 
 ## Docs
 
