@@ -126,7 +126,29 @@ mode: it shows the exact address for the control you click.
 `/td/blackout` is handled specially by the router: it drops every mapped
 parameter to its low value.
 
-## 5. Changing the surface
+## 5. The COLOUR page
+
+Each picker is an XY pad -- hue across, shade up -- over R, G and B faders,
+with a live swatch beside it. The pad only moves the faders; the faders carry
+the OSC. Setting a fader from a script still fires that fader's own message,
+so nothing depends on a scripted OSC send, and the faders stay usable on their
+own for fine adjustment.
+
+The hue maths is adapted from the ColorPicker module of
+[tshoppa/touchOSC](https://github.com/tshoppa/touchOSC) (MIT). That module is a
+modal dialog -- open it, pick, confirm -- which suits a settings screen more
+than a live surface, so only the maths is borrowed and the picker here is
+always on screen.
+
+**The Resolume addresses are a guess and need confirming.** `spec/mapping.yaml`
+points them at a Solid Colour effect's parameters, which is a plausible target
+but unverified. In Arena, open Shortcuts > OSC and click the colour parameter
+you actually want to drive; whatever address it reports goes in the spec.
+
+On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
+`/b`, wired in `touchdesigner/osc_router.py` to a Constant TOP by default.
+
+## 6. Changing the surface
 
 Everything about the layout comes from `spec/mapping.yaml` — grid sizes,
 colours, ports, addresses. Change it and re-run `make`. The uncompressed

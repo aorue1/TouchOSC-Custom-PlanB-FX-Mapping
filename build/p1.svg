@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="1180" viewBox="0 0 820 1180">
+<rect width="100%" height="100%" fill="#1c1c20"/>
+<rect x="0.0" y="0.0" width="820.0" height="1180.0" fill="rgba(28,28,33,1.000)"/>
+<rect x="0.0" y="0.0" width="820.0" height="60.0" fill="rgba(28,28,33,1.000)"/>
+<rect x="16.0" y="8.0" width="4.0" height="44.0" rx="2" fill="rgba(229,229,229,1.000)" stroke="none" stroke-width="1.5"/>
+<ellipse cx="29.0" cy="18.0" rx="10.0" ry="10.0" fill="none" stroke="rgba(229,229,229,1.000)" stroke-width="1.5"/>
+<ellipse cx="31.5" cy="39.5" rx="12.5" ry="12.5" fill="none" stroke="rgba(229,229,229,1.000)" stroke-width="1.5"/>
+<rect x="662.0" y="8.0" width="150.0" height="44.0" rx="2" fill="rgba(216,38,63,1.000)" stroke="rgba(216,38,63,1.000)" stroke-width="1.5"/>
+<text x="737.0" y="35.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(234,234,239,1.000)" text-anchor="middle">BLACKOUT</text>
+<rect x="504.0" y="8.0" width="150.0" height="44.0" rx="2" fill="rgba(242,204,51,1.000)" stroke="rgba(242,204,51,1.000)" stroke-width="1.5"/>
+<text x="579.0" y="35.8" font-family="Helvetica,Arial,sans-serif" font-size="16" fill="rgba(234,234,239,1.000)" text-anchor="middle">TAP</text>
+<rect x="72.0" y="14.0" width="424.0" height="32.0" rx="2" fill="rgba(237,89,40,1.000)" stroke="rgba(237,89,40,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="135.3" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="rgba(237,89,40,1.000)" text-anchor="middle">L1</text>
+<text x="350.5" y="135.3" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="rgba(237,89,40,1.000)" text-anchor="middle">L2</text>
+<text x="537.5" y="135.3" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="rgba(237,89,40,1.000)" text-anchor="middle">L3</text>
+<text x="724.5" y="135.3" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="rgba(237,89,40,1.000)" text-anchor="middle">L4</text>
+<text x="35.0" y="201.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">Blur</text>
+<rect x="76.0" y="148.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="233.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="253.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="148.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="233.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="253.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="148.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="233.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="253.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="148.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="233.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="253.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<text x="35.0" y="330.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">RGB Shift</text>
+<rect x="76.0" y="277.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="362.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="277.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="362.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="277.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="362.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="277.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="362.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<text x="35.0" y="459.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">Hue</text>
+<rect x="76.0" y="406.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="491.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="511.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="406.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="491.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="511.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="406.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="491.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="511.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="406.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="491.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="511.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<text x="35.0" y="588.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">Sat</text>
+<rect x="76.0" y="535.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="620.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="640.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="535.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="620.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="640.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="535.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="620.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="640.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="535.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="620.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="640.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<text x="35.0" y="717.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">Zoom</text>
+<rect x="76.0" y="664.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="749.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="769.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="664.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="749.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="769.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="664.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="749.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="769.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="664.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="749.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="769.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<text x="35.0" y="846.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">Kaleido</text>
+<rect x="76.0" y="793.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="878.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="898.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="793.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="878.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="898.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="793.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="878.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="898.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="793.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="878.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="898.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<text x="35.0" y="975.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">Glitch</text>
+<rect x="76.0" y="922.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="1007.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="1027.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="922.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="1007.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="1027.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="922.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="1007.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="1027.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="922.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="1007.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="1027.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<text x="35.0" y="1104.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(237,89,40,1.000)" text-anchor="middle">Strobe</text>
+<rect x="76.0" y="1051.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="76.0" y="1136.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="163.5" y="1156.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="263.0" y="1051.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="263.0" y="1136.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="350.5" y="1156.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="450.0" y="1051.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="450.0" y="1136.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="537.5" y="1156.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+<rect x="637.0" y="1051.0" width="175.0" height="83.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<rect x="637.0" y="1136.0" width="175.0" height="32.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
+<text x="724.5" y="1156.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(234,234,239,1.000)" text-anchor="middle">byp</text>
+</svg>

@@ -27,6 +27,55 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "mapping.yaml")
 BUILD = os.path.join(ROOT, "build")
 
+# Hue across, shade up the Y axis, driving the three RGB faders beside it.
+# Adapted from the ColorPicker module of github.com/tshoppa/touchOSC (MIT).
+PICKER_SCRIPT = """
+local name = self.name:gsub('_pad$', '')
+local r = self.parent.children[name .. '_r'].values
+local g = self.parent.children[name .. '_g'].values
+local b = self.parent.children[name .. '_b'].values
+
+local function shade(v, s)
+  v = v + (s - 0.5) * 2
+  if v < 0 then return 0 elseif v > 1 then return 1 end
+  return v
+end
+
+local function hue(x, y)
+  if x <= 1/6 then
+    r.x, g.x, b.x = shade(1, y), shade(6 * x, y), shade(0, y)
+  elseif x <= 1/3 then
+    r.x, g.x, b.x = shade(1 - 6 * (x - 1/6), y), shade(1, y), shade(0, y)
+  elseif x <= 1/2 then
+    r.x, g.x, b.x = shade(0, y), shade(1, y), shade(6 * (x - 1/3), y)
+  elseif x <= 2/3 then
+    r.x, g.x, b.x = shade(0, y), shade(1 - 6 * (x - 0.5), y), shade(1, y)
+  elseif x <= 5/6 then
+    r.x, g.x, b.x = shade(6 * (x - 2/3), y), shade(0, y), shade(1, y)
+  else
+    r.x, g.x, b.x = shade(1, y), shade(0, y), shade(1 - 6 * (x - 5/6), y)
+  end
+end
+
+function onValueChanged(key)
+  if key == 'x' or key == 'y' then
+    hue(self.values.x, self.values.y)
+  end
+end
+""".strip()
+
+# Live swatch of whatever the three faders currently say.
+PREVIEW_SCRIPT = """
+local name = self.name:gsub('_preview$', '')
+local p = self.parent.children
+
+function update()
+  self.color = Color(p[name .. '_r'].values.x,
+                     p[name .. '_g'].values.x,
+                     p[name .. '_b'].values.x, 1)
+end
+""".strip()
+
 # Momentary vs latching, in TouchOSC's buttonType encoding.
 MOMENTARY, TOGGLE = 0, 1
 # Smallest comfortable touch target; tools/verify.py enforces the same number.
@@ -99,46 +148,19 @@ class Builder:
 
     # -- global strip ------------------------------------------------------
     def brand_mark(self, parent: Node, x: int, y: int, height: int) -> int:
-        """Monogram badge plus wordmark in the top-left. Returns its right edge.
+        """Wordmark in the top-left. Returns its right edge.
 
-        TouchOSC draws controls as vector primitives and cannot load an image,
-        so the logo is approximated: a filled, outlined square carrying the
-        monogram, set beside the wordmark in the brand grey.
+        Text only: TouchOSC loads no images, and a mark drawn from primitives
+        read as a pseudo-logo rather than the real one.
         """
         brand = self.spec["branding"]
-        size = min(brand["badge"], height - 8)
-        badge_y = y + (height - size) // 2
-        ink = self.colors["brand"]
-
-        # The logo artwork cannot be embedded — TouchOSC draws controls as
-        # vector primitives and loads no images — so the mark is constructed
-        # the way the logo is: a stem with two bowls set against it.
-        mark = Node(GROUP, (x, badge_y, size, size), name="brand_mark",
-                    background=False, outline=False, interactive=False)
-        stem_w = max(3, size // 9)
-        mark.add(Node(BOX, (size // 6, 0, stem_w, size), name="brand_stem",
-                      color=ink, shape=Shape.RECTANGLE, background=True,
-                      outline=False, interactive=False, corner_radius=0))
-        bowl_x = size // 6 + stem_w - 1
-        top_d = int(size * 0.52)
-        bot_d = int(size * 0.62)
-        mark.add(Node(BOX, (bowl_x, 0, top_d, top_d), name="brand_bowl_top",
-                      color=ink, shape=Shape.CIRCLE, background=False,
-                      outline=True, outline_style=Outline.FULL,
-                      interactive=False))
-        mark.add(Node(BOX, (bowl_x, size - bot_d, bot_d, bot_d),
-                      name="brand_bowl_bottom", color=ink, shape=Shape.CIRCLE,
-                      background=False, outline=True,
-                      outline_style=Outline.FULL, interactive=False))
-        parent.add(mark)
-
-        word_w = 0 if self.portrait else 150
-        if word_w:
-            parent.add(Node(LABEL, (x + size + 8, y + 8, word_w, height - 16),
+        width = 0 if self.portrait else 150
+        if width:
+            parent.add(Node(LABEL, (x, y + 8, width, height - 16),
                             name="brand_wordmark", text=brand["wordmark"],
-                            text_size=19, text_color=ink, background=False,
-                            outline=False, interactive=False))
-        return x + size + (word_w + 8 if word_w else 0)
+                            text_size=20, text_color=self.colors["brand"],
+                            background=False, outline=False, interactive=False))
+        return x + width
 
     def global_strip(self, width: int, height: int) -> Node:
         res, td = self.spec["resolume"], self.spec["touchdesigner"]
@@ -376,6 +398,72 @@ class Builder:
             y += 56
         return page
 
+    def color_picker(self, parent: Node, frame, name: str, addrs: dict,
+                     conns: str, accent: str) -> Node:
+        """An XY hue/shade pad over R, G and B faders, with a live preview.
+
+        The faders carry the OSC messages, so the pad only has to move them --
+        setting a fader's value from a script still fires that fader's own
+        message, which avoids depending on a scripted OSC send.
+
+        The hue/shade maths is adapted from the ColorPicker module of
+        github.com/tshoppa/touchOSC (MIT).
+        """
+        x, y, w, h = frame
+        pad = 8
+        group = Node(GROUP, frame, name=name, background=False, outline=False,
+                     interactive=True)
+
+        head_h = 22
+        fader_h = 46
+        preview_w = 72
+        pad_h = h - head_h - 3 * fader_h - 3 * pad
+        group.add(self.label((0, 0, w - preview_w, head_h), name.upper(),
+                             size=13, color=accent))
+
+        picker = Node(XY, (0, head_h, w - preview_w - pad, pad_h),
+                      name=f"{name}_pad", color=self.colors[accent],
+                      script=PICKER_SCRIPT)
+        group.add(picker)
+
+        preview = Node(BOX, (w - preview_w, head_h, preview_w, pad_h),
+                       name=f"{name}_preview", color=self.colors["panel"],
+                       shape=Shape.RECTANGLE, background=True, outline=True,
+                       interactive=False, script=PREVIEW_SCRIPT)
+        group.add(preview)
+
+        chan_y = head_h + pad_h + pad
+        for i, (chan, label_text) in enumerate((("red", "R"), ("green", "G"),
+                                                ("blue", "B"))):
+            row_y = chan_y + i * (fader_h + pad // 2)
+            group.add(self.label((0, row_y, 22, fader_h), label_text, size=13))
+            group.add(self.fader((26, row_y, w - 26, fader_h),
+                                 f"{name}_{chan[0]}", addrs[chan], conns,
+                                 horizontal=True, color=accent))
+        parent.add(group)
+        return group
+
+    def color_page(self, width: int, height: int) -> Node:
+        """Both pickers side by side in landscape, stacked in portrait."""
+        cp = self.spec["colorpicker"]
+        page = Node(GROUP, (0, 0, width, height), name="COLOR",
+                    color=self.colors["accent"], background=False, outline=False)
+        pad = 12
+        if self.portrait:
+            block_h = (height - 3 * pad) // 2
+            frames = ((pad, pad, width - 2 * pad, block_h),
+                      (pad, 2 * pad + block_h, width - 2 * pad, block_h))
+        else:
+            block_w = (width - 3 * pad) // 2
+            frames = ((pad, pad, block_w, height - 2 * pad),
+                      (2 * pad + block_w, pad, block_w, height - 2 * pad))
+
+        self.color_picker(page, frames[0], "resolume", cp["resolume"],
+                          self.res_conn, "resolume")
+        self.color_picker(page, frames[1], "touchdesigner", cp["touchdesigner"],
+                          self.td_conn, "td")
+        return page
+
     # -- assembly ----------------------------------------------------------
     def build(self) -> Node:
         layout = self.spec["layout"]
@@ -402,6 +490,7 @@ class Builder:
         tab_h = layout["tabbar_height"]
         pages = ((self.resolume_page(w, page_h), "RESOLUME"),
                  (self.fx_page(w, page_h), "FX"),
+                 (self.color_page(w, page_h), "COLOR"),
                  (self.td_page(w, page_h), "TOUCHDESIGNER"))
         for page, tab in pages:
             # Child coordinates stay relative to the page, so only the page's

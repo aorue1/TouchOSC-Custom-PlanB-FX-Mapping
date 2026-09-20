@@ -38,13 +38,10 @@ connections:
     note: TouchDesigner OSC In
 
 # Palette (r,g,b,a floats 0-1).
-# Branding shown in the top-left of the global strip. TouchOSC draws controls
-# as vector primitives and cannot load an image, so the mark is a monogram
-# badge rather than the full logo.
+# Wordmark shown top-left in the global strip. TouchOSC cannot load images,
+# so this is text only.
 branding:
   wordmark: PlanB-FX
-  monogram: B
-  badge: 44            # square badge size in points
 
 colors:
   bg:        [0.11, 0.11, 0.13, 1.0]
@@ -105,6 +102,26 @@ touchdesigner:
   scene:    /td/scene
   intensity: /td/intensity
   blackout: /td/blackout
+
+# ---------------------------------------------------------------------------
+# Colour pickers. Each picker is an XY pad (hue across, shade up) over three
+# RGB faders; the faders carry the OSC, so the pad only has to move them.
+#
+# The Resolume addresses below are a best guess at a Solid Colour effect's
+# parameters. CONFIRM THEM before relying on them: in Arena, Shortcuts > OSC,
+# then click the colour parameter to see its real address. Whatever it turns
+# out to be, change it here and rebuild.
+# ---------------------------------------------------------------------------
+colorpicker:
+  resolume:
+    layer: 1
+    red:   /composition/layers/1/video/effects/solidcolor/effect/color/red
+    green: /composition/layers/1/video/effects/solidcolor/effect/color/green
+    blue:  /composition/layers/1/video/effects/solidcolor/effect/color/blue
+  touchdesigner:
+    red:   /td/color/r
+    green: /td/color/g
+    blue:  /td/color/b
 
 # Global strip, always visible above the pager.
 globals:

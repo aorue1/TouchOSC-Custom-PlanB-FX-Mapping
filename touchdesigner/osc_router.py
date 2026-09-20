@@ -22,6 +22,10 @@ MAPPING = {
     "/td/pad/1/x": ("/project1/geo1", "Tx", -5.0, 5.0),
     "/td/pad/1/y": ("/project1/geo1", "Ty", -5.0, 5.0),
     "/td/intensity": ("/project1/level1", "Opacity", 0.0, 1.0),
+    # Colour picker: the three channels arrive independently, already 0..1.
+    "/td/color/r": ("/project1/constant1", "Colorr", 0.0, 1.0),
+    "/td/color/g": ("/project1/constant1", "Colorg", 0.0, 1.0),
+    "/td/color/b": ("/project1/constant1", "Colorb", 0.0, 1.0),
 }
 
 # Addresses that toggle a parameter on/off rather than scaling a range.

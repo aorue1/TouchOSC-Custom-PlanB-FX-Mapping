@@ -4,10 +4,9 @@ A custom TouchOSC control surface for **PlanB-FX** that drives **Resolume
 Arena** and **TouchDesigner** from one tablet, with a tab bar to switch between
 views. Built for an iPad Air (4th gen), in both portrait and landscape.
 
-The wordmark, monogram and badge size live under `branding:` in
-`spec/mapping.yaml`. TouchOSC draws controls as vector primitives and cannot
-load an image, so the mark is *drawn* from shape primitives — a stem with two
-circular bowls, the way the logo is built — rather than being the logo file.
+The wordmark lives under `branding:` in `spec/mapping.yaml`. It is text only:
+TouchOSC draws controls as vector primitives and cannot load an image, so the
+logo artwork cannot be placed on the surface.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -22,6 +21,8 @@ circular bowls, the way the logo is built — rather than being the logo file.
 * **RESOLUME** — 4 layers × 8 clip-launch buttons, per-layer bypass/solo/clear,
   per-layer opacity faders, master + speed + resync column.
 * **FX** — a knob and a bypass per effect per layer (8 effects × 4 layers).
+* **COLOR** — an XY hue/shade pad with RGB faders and a live swatch, one
+  feeding Resolume and one feeding TouchDesigner.
 * **TOUCHDESIGNER** — generic param bank: 8 faders, 8 toggles, 8 triggers,
   2 XY pads, intensity and scene faders.
 
@@ -40,6 +41,7 @@ connection 1 (port 7000), TouchDesigner on connection 2 (port 7001).
 | `touchdesigner/osc_router.py` | OSC In DAT callbacks for the TouchDesigner side |
 | `tools/build_probe.py` | Builds the rotation probe described below |
 | `tools/inspect_tosc.py` | Prints the control tree / property summary of any `.tosc` |
+| `tools/preview.py` | Renders a layout to SVG so it can be checked without a device |
 | `build/vj-control-landscape.tosc` | 1180x820 layout |
 | `build/vj-control-portrait.tosc` | 820x1180 layout |
 | `build/*.xml` | Same layouts uncompressed, so diffs are reviewable |
@@ -101,6 +103,15 @@ Confirmed on the iPad Air 4: the layouts open, captions render, and Lua
 scripts run. What each control *does* against a live Resolume composition and
 TouchDesigner network is still unconfirmed — the addresses are written from the
 Resolume OSC convention, not yet tested against a running composition.
+
+## Credits
+
+The colour picker's hue/shade maths is adapted from the ColorPicker module of
+[tshoppa/touchOSC](https://github.com/tshoppa/touchOSC), MIT licensed,
+copyright (c) 2023 Schulzki.
+
+The `.tosc` writer's property names and enums follow
+[NicoG60/TouchMCU](https://github.com/NicoG60/TouchMCU).
 
 ## Docs
 
