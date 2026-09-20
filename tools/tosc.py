@@ -17,6 +17,7 @@ that cost this project a round each on the device:
 
 from __future__ import annotations
 
+import copy
 import uuid
 import zlib
 from dataclasses import dataclass, field
@@ -162,6 +163,20 @@ class OscMessage:
                 "type": "VALUE", "conversion": "FLOAT",
                 "value": "x", "scaleMin": "0", "scaleMax": "1",
             })
+
+
+class Raw:
+    """A prepared XML subtree grafted in as a child.
+
+    Used for third-party components lifted out of another .tosc, whose
+    controls and scripts must be reproduced exactly rather than rebuilt.
+    """
+
+    def __init__(self, element):
+        self.element = element
+
+    def to_xml(self, parent) -> None:
+        parent.append(copy.deepcopy(self.element))
 
 
 @dataclass

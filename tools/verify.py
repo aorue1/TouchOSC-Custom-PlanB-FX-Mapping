@@ -33,6 +33,19 @@ def frame_of(node: ET.Element):
     return None
 
 
+def is_vendored(node: ET.Element) -> bool:
+    """True for a third-party component grafted in whole.
+
+    Its frame is still checked against its parent, but its internals are the
+    component author's design — flagging their touch targets or overlaps would
+    be noise we cannot act on without forking the component.
+    """
+    for p in node.findall("./properties/property"):
+        if p.findtext("key") == "tag" and _prop_text(p).startswith("vendor:"):
+            return True
+    return False
+
+
 def is_decorative(node: ET.Element) -> bool:
     """True for anything that cannot be touched.
 
@@ -132,6 +145,8 @@ def check(path: str) -> list[str]:
                     problems.append(f"{here}: {n1} {f1} overlaps {n2} {f2}")
 
         for kid in kids:
+            if is_vendored(kid):
+                continue
             walk(kid, here)
 
     walk(root, "")

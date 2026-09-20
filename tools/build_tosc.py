@@ -20,59 +20,36 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tosc  # noqa: E402
+import vendor  # noqa: E402
 from tosc import (BOX, BUTTON, FADER, GROUP, LABEL, PAGER, RADIAL, XY,  # noqa: E402
-                  Node, OscMessage, Orientation, Outline, Shape)
+                  Node, OscMessage, Orientation, Outline, Raw, Shape)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "mapping.yaml")
 BUILD = os.path.join(ROOT, "build")
 
-# Hue across, shade up the Y axis, driving the three RGB faders beside it.
-# Adapted from the ColorPicker module of github.com/tshoppa/touchOSC (MIT).
-PICKER_SCRIPT = """
-local name = self.name:gsub('_pad$', '')
-local r = self.parent.children[name .. '_r'].values
-local g = self.parent.children[name .. '_g'].values
-local b = self.parent.children[name .. '_b'].values
-
-local function shade(v, s)
-  v = v + (s - 0.5) * 2
-  if v < 0 then return 0 elseif v > 1 then return 1 end
-  return v
-end
-
-local function hue(x, y)
-  if x <= 1/6 then
-    r.x, g.x, b.x = shade(1, y), shade(6 * x, y), shade(0, y)
-  elseif x <= 1/3 then
-    r.x, g.x, b.x = shade(1 - 6 * (x - 1/6), y), shade(1, y), shade(0, y)
-  elseif x <= 1/2 then
-    r.x, g.x, b.x = shade(0, y), shade(1, y), shade(6 * (x - 1/3), y)
-  elseif x <= 2/3 then
-    r.x, g.x, b.x = shade(0, y), shade(1 - 6 * (x - 0.5), y), shade(1, y)
-  elseif x <= 5/6 then
-    r.x, g.x, b.x = shade(6 * (x - 2/3), y), shade(0, y), shade(1, y)
-  else
-    r.x, g.x, b.x = shade(1, y), shade(0, y), shade(1 - 6 * (x - 5/6), y)
-  end
-end
+# Opens the vendored ColorPicker and writes the result into the R/G/B faders
+# beside it, which are what actually send the OSC.
+SWATCH_SCRIPT = """
+local base = self.name:gsub('_swatch$', '')
+local sib = self.parent.children
 
 function onValueChanged(key)
-  if key == 'x' or key == 'y' then
-    hue(self.values.x, self.values.y)
+  if key == 'x' and self.values.x == 1 then
+    root.children.ColorPicker:notify('pickColor', {
+      callback = self,
+      initial = self.color
+    })
   end
 end
-""".strip()
 
-# Live swatch of whatever the three faders currently say.
-PREVIEW_SCRIPT = """
-local name = self.name:gsub('_preview$', '')
-local p = self.parent.children
-
-function update()
-  self.color = Color(p[name .. '_r'].values.x,
-                     p[name .. '_g'].values.x,
-                     p[name .. '_b'].values.x, 1)
+function onReceiveNotify(key, val)
+  if key == 'colorPicked' then
+    self.color = val
+    sib[base .. '_r'].values.x = val.r
+    sib[base .. '_g'].values.x = val.g
+    sib[base .. '_b'].values.x = val.b
+  end
 end
 """.strip()
 
@@ -196,66 +173,113 @@ class Builder:
 
     # -- pages -------------------------------------------------------------
     def resolume_page(self, width: int, height: int) -> Node:
-        """Layer columns with a clip stack each; master column on the right.
+        """Layer columns with a banked clip grid; master column on the right.
 
-        The shape holds up in both orientations — portrait just makes the
-        columns narrower and the clip buttons taller.
+        TouchOSC has no scrolling control, so more clips than fit on screen are
+        reached by banking: the clip grid lives in its own pager whose tabs are
+        clip ranges (1-8, 9-16, ...). Banking moves every layer's column at
+        once, and only the clip buttons move — opacity, bypass and the nav row
+        stay put, so the controls you hold during a set never shift under you.
         """
         res, grid = self.spec["resolume"], self.spec["grid"]
-        layers, clips = grid["layers"], grid["clips"]
+        layers, clips, banks = grid["layers"], grid["clips"], grid["banks"]
         page = Node(GROUP, (0, 0, width, height), name="RESOLUME",
                     color=self.colors["resolume"], background=False, outline=False)
 
         col_w = width // (layers + 1)
+        grid_w = layers * col_w
         pad = 6
         header_h = 26
+        nav_h = 44
         strip_h = 44
         fader_h = 200 if self.portrait else 150
-        clip_area = height - header_h - strip_h - fader_h - 5 * pad
-        clip_h = clip_area // clips
+        bank_tab_h = grid["bank_tabbar"]
+        clip_area = height - header_h - nav_h - strip_h - fader_h - 5 * pad
 
+        for li in range(layers):
+            page.add(self.label((li * col_w, 2, col_w, header_h),
+                                f"LAYER {li + 1}", size=15, color="resolume"))
+
+        # --- banked clip grid ---
+        bank_pager = Node(PAGER, (0, header_h, grid_w, clip_area),
+                          name="clipbanks", color=self.colors["panel"],
+                          background=False, outline=False,
+                          extra_props={
+                              "tabbar": ("b", 1),
+                              "tabbarSize": ("i", bank_tab_h),
+                              "tabbarDoubleTap": ("b", 0),
+                              "tabLabels": ("b", 1),
+                              "textSizeOff": ("i", 12),
+                              "textSizeOn": ("i", 12),
+                          })
+        bank_h = clip_area - bank_tab_h
+        clip_h = bank_h // clips
+        for b in range(banks):
+            first = b * clips + 1
+            bank = Node(GROUP, (0, bank_tab_h, grid_w, bank_h),
+                        name=f"bank{b + 1}", color=self.colors["bg"],
+                        background=False, outline=False,
+                        tab_label=f"{first}-{first + clips - 1}")
+            for li in range(layers):
+                x = li * col_w
+                for ci in range(clips):
+                    clip = first + ci
+                    self.add_button(
+                        bank, (x + pad, ci * clip_h, col_w - 2 * pad, clip_h - pad),
+                        f"L{li + 1}C{clip}",
+                        res["clip_connect"].format(layer=li + 1, clip=clip),
+                        self.res_conn, color="panel", text=str(clip),
+                        constant_args=(1.0,))
+            bank_pager.add(bank)
+        page.add(bank_pager)
+
+        # --- per-layer nav, state strip and opacity ---
+        nav_y = header_h + clip_area + pad
+        strip_y = nav_y + nav_h
+        fader_y = strip_y + strip_h
         for li in range(layers):
             layer = li + 1
             x = li * col_w
-            page.add(self.label((x, 2, col_w, header_h), f"LAYER {layer}", size=15,
-                                color="resolume"))
-            y = header_h + pad
-            for ci in range(clips):
-                self.add_button(
-                    page, (x + pad, y + ci * clip_h, col_w - 2 * pad, clip_h - pad),
-                    f"L{layer}C{ci + 1}",
-                    res["clip_connect"].format(layer=layer, clip=ci + 1),
-                    self.res_conn, color="panel", text=str(ci + 1),
-                    constant_args=(1.0,))
+            half = (col_w - 3 * pad) // 2
+            for i, (key, text) in enumerate((("clip_prev", "PREV"),
+                                             ("clip_next", "NEXT"))):
+                self.add_button(page, (x + pad + i * (half + pad), nav_y,
+                                       half, nav_h - pad),
+                                f"L{layer}_{text}", res[key].format(layer=layer),
+                                self.res_conn, color="panel", text=text,
+                                text_size=12, constant_args=(1.0,))
 
-            y = header_h + pad + clip_area + pad
             btn_w = (col_w - 4 * pad) // 3
             for i, (key, text) in enumerate((
                 ("layer_bypass", "BYP"), ("layer_solo", "SOLO"), ("layer_clear", "CLR"),
             )):
                 toggle = key != "layer_clear"
                 self.add_button(
-                    page, (x + pad + i * (btn_w + pad), y, btn_w, strip_h - pad),
+                    page, (x + pad + i * (btn_w + pad), strip_y, btn_w, strip_h - pad),
                     f"L{layer}_{text}", res[key].format(layer=layer), self.res_conn,
                     toggle=toggle, color="panel", text=text, text_size=11,
                     constant_args=() if toggle else (1.0,))
 
-            y += strip_h
-            page.add(self.fader((x + pad, y, col_w - 2 * pad, fader_h - pad),
+            page.add(self.fader((x + pad, fader_y, col_w - 2 * pad, fader_h - pad),
                                 f"L{layer}_opacity",
                                 res["layer_opacity"].format(layer=layer),
                                 self.res_conn, color="resolume"))
 
-        # Master column: speed fader over RESYNC and a TAP within thumb reach
-        # of the clip grid (the strip TAP is a long stretch on a big screen).
+        # --- master column ---
         x = layers * col_w
         page.add(self.label((x, 2, col_w, header_h), "MASTER", size=15, color="accent"))
         y = header_h + pad
         page.add(self.label((x + pad, y, col_w - 2 * pad, 22), "SPEED", size=12))
         fader_bottom = height - 2 * 52 - pad
-        speed_h = min(fader_bottom - y - 22, int(height * 0.45))
+        speed_h = min(fader_bottom - y - 22, int(height * 0.34))
         page.add(self.fader((x + pad, y + 22, col_w - 2 * pad, speed_h),
                             "speed", res["speed"], self.res_conn, color="accent"))
+
+        colour_y = y + 22 + speed_h + pad
+        self.color_swatch(page, (x + pad, colour_y, col_w - 2 * pad,
+                                 fader_bottom - colour_y - pad),
+                          "resolume", self.spec["colorpicker"]["resolume"],
+                          self.res_conn, "resolume")
         self.add_button(page, (x + pad, fader_bottom + 4, col_w - 2 * pad, 48),
                         "resync", res["tempo_resync"], self.res_conn,
                         color="accent", text="RESYNC", text_size=12,
@@ -380,8 +404,9 @@ class Builder:
         page.add(self.label((sx, sy, sw, 24), "XY / SCENE", size=14, color="td"))
         pads = grid["td_pads"]
         strips_h = 2 * 56
+        colour_h = 164
         pad_w = (sw - (pads + 1) * pad) // pads
-        pad_h = sh - strips_h - 26 - 24
+        pad_h = sh - strips_h - colour_h - 26 - 24
         for i in range(pads):
             x = sx + pad + i * (pad_w + pad)
             page.add(self.xy((x, sy + 26, pad_w, pad_h), f"td_pad_{i + 1}",
@@ -390,6 +415,10 @@ class Builder:
             page.add(self.label((x, sy + 26 + pad_h, pad_w, 22), f"PAD {i + 1}", size=12))
 
         y = sy + 26 + pad_h + 24
+        self.color_swatch(page, (sx + pad, y, sw - 2 * pad, colour_h - pad),
+                          "touchdesigner", self.spec["colorpicker"]["touchdesigner"],
+                          self.td_conn, "td")
+        y += colour_h
         for label_text, path, name in (("INTENSITY", td["intensity"], "td_intensity"),
                                        ("SCENE", td["scene"], "td_scene")):
             page.add(self.label((sx + pad, y, 110, 24), label_text, size=12))
@@ -398,71 +427,38 @@ class Builder:
             y += 56
         return page
 
-    def color_picker(self, parent: Node, frame, name: str, addrs: dict,
+    def color_swatch(self, parent: Node, frame, name: str, addrs: dict,
                      conns: str, accent: str) -> Node:
-        """An XY hue/shade pad over R, G and B faders, with a live preview.
+        """A swatch button that opens the ColorPicker, over R/G/B faders.
 
-        The faders carry the OSC messages, so the pad only has to move them --
-        setting a fader's value from a script still fires that fader's own
-        message, which avoids depending on a scripted OSC send.
-
-        The hue/shade maths is adapted from the ColorPicker module of
-        github.com/tshoppa/touchOSC (MIT).
+        The picker is the vendored component from tshoppa/touchOSC: it is a
+        modal dialog that notifies its caller with `colorPicked` as the colour
+        is dragged. The caller here writes the three channels into the faders
+        below it, and those faders carry the OSC — the component itself sends
+        nothing, and TouchOSC's scripting has no OSC send of its own.
         """
         x, y, w, h = frame
-        pad = 8
-        group = Node(GROUP, frame, name=name, background=False, outline=False,
-                     interactive=True)
+        gap = 4
+        btn_h = 44
+        chan_h = max(MIN_TOUCH, (h - btn_h - 4 * gap) // 3)
+        group = Node(GROUP, frame, name=f"{name}_color", background=False,
+                     outline=False)
 
-        head_h = 22
-        fader_h = 46
-        preview_w = 72
-        pad_h = h - head_h - 3 * fader_h - 3 * pad
-        group.add(self.label((0, 0, w - preview_w, head_h), name.upper(),
-                             size=13, color=accent))
+        swatch = Node(BUTTON, (0, 0, w, btn_h), name=f"{name}_swatch",
+                      color=self.colors[accent], button_type=MOMENTARY,
+                      script=SWATCH_SCRIPT)
+        group.add(swatch)
+        group.add(self.label((0, 0, w, btn_h), "COLOR", size=13))
 
-        picker = Node(XY, (0, head_h, w - preview_w - pad, pad_h),
-                      name=f"{name}_pad", color=self.colors[accent],
-                      script=PICKER_SCRIPT)
-        group.add(picker)
-
-        preview = Node(BOX, (w - preview_w, head_h, preview_w, pad_h),
-                       name=f"{name}_preview", color=self.colors["panel"],
-                       shape=Shape.RECTANGLE, background=True, outline=True,
-                       interactive=False, script=PREVIEW_SCRIPT)
-        group.add(preview)
-
-        chan_y = head_h + pad_h + pad
-        for i, (chan, label_text) in enumerate((("red", "R"), ("green", "G"),
-                                                ("blue", "B"))):
-            row_y = chan_y + i * (fader_h + pad // 2)
-            group.add(self.label((0, row_y, 22, fader_h), label_text, size=13))
-            group.add(self.fader((26, row_y, w - 26, fader_h),
+        for i, (chan, letter) in enumerate((("red", "R"), ("green", "G"),
+                                            ("blue", "B"))):
+            row_y = btn_h + gap + i * (chan_h + gap)
+            group.add(self.label((0, row_y, 18, chan_h), letter, size=11))
+            group.add(self.fader((20, row_y, w - 20, chan_h),
                                  f"{name}_{chan[0]}", addrs[chan], conns,
                                  horizontal=True, color=accent))
         parent.add(group)
         return group
-
-    def color_page(self, width: int, height: int) -> Node:
-        """Both pickers side by side in landscape, stacked in portrait."""
-        cp = self.spec["colorpicker"]
-        page = Node(GROUP, (0, 0, width, height), name="COLOR",
-                    color=self.colors["accent"], background=False, outline=False)
-        pad = 12
-        if self.portrait:
-            block_h = (height - 3 * pad) // 2
-            frames = ((pad, pad, width - 2 * pad, block_h),
-                      (pad, 2 * pad + block_h, width - 2 * pad, block_h))
-        else:
-            block_w = (width - 3 * pad) // 2
-            frames = ((pad, pad, block_w, height - 2 * pad),
-                      (2 * pad + block_w, pad, block_w, height - 2 * pad))
-
-        self.color_picker(page, frames[0], "resolume", cp["resolume"],
-                          self.res_conn, "resolume")
-        self.color_picker(page, frames[1], "touchdesigner", cp["touchdesigner"],
-                          self.td_conn, "td")
-        return page
 
     # -- assembly ----------------------------------------------------------
     def build(self) -> Node:
@@ -490,7 +486,6 @@ class Builder:
         tab_h = layout["tabbar_height"]
         pages = ((self.resolume_page(w, page_h), "RESOLUME"),
                  (self.fx_page(w, page_h), "FX"),
-                 (self.color_page(w, page_h), "COLOR"),
                  (self.td_page(w, page_h), "TOUCHDESIGNER"))
         for page, tab in pages:
             # Child coordinates stay relative to the page, so only the page's
@@ -499,6 +494,10 @@ class Builder:
             page.tab_label = tab
             pager.add(page)
         root.add(pager)
+        # The picker is a modal overlay: it covers the surface so its pane can
+        # dim everything behind the dialog, and must come last so it draws on
+        # top of the pages. It ships hidden and shows itself when notified.
+        root.add(Raw(vendor.color_picker(w, h)))
         return root
 
 

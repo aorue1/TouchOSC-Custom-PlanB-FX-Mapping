@@ -56,7 +56,9 @@ colors:
 # Geometry knobs used by the page builders.
 grid:
   layers: 4             # Resolume layers exposed
-  clips: 8              # clips per layer on the launch grid
+  clips: 8              # clips per layer per bank
+  banks: 4              # banks of clips; 4 x 8 = clips 1-32 per layer
+  bank_tabbar: 34       # height of the bank selector strip
   fx_params: 8          # knobs on the FX page
   td_faders: 8          # faders in the TD param bank
   td_pads: 2            # XY pads in the TD param bank
@@ -72,6 +74,10 @@ resolume:
   layer_bypass:   /composition/layers/{layer}/bypassed
   layer_solo:     /composition/layers/{layer}/solo
   layer_clear:    /composition/layers/{layer}/clear
+  # CONFIRM THESE in Arena (Shortcuts > Edit OSC, then click the control):
+  # the naming follows Resolume's style but is not verified.
+  clip_next:      /composition/layers/{layer}/connectnextclip
+  clip_prev:      /composition/layers/{layer}/connectpreviousclip
   master:         /composition/master
   speed:          /composition/speed
   tempo_tap:      /composition/tempocontroller/tempotap
