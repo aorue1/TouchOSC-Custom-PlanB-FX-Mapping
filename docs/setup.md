@@ -37,19 +37,26 @@ how a property is spelled, then diff that against one of ours. This is the
 reliable way to resolve the property guesses that the manual does not spell
 out — it is how the caption bug below should have been found.
 
-### Captions
+### Format notes
 
-A LABEL's `color` is its **background fill**, not its text colour — captions
-render light regardless, which is why the orange LAYER headers come out white
-on the device. Anything meant to read as coloured text has to be done with the
-fill behind it.
+`tools/tosc.py` follows [NicoG60/TouchMCU](https://github.com/NicoG60/TouchMCU),
+a working Mk2 layout generator, rather than inferring property names from how
+the app behaves. Three mistakes that each cost a round on the device:
 
-A LABEL's caption is a **value** named `text`, not a property, and a BUTTON
-draws no text at all. The first build got both wrong, so every label showed the
-default "Label" and buttons were bare. `tools/tosc.py` now writes captions as
-values, and `Builder.add_button` lays a non-interactive LABEL over each button
-so touches still reach the button underneath. If a caption ever goes back to
-reading "Label", that is the property-vs-value mistake returning.
+* **A LABEL's caption is a value named `text`**, not a property. Written as a
+  property it is ignored and the control shows its default "Label".
+* **A LABEL's `color` is its background fill; `textColor` is the text.** The
+  LAYER headers rendered white because only `color` was set.
+* **A pager's tab captions come from a `tabLabel` property on each page** — the
+  node's `name` is not used — and **each page's frame must be offset below the
+  tab bar** (`y = tabbarSize`), not drawn from the pager's top edge. Getting
+  this wrong gives a working pager with an empty tab bar, which is exactly what
+  the device showed.
+
+A BUTTON draws no text at all, so `Builder.add_button` lays a non-interactive
+LABEL over each button; `interactive=0` is what lets touches fall through to
+the button underneath. `tools/inspect_tosc.py` prints any layout's properties
+and values when something needs settling.
 
 ### Why two files, settled
 

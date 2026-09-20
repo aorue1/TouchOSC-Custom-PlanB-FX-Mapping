@@ -21,8 +21,8 @@ BUILD = os.path.join(ROOT, "build")
 
 # Controls smaller than this are hard to hit accurately on a tablet.
 MIN_TOUCH_PX = 28
-# Decorative types that are allowed to overlap the controls they annotate.
-NON_INTERACTIVE = {"LABEL", "GROUP", "PAGER"}
+# Containers are exempt from the touch-target and overlap rules.
+CONTAINERS = {"GROUP", "PAGER"}
 
 
 def frame_of(node: ET.Element):
@@ -31,6 +31,27 @@ def frame_of(node: ET.Element):
             v = prop.find("value")
             return tuple(int(v.findtext(a)) for a in ("x", "y", "w", "h"))
     return None
+
+
+def is_decorative(node: ET.Element) -> bool:
+    """True for anything that cannot be touched.
+
+    Captions and logo artwork are meant to overlap the controls they sit on
+    and are exempt from the touch-target rule; they carry interactive=0, which
+    is also what makes touches fall through to the control underneath.
+    """
+    if node.get("type") in CONTAINERS:
+        return True
+    for key, _, text in ((p.findtext("key"), p.get("type"), _prop_text(p))
+                         for p in node.findall("./properties/property")):
+        if key == "interactive":
+            return text in ("0", "false", "False")
+    return False
+
+
+def _prop_text(prop: ET.Element) -> str:
+    value = prop.find("value")
+    return (value.text if value is not None else "") or ""
 
 
 def name_of(node: ET.Element) -> str:
@@ -92,7 +113,7 @@ def check(path: str) -> list[str]:
             x, y, w, h = kframe
             if w <= 0 or h <= 0:
                 problems.append(f"{here}/{kname}: non-positive size {w}x{h}")
-            elif ktype not in NON_INTERACTIVE and min(w, h) < MIN_TOUCH_PX:
+            elif not is_decorative(kid) and min(w, h) < MIN_TOUCH_PX:
                 problems.append(f"{here}/{kname}: {w}x{h} is below the "
                                 f"{MIN_TOUCH_PX}px touch minimum")
             if frame is not None:
@@ -100,7 +121,7 @@ def check(path: str) -> list[str]:
                 if x < 0 or y < 0 or x + w > pw or y + h > ph:
                     problems.append(f"{here}/{kname}: frame {kframe} escapes "
                                     f"parent {pw}x{ph}")
-            if ktype not in NON_INTERACTIVE:
+            if not is_decorative(kid):
                 siblings.append((kname, kframe))
             for addr in address_of(kid):
                 addresses[addr].append(f"{here}/{kname}")

@@ -6,7 +6,8 @@ views. Built for an iPad Air (4th gen), in both portrait and landscape.
 
 The wordmark, monogram and badge size live under `branding:` in
 `spec/mapping.yaml`. TouchOSC draws controls as vector primitives and cannot
-load an image, so the mark is a monogram badge rather than the logo artwork.
+load an image, so the mark is *drawn* from shape primitives — a stem with two
+circular bowls, the way the logo is built — rather than being the logo file.
 
 ```
 ┌──────────────────────────────────────────────────────────┐

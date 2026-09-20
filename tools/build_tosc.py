@@ -20,7 +20,8 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tosc  # noqa: E402
-from tosc import BUTTON, FADER, GROUP, LABEL, PAGER, RADIAL, XY, Node, OscMessage  # noqa: E402
+from tosc import (BOX, BUTTON, FADER, GROUP, LABEL, PAGER, RADIAL, XY,  # noqa: E402
+                  Node, OscMessage, Orientation, Outline, Shape)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "mapping.yaml")
@@ -51,8 +52,8 @@ class Builder:
     # -- small control factories ------------------------------------------
     def label(self, frame, text, size=14, color="text") -> Node:
         return Node(LABEL, frame, name=f"lbl_{text}", text=text, text_size=size,
-                    color=self.colors[color], background=False, outline=False,
-                    interactive=False)
+                    text_color=self.colors[color], background=False,
+                    outline=False, interactive=False)
 
     def add_button(self, parent: Node, frame, name, path, conns, *, toggle=False,
                    color="panel", text="", text_size=14, constant_args=()) -> Node:
@@ -81,7 +82,7 @@ class Builder:
 
     def fader(self, frame, name, path, conns, *, horizontal=False, color="panel") -> Node:
         fdr = Node(FADER, frame, name=name, color=self.colors[color],
-                   orientation=1 if horizontal else 0)
+                   orientation=Orientation.EAST if horizontal else Orientation.NORTH)
         fdr.messages.append(OscMessage(path, conns))
         return fdr
 
@@ -107,23 +108,36 @@ class Builder:
         brand = self.spec["branding"]
         size = min(brand["badge"], height - 8)
         badge_y = y + (height - size) // 2
+        ink = self.colors["brand"]
 
-        # A LABEL's colour fills its background; the caption itself draws light
-        # whatever the colour is (the orange LAYER headers render white on
-        # device). So the badge is a dark tile with a light monogram, not a
-        # light tile that would leave the monogram unreadable.
-        badge = Node(LABEL, (x, badge_y, size, size), name="brand_badge",
-                     text=brand["monogram"], text_size=max(14, size - 18),
-                     color=self.colors["panel"], background=True, outline=True,
-                     interactive=False)
-        parent.add(badge)
+        # The logo artwork cannot be embedded — TouchOSC draws controls as
+        # vector primitives and loads no images — so the mark is constructed
+        # the way the logo is: a stem with two bowls set against it.
+        mark = Node(GROUP, (x, badge_y, size, size), name="brand_mark",
+                    background=False, outline=False, interactive=False)
+        stem_w = max(3, size // 9)
+        mark.add(Node(BOX, (size // 6, 0, stem_w, size), name="brand_stem",
+                      color=ink, shape=Shape.RECTANGLE, background=True,
+                      outline=False, interactive=False, corner_radius=0))
+        bowl_x = size // 6 + stem_w - 1
+        top_d = int(size * 0.52)
+        bot_d = int(size * 0.62)
+        mark.add(Node(BOX, (bowl_x, 0, top_d, top_d), name="brand_bowl_top",
+                      color=ink, shape=Shape.CIRCLE, background=False,
+                      outline=True, outline_style=Outline.FULL,
+                      interactive=False))
+        mark.add(Node(BOX, (bowl_x, size - bot_d, bot_d, bot_d),
+                      name="brand_bowl_bottom", color=ink, shape=Shape.CIRCLE,
+                      background=False, outline=True,
+                      outline_style=Outline.FULL, interactive=False))
+        parent.add(mark)
 
         word_w = 0 if self.portrait else 150
         if word_w:
             parent.add(Node(LABEL, (x + size + 8, y + 8, word_w, height - 16),
                             name="brand_wordmark", text=brand["wordmark"],
-                            text_size=19, color=self.colors["brand"],
-                            background=False, outline=False, interactive=False))
+                            text_size=19, text_color=ink, background=False,
+                            outline=False, interactive=False))
         return x + size + (word_w + 8 if word_w else 0)
 
     def global_strip(self, width: int, height: int) -> Node:
@@ -376,14 +390,25 @@ class Builder:
         page_h = pager_h - layout["tabbar_height"]
         pager = Node(PAGER, (0, strip_h, w, pager_h), name="views",
                      color=self.colors["panel"],
+                     background=False, outline=False,
                      extra_props={
-                         "tabLabels": ("b", 1),
-                         "tabbarDoubleTap": ("b", 0),
+                         "tabbar": ("b", 1),
                          "tabbarSize": ("i", layout["tabbar_height"]),
+                         "tabbarDoubleTap": ("b", 0),
+                         "tabLabels": ("b", 1),
+                         "textSizeOff": ("i", 15),
+                         "textSizeOn": ("i", 15),
                      })
-        pager.add(self.resolume_page(w, page_h))
-        pager.add(self.fx_page(w, page_h))
-        pager.add(self.td_page(w, page_h))
+        tab_h = layout["tabbar_height"]
+        pages = ((self.resolume_page(w, page_h), "RESOLUME"),
+                 (self.fx_page(w, page_h), "FX"),
+                 (self.td_page(w, page_h), "TOUCHDESIGNER"))
+        for page, tab in pages:
+            # Child coordinates stay relative to the page, so only the page's
+            # own frame moves down past the tab bar.
+            page.frame = (0, tab_h, w, page_h)
+            page.tab_label = tab
+            pager.add(page)
         root.add(pager)
         return root
 
