@@ -44165,9 +44165,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -44209,15 +44209,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -44531,9 +44540,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -44575,15 +44584,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -44897,9 +44915,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -44941,15 +44959,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -45263,9 +45290,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -45307,15 +45334,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -45629,9 +45665,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -45673,15 +45709,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -45995,9 +46040,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -46039,15 +46084,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -46361,9 +46415,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -46405,15 +46459,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -46727,9 +46790,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -46771,15 +46834,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -47207,9 +47279,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -47251,15 +47323,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -47573,9 +47654,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -47617,15 +47698,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -47939,9 +48029,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -47983,15 +48073,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -48305,9 +48404,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -48349,15 +48448,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -48671,9 +48779,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -48715,15 +48823,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -49037,9 +49154,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -49081,15 +49198,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -49403,9 +49529,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -49447,15 +49573,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -49769,9 +49904,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -49813,15 +49948,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -50249,9 +50393,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -50293,15 +50437,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -50615,9 +50768,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -50659,15 +50812,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -50981,9 +51143,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -51025,15 +51187,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -51347,9 +51518,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -51391,15 +51562,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -51713,9 +51893,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -51757,15 +51937,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -52079,9 +52268,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -52123,15 +52312,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -52445,9 +52643,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -52489,15 +52687,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -52811,9 +53018,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -52855,15 +53062,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -53291,9 +53507,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -53335,15 +53551,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -53657,9 +53882,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -53701,15 +53926,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -54023,9 +54257,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -54067,15 +54301,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -54389,9 +54632,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -54433,15 +54676,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -54755,9 +55007,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -54799,15 +55051,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -55121,9 +55382,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -55165,15 +55426,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -55487,9 +55757,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -55531,15 +55801,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -55853,9 +56132,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>1.000000</r>
-                      <g>0.250000</g>
-                      <b>0.160000</b>
+                      <r>0.110000</r>
+                      <g>0.280000</g>
+                      <b>0.720000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -55897,15 +56176,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local function paint()
+                    <value>local low  = { 0.110, 0.280, 0.720 }
+local mid  = { 0.100, 0.780, 0.820 }
+local high = { 0.250, 0.950, 0.380 }
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
+local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v &lt; 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()

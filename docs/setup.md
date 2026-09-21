@@ -180,16 +180,27 @@ On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 
 ## 7. The FX page
 
-Every FX control repaints itself by value: red at rest, amber through the
-middle, green at full. A glance across the matrix reads as a level meter
-rather than a wall of identical grey, and the resting state is legible because
-a control's colour tints its background as well as its bar — grey on dark was
-the problem.
+Every FX control repaints itself by value, interpolating between three stops:
+deep blue at rest, cyan halfway, green at full. A glance across the matrix
+reads as a level meter rather than a wall of identical grey, and the resting
+state is legible because a control's colour tints its background as well as
+its bar — grey on dark was the problem, and a bar-only fix would have left
+zero looking the same.
 
-The scale lives in `FX_COLOR_SCRIPT` in `tools/build_tosc.py`: `init()` paints
-the resting colour when the surface loads and `onValueChanged` repaints on
-every move. `colors.fx_low` in the spec is the resting colour the script
-starts from, so a layout that never gets touched still shows it.
+The stops are data, in `fx_scale` in the spec:
+
+```yaml
+fx_scale:
+  low:  [0.11, 0.28, 0.72, 1.0]
+  mid:  [0.10, 0.78, 0.82, 1.0]
+  high: [0.25, 0.95, 0.38, 1.0]
+```
+
+`tools/build_tosc.py` bakes them into the per-control script, so changing the
+scale is a spec edit and a rebuild. `init()` paints the resting colour when the
+surface loads, so an untouched layout still shows it; `onValueChanged` repaints
+on every move. Cool at the bottom is deliberate: red at rest reads as a fault
+on a dark stage.
 
 Landscape draws these as dials, portrait as horizontal faders — the portrait
 cells are wide and short, where a dial wastes the width.

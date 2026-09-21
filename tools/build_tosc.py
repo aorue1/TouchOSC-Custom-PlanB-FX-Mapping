@@ -28,19 +28,27 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "mapping.yaml")
 BUILD = os.path.join(ROOT, "build")
 
-# FX controls colour themselves by value: red at rest, amber through the
-# middle, green at full, so a glance across the matrix reads as a level meter
-# rather than a wall of identical grey.
-FX_COLOR_SCRIPT = """
+# FX controls colour themselves by value, interpolating between the three
+# stops in the spec. Built per layout so the stops stay data, not code.
+FX_COLOR_TEMPLATE = """
+local low  = {{ {low} }}
+local mid  = {{ {mid} }}
+local high = {{ {high} }}
+
+local function mix(a, b, t)
+  return a + (b - a) * t
+end
+
 local function paint()
   local v = self.values.x
-  local r, g
+  local c1, c2, t
   if v < 0.5 then
-    r, g = 1.0, 0.25 + v * 1.5
+    c1, c2, t = low, mid, v * 2
   else
-    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+    c1, c2, t = mid, high, (v - 0.5) * 2
   end
-  self.color = Color(r, g, 0.16, 1)
+  self.color = Color(mix(c1[1], c2[1], t), mix(c1[2], c2[2], t),
+                     mix(c1[3], c2[3], t), 1)
 end
 
 function init()
@@ -51,6 +59,15 @@ function onValueChanged(key)
   if key == 'x' then paint() end
 end
 """.strip()
+
+
+def fx_color_script(scale: dict) -> str:
+    """Bake the spec's colour stops into the per-control repaint script."""
+    def stop(key):
+        return ", ".join(f"{float(c):.3f}" for c in scale[key][:3])
+    return FX_COLOR_TEMPLATE.format(low=stop("low"), mid=stop("mid"),
+                                    high=stop("high"))
+
 
 # Opens the vendored ColorPicker and writes the result into the R/G/B faders
 # beside it, which are what actually send the OSC.
@@ -100,6 +117,8 @@ class Builder:
         self.width, self.height = size["width"], size["height"]
         self.portrait = self.height > self.width
         self.colors = {k: tuple(v) for k, v in spec["colors"].items()}
+        self.fx_script = fx_color_script(spec["fx_scale"])
+        self.colors["fx_low"] = tuple(spec["fx_scale"]["low"])
         self.res_conn = tosc.connections(spec["connections"]["resolume"]["slot"])
         self.td_conn = tosc.connections(spec["connections"]["touchdesigner"]["slot"])
 
@@ -390,7 +409,7 @@ class Builder:
                     # horizontal fader uses the width and reads at a glance.
                     page.add(self.fader((x + pad, y + pad, cell_w, knob_h), name,
                                         addr, self.res_conn, horizontal=True,
-                                        color="fx_low", script=FX_COLOR_SCRIPT))
+                                        color="fx_low", script=self.fx_script))
                 else:
                     # Keep dials circular: square them and centre in the cell.
                     size = min(cell_w, knob_h)
@@ -398,7 +417,7 @@ class Builder:
                                           y + pad + (knob_h - size) // 2,
                                           size, size), name, addr,
                                          self.res_conn, color="fx_low",
-                                         script=FX_COLOR_SCRIPT))
+                                         script=self.fx_script))
                 self.add_button(page, (x + pad, y + pad + knob_h + 2,
                                        col_w - 2 * pad, byp_h),
                                 f"L{layer}_{fx['fx']}_byp",
