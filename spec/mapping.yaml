@@ -52,6 +52,9 @@ colors:
   danger:    [0.85, 0.15, 0.25, 1.0]
   text:      [0.92, 0.92, 0.94, 1.0]
   brand:     [0.90, 0.90, 0.90, 1.0]
+  # FX controls repaint themselves by value (red -> amber -> green); this is
+  # the resting colour they start from.
+  fx_low:    [1.00, 0.25, 0.16, 1.0]
 
 # Geometry knobs used by the page builders.
 grid:

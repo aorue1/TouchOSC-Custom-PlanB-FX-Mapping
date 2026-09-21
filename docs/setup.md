@@ -178,7 +178,23 @@ you actually want to drive; whatever address it reports goes in the spec.
 On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 `/b`, wired in `touchdesigner/osc_router.py` to a Constant TOP by default.
 
-## 7. Changing the surface
+## 7. The FX page
+
+Every FX control repaints itself by value: red at rest, amber through the
+middle, green at full. A glance across the matrix reads as a level meter
+rather than a wall of identical grey, and the resting state is legible because
+a control's colour tints its background as well as its bar — grey on dark was
+the problem.
+
+The scale lives in `FX_COLOR_SCRIPT` in `tools/build_tosc.py`: `init()` paints
+the resting colour when the surface loads and `onValueChanged` repaints on
+every move. `colors.fx_low` in the spec is the resting colour the script
+starts from, so a layout that never gets touched still shows it.
+
+Landscape draws these as dials, portrait as horizontal faders — the portrait
+cells are wide and short, where a dial wastes the width.
+
+## 8. Changing the surface
 
 Everything about the layout comes from `spec/mapping.yaml` — grid sizes,
 colours, ports, addresses. Change it and re-run `make`. The uncompressed

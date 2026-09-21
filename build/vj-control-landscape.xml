@@ -44165,9 +44165,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -44209,7 +44209,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -44514,9 +44531,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -44558,7 +44575,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -44863,9 +44897,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -44907,7 +44941,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -45212,9 +45263,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -45256,7 +45307,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -45561,9 +45629,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -45605,7 +45673,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -45910,9 +45995,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -45954,7 +46039,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -46259,9 +46361,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -46303,7 +46405,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -46608,9 +46727,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -46652,7 +46771,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -47071,9 +47207,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -47115,7 +47251,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -47420,9 +47573,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -47464,7 +47617,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -47769,9 +47939,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -47813,7 +47983,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -48118,9 +48305,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -48162,7 +48349,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -48467,9 +48671,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -48511,7 +48715,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -48816,9 +49037,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -48860,7 +49081,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -49165,9 +49403,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -49209,7 +49447,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -49514,9 +49769,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -49558,7 +49813,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -49977,9 +50249,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -50021,7 +50293,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -50326,9 +50615,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -50370,7 +50659,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -50675,9 +50981,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -50719,7 +51025,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -51024,9 +51347,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -51068,7 +51391,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -51373,9 +51713,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -51417,7 +51757,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -51722,9 +52079,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -51766,7 +52123,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -52071,9 +52445,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -52115,7 +52489,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -52420,9 +52811,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -52464,7 +52855,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -52883,9 +53291,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -52927,7 +53335,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -53232,9 +53657,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -53276,7 +53701,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -53581,9 +54023,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -53625,7 +54067,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -53930,9 +54389,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -53974,7 +54433,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -54279,9 +54755,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -54323,7 +54799,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -54628,9 +55121,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -54672,7 +55165,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -54977,9 +55487,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -55021,7 +55531,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>
@@ -55326,9 +55853,9 @@ end</value>
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.160000</r>
-                      <g>0.160000</g>
-                      <b>0.190000</b>
+                      <r>1.000000</r>
+                      <g>0.250000</g>
+                      <b>0.160000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -55370,7 +55897,24 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local function paint()
+  local v = self.values.x
+  local r, g
+  if v &lt; 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end</value>
                   </property>
                 </properties>
                 <values>

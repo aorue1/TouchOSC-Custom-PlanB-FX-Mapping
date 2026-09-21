@@ -28,6 +28,30 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "mapping.yaml")
 BUILD = os.path.join(ROOT, "build")
 
+# FX controls colour themselves by value: red at rest, amber through the
+# middle, green at full, so a glance across the matrix reads as a level meter
+# rather than a wall of identical grey.
+FX_COLOR_SCRIPT = """
+local function paint()
+  local v = self.values.x
+  local r, g
+  if v < 0.5 then
+    r, g = 1.0, 0.25 + v * 1.5
+  else
+    r, g = 1.0 - (v - 0.5) * 1.9, 1.0
+  end
+  self.color = Color(r, g, 0.16, 1)
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end
+""".strip()
+
 # Opens the vendored ColorPicker and writes the result into the R/G/B faders
 # beside it, which are what actually send the OSC.
 SWATCH_SCRIPT = """
@@ -123,14 +147,15 @@ class Builder:
                                        trigger="ANY" if toggle else "RISE"))
         return btn
 
-    def fader(self, frame, name, path, conns, *, horizontal=False, color="panel") -> Node:
-        fdr = Node(FADER, frame, name=name, color=self.colors[color],
+    def fader(self, frame, name, path, conns, *, horizontal=False, color="panel",
+              script="") -> Node:
+        fdr = Node(FADER, frame, name=name, color=self.colors[color], script=script,
                    orientation=Orientation.EAST if horizontal else Orientation.NORTH)
         fdr.messages.append(OscMessage(path, conns))
         return fdr
 
-    def radial(self, frame, name, path, conns, color="panel") -> Node:
-        knob = Node(RADIAL, frame, name=name, color=self.colors[color])
+    def radial(self, frame, name, path, conns, color="panel", script="") -> Node:
+        knob = Node(RADIAL, frame, name=name, color=self.colors[color], script=script)
         knob.messages.append(OscMessage(path, conns))
         return knob
 
@@ -365,14 +390,15 @@ class Builder:
                     # horizontal fader uses the width and reads at a glance.
                     page.add(self.fader((x + pad, y + pad, cell_w, knob_h), name,
                                         addr, self.res_conn, horizontal=True,
-                                        color="panel"))
+                                        color="fx_low", script=FX_COLOR_SCRIPT))
                 else:
                     # Keep dials circular: square them and centre in the cell.
                     size = min(cell_w, knob_h)
                     page.add(self.radial((x + pad + (cell_w - size) // 2,
                                           y + pad + (knob_h - size) // 2,
                                           size, size), name, addr,
-                                         self.res_conn, color="panel"))
+                                         self.res_conn, color="fx_low",
+                                         script=FX_COLOR_SCRIPT))
                 self.add_button(page, (x + pad, y + pad + knob_h + 2,
                                        col_w - 2 * pad, byp_h),
                                 f"L{layer}_{fx['fx']}_byp",
