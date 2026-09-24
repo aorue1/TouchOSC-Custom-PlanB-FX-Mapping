@@ -145,7 +145,7 @@ touchdesigner:
 tempo:
   min_bpm: 20
   max_bpm: 500
-  default_bpm: 128
+  default_bpm: 125
   nudge: 1
 
 # ---------------------------------------------------------------------------

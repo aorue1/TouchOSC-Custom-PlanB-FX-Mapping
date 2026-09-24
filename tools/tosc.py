@@ -303,7 +303,7 @@ class Node:
             return
         _value("touch", "false")
         if self.type in (BUTTON, FADER, XY, RADIAL, PAGER):
-            _value("x", "0.0")
+            _value("x", f"{self.value_default:.6f}")
         if self.type == XY:
             _value("y", "0.0")
 
