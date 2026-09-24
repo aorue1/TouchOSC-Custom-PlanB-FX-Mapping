@@ -171,7 +171,13 @@ def diagram(path: str, page_index: int, title: str, subtitle: str,
 
     boxes = frames(path, page_index)
     marks, legend = [], []
+    # A long legend in one column leaves the page render floating in empty
+    # space, so past a handful of callouts it runs in two.
+    columns = 2 if len(callouts) > 7 else 1
+    col_w = LEGEND_W if columns == 1 else LEGEND_W - 40
+    per_col = -(-len(callouts) // columns)
     ly = PAD + 74
+    col = 0
     for i, (label, names, note) in enumerate(callouts, start=1):
         targets = [boxes[n] for n in names if n in boxes]
         if not targets:
@@ -191,27 +197,33 @@ def diagram(path: str, page_index: int, title: str, subtitle: str,
             f'font-family="Helvetica,Arial,sans-serif" font-size="16" '
             f'font-weight="bold" fill="#141416">{i}</text>')
 
+        if i > 1 and (i - 1) % per_col == 0:
+            col += 1
+            ly = PAD + 74
+        lx = pw + PAD + col * col_w
+
         legend.append(
-            f'<circle cx="{pw + PAD + 14:.1f}" cy="{ly - 5:.1f}" r="14" '
+            f'<circle cx="{lx + 14:.1f}" cy="{ly - 5:.1f}" r="14" '
             f'fill="{ACCENT}"/>'
-            f'<text x="{pw + PAD + 14:.1f}" y="{ly + 1:.1f}" text-anchor="middle" '
+            f'<text x="{lx + 14:.1f}" y="{ly + 1:.1f}" text-anchor="middle" '
             f'font-family="Helvetica,Arial,sans-serif" font-size="15" '
             f'font-weight="bold" fill="#141416">{i}</text>')
         legend.append(
-            f'<text x="{pw + PAD + 38:.1f}" y="{ly:.1f}" '
+            f'<text x="{lx + 38:.1f}" y="{ly:.1f}" '
             f'font-family="Helvetica,Arial,sans-serif" font-size="16" '
             f'font-weight="bold" fill="{INK}">{esc(label)}</text>')
         ly += 22
-        for line in wrap(note, 40):
+        for line in wrap(note, 34 if columns == 2 else 40):
             legend.append(
-                f'<text x="{pw + PAD + 38:.1f}" y="{ly:.1f}" '
+                f'<text x="{lx + 38:.1f}" y="{ly:.1f}" '
                 f'font-family="Helvetica,Arial,sans-serif" font-size="13.5" '
                 f'fill="#a9a9b2">{esc(line)}</text>')
             ly += 18
         ly += 14
+        tallest = max(locals().get("tallest", 0), ly)
 
-    width = pw + LEGEND_W + 2 * PAD
-    height = max(ph, ly) + PAD
+    width = pw + columns * col_w + 2 * PAD
+    height = max(ph, tallest) + PAD
     svg = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width:.0f}" '
         f'height="{height:.0f}" viewBox="0 0 {width:.0f} {height:.0f}">',

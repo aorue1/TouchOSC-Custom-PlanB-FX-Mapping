@@ -57,6 +57,136 @@ def css_color(c: dict | str, default="#888") -> str:
     return f"rgba({r},{g},{b},{a:.3f})"
 
 
+TRACK = "#0f0f12"          # the recessed face a control is drawn into
+EDGE = "rgba(255,255,255,0.10)"
+
+
+def corners(x, y, w, h, colour, length=None):
+    """TouchOSC's default outline: brackets at the corners, not a full box."""
+    # Short brackets: at clip-grid density, long ones from adjacent controls
+    # meet and read as a cross-hatch rather than as separate controls.
+    n = length or min(9.0, w / 5, h / 5)
+    d = []
+    for cx, cy, sx, sy in ((x, y, 1, 1), (x + w, y, -1, 1),
+                           (x, y + h, 1, -1), (x + w, y + h, -1, -1)):
+        d.append(f'M {cx + sx * n:.1f} {cy:.1f} L {cx:.1f} {cy:.1f} '
+                 f'L {cx:.1f} {cy + sy * n:.1f}')
+    return [f'<path d="{" ".join(d)}" fill="none" stroke="{colour}" '
+            f'stroke-width="1.6" opacity="0.85"/>']
+
+
+def value_of_x(p) -> float:
+    return 0.0
+
+
+def fader(x, y, w, h, colour, p):
+    """Dark track, a bar from the low end, and grid ticks when it snaps."""
+    vertical = int(p.get("orientation") or 0) in (0, 2)
+    out = [f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" '
+           f'rx="3" fill="{TRACK}" stroke="{EDGE}" stroke-width="1"/>']
+
+    steps = int(p.get("gridSteps") or 0) if p.get("grid") == "1" else 0
+    if steps > 1:
+        for i in range(1, steps):
+            t = i / steps
+            if vertical:
+                gy = y + h - t * h
+                out.append(f'<line x1="{x + 3:.1f}" y1="{gy:.1f}" '
+                           f'x2="{x + w - 3:.1f}" y2="{gy:.1f}" '
+                           f'stroke="{EDGE}" stroke-width="1"/>')
+            else:
+                gx = x + t * w
+                out.append(f'<line x1="{gx:.1f}" y1="{y + 3:.1f}" '
+                           f'x2="{gx:.1f}" y2="{y + h - 3:.1f}" '
+                           f'stroke="{EDGE}" stroke-width="1"/>')
+
+    # A doc image of controls all sitting at zero reads as broken rather than
+    # idle, so the bar is drawn at a nominal level to show which way it runs.
+    level = 0.34
+    if vertical:
+        bh = h * level
+        out.append(f'<rect x="{x + 2:.1f}" y="{y + h - bh:.1f}" '
+                   f'width="{w - 4:.1f}" height="{bh - 2:.1f}" rx="2" '
+                   f'fill="{colour}" opacity="0.9"/>')
+        out.append(f'<line x1="{x + 2:.1f}" y1="{y + h - bh:.1f}" '
+                   f'x2="{x + w - 2:.1f}" y2="{y + h - bh:.1f}" '
+                   f'stroke="#fff" stroke-width="1.5" opacity="0.75"/>')
+    else:
+        bw = w * level
+        out.append(f'<rect x="{x + 2:.1f}" y="{y + 2:.1f}" width="{bw - 2:.1f}" '
+                   f'height="{h - 4:.1f}" rx="2" fill="{colour}" opacity="0.9"/>')
+        out.append(f'<line x1="{x + bw:.1f}" y1="{y + 2:.1f}" '
+                   f'x2="{x + bw:.1f}" y2="{y + h - 2:.1f}" '
+                   f'stroke="#fff" stroke-width="1.5" opacity="0.75"/>')
+    return out
+
+
+def radial(x, y, w, h, colour, p):
+    """A ring dial: dark face, track ring, coloured arc and a pointer."""
+    import math
+    cx, cy = x + w / 2, y + h / 2
+    r = min(w, h) / 2 - 2
+    start, sweep = 135.0, 270.0
+    level = 0.34
+    out = [f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" fill="{TRACK}" '
+           f'stroke="{EDGE}" stroke-width="1"/>']
+
+    def arc(frm, to, stroke, width, opacity):
+        rr = r - width / 2 - 1
+        a0, a1 = math.radians(frm), math.radians(to)
+        x0, y0 = cx + rr * math.cos(a0), cy + rr * math.sin(a0)
+        x1, y1 = cx + rr * math.cos(a1), cy + rr * math.sin(a1)
+        large = 1 if (to - frm) % 360 > 180 else 0
+        return (f'<path d="M {x0:.1f} {y0:.1f} A {rr:.1f} {rr:.1f} 0 {large} 1 '
+                f'{x1:.1f} {y1:.1f}" fill="none" stroke="{stroke}" '
+                f'stroke-width="{width:.1f}" stroke-linecap="round" '
+                f'opacity="{opacity}"/>')
+
+    thickness = max(3.0, r * 0.22)
+    out.append(arc(start, start + sweep, EDGE, thickness, 1))
+    out.append(arc(start, start + sweep * level, colour, thickness, 0.95))
+
+    ang = math.radians(start + sweep * level)
+    inner = r - thickness - 2
+    out.append(f'<line x1="{cx:.1f}" y1="{cy:.1f}" '
+               f'x2="{cx + inner * math.cos(ang):.1f}" '
+               f'y2="{cy + inner * math.sin(ang):.1f}" stroke="#fff" '
+               f'stroke-width="1.8" opacity="0.8" stroke-linecap="round"/>')
+    return out
+
+
+def xy_pad(x, y, w, h, colour):
+    """Dark field with crosshairs and a cursor."""
+    px, py = x + w * 0.42, y + h * 0.55
+    return [
+        f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="3" '
+        f'fill="{TRACK}" stroke="{EDGE}" stroke-width="1"/>',
+        f'<line x1="{x:.1f}" y1="{py:.1f}" x2="{x + w:.1f}" y2="{py:.1f}" '
+        f'stroke="{colour}" stroke-width="1" opacity="0.5"/>',
+        f'<line x1="{px:.1f}" y1="{y:.1f}" x2="{px:.1f}" y2="{y + h:.1f}" '
+        f'stroke="{colour}" stroke-width="1" opacity="0.5"/>',
+        f'<circle cx="{px:.1f}" cy="{py:.1f}" r="7" fill="none" '
+        f'stroke="{colour}" stroke-width="2"/>',
+    ]
+
+
+def button(x, y, w, h, colour, has_bg, has_outline, shape):
+    """A dark face tinted with the button's colour, plus corner brackets."""
+    if shape == CIRCLE:
+        body = (f'<ellipse cx="{x + w / 2:.1f}" cy="{y + h / 2:.1f}" '
+                f'rx="{w / 2:.1f}" ry="{h / 2:.1f}"')
+    else:
+        body = (f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" '
+                f'height="{h:.1f}" rx="3"')
+    out = []
+    if has_bg:
+        out.append(f'{body} fill="{TRACK}"/>')
+        out.append(f'{body} fill="{colour}" opacity="0.22"/>')
+    if has_outline:
+        out.extend(corners(x, y, w, h, colour))
+    return out
+
+
 def draw(node: ET.Element, ox: float, oy: float, out: list) -> None:
     p = props(node)
     frame = p.get("frame", {})
@@ -78,18 +208,25 @@ def draw(node: ET.Element, ox: float, oy: float, out: list) -> None:
     has_outline = p.get("outline", "1") == "1"
     shape = int(p.get("shape") or RECTANGLE)
 
-    if ntype not in ("GROUP", "PAGER", "LABEL"):
-        body = ""
-        if shape == CIRCLE:
-            body = (f'<ellipse cx="{x + w / 2:.1f}" cy="{y + h / 2:.1f}" '
-                    f'rx="{w / 2:.1f}" ry="{h / 2:.1f}"')
-        else:
-            body = f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="2"'
+    if ntype in ("GROUP", "PAGER"):
+        if has_bg:
+            out.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" '
+                       f'height="{h:.1f}" fill="{fill}" rx="3"/>')
+    elif ntype == "FADER":
+        out.extend(fader(x, y, w, h, fill, p))
+    elif ntype == "RADIAL":
+        out.extend(radial(x, y, w, h, fill, p))
+    elif ntype == "XY":
+        out.extend(xy_pad(x, y, w, h, fill))
+    elif ntype == "BUTTON":
+        out.extend(button(x, y, w, h, fill, has_bg, has_outline, shape))
+    elif ntype == "BOX":
+        body = (f'<ellipse cx="{x + w / 2:.1f}" cy="{y + h / 2:.1f}" '
+                f'rx="{w / 2:.1f}" ry="{h / 2:.1f}"' if shape == CIRCLE
+                else f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" '
+                     f'height="{h:.1f}" rx="3"')
         out.append(f'{body} fill="{fill if has_bg else "none"}" '
                    f'stroke="{fill if has_outline else "none"}" stroke-width="1.5"/>')
-    elif ntype in ("GROUP", "PAGER") and has_bg:
-        out.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" '
-                   f'fill="{fill}"/>')
 
     if ntype == "LABEL":
         text = value_of(node, "text")
