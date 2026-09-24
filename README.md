@@ -181,11 +181,19 @@ Resolume addresses effects by their name in the chain.
 | `tools/verify.py` | Geometry and address checks on the built layouts |
 | `tools/preview.py` | Renders a layout to SVG, to check it without a device |
 | `tools/page_diagram.py` | The annotated diagrams above |
+| `docs/img/screen-*.webp` | Device screenshots the diagrams are drawn over |
 | `tools/inspect_tosc.py` | Prints the control tree / property summary of any `.tosc` |
 | `tools/build_probe.py` | The rotation probe |
 | `touchdesigner/osc_router.py` | OSC In DAT callbacks for the TouchDesigner side |
 | `docs/setup.md` | Wiring up Resolume, TouchDesigner and the tablet |
 | `docs/osc-map.md` | Generated address reference |
+
+The three diagrams above are real screenshots from the iPad with the callouts
+composited on top. They are not drawn by hand: the layout is a fixed size and
+a screenshot is that layout scaled, so `tools/page_diagram.py` projects each
+control's actual frame onto the image and anchors the callouts to controls by
+name. Replace a screenshot, re-run `./tools/render_diagrams.sh`, and the
+annotations land in the right places again.
 
 ```sh
 python3 tools/build_tosc.py                 # both orientations

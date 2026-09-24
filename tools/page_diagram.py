@@ -12,6 +12,7 @@ of leaving the docs quietly wrong.
 from __future__ import annotations
 
 import argparse
+import base64
 import os
 import sys
 from xml.etree import ElementTree as ET
@@ -25,6 +26,9 @@ BUILD = os.path.join(ROOT, "build")
 OUT_DIR = os.path.join(ROOT, "docs", "img")
 
 LEGEND_W = 330
+# Width the screenshot is displayed at in the diagram. The layout's own
+# geometry is scaled to match, so callouts land on the real controls.
+SHOT_W = 1400
 PAD = 24
 INK = "#e8e8ea"
 ACCENT = "#ffd23f"
@@ -159,17 +163,31 @@ def wrap(text: str, width: int) -> list:
 
 
 def diagram(path: str, page_index: int, title: str, subtitle: str,
-            callouts: list, out: str) -> str:
+            callouts: list, out: str, shot: str | None = None) -> str:
     root = read_xml(path).find("node")
     frame = preview.props(root).get("frame", {})
     pw, ph = float(frame.get("w", 0)), float(frame.get("h", 0))
 
     preview.PAGE_INDEX[0] = page_index
     preview.SHOW_HIDDEN[0] = False
-    body: list[str] = []
-    preview.draw(root, 0, 0, body)
-
     boxes = frames(path, page_index)
+
+    if shot:
+        # A photograph of the real surface beats a drawing of it. The layout
+        # is a fixed size and the screenshot is that layout scaled, so one
+        # factor maps every control's frame onto the image.
+        scale = SHOT_W / pw
+        pw, ph = SHOT_W, ph * scale
+        boxes = {k: tuple(v * scale for v in box) for k, box in boxes.items()}
+        # Embedded, not referenced: an SVG rendered inside an <img> (which is
+        # how a browser and GitHub both treat it) does not load external
+        # images, so a linked screenshot silently renders as nothing.
+        data = base64.b64encode(open(shot, "rb").read()).decode()
+        body = [f'<image href="data:image/webp;base64,{data}" x="0" y="0" '
+                f'width="{pw:.0f}" height="{ph:.0f}"/>']
+    else:
+        body = []
+        preview.draw(root, 0, 0, body)
     marks, legend = [], []
     # A long legend in one column leaves the page render floating in empty
     # space, so past a handful of callouts it runs in two.
@@ -223,7 +241,9 @@ def diagram(path: str, page_index: int, title: str, subtitle: str,
         tallest = max(locals().get("tallest", 0), ly)
 
     width = pw + columns * col_w + 2 * PAD
-    height = max(ph, tallest) + PAD
+    # Room below the image as well as above it, or the last row of controls
+    # sits flush against the edge and reads as cropped.
+    height = max(ph, tallest) + 2 * PAD
     svg = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width:.0f}" '
         f'height="{height:.0f}" viewBox="0 0 {width:.0f} {height:.0f}">',
@@ -253,8 +273,10 @@ def main() -> int:
     args = ap.parse_args()
 
     for stem, index, title, subtitle, callouts in PAGES:
+        shot = os.path.join(args.outdir, f"screen-{stem}.webp")
         out = diagram(args.layout, index, title, subtitle, callouts,
-                      os.path.join(args.outdir, f"page-{stem}.svg"))
+                      os.path.join(args.outdir, f"page-{stem}.svg"),
+                      shot if os.path.exists(shot) else None)
         print(f"wrote {out}")
     return 0
 

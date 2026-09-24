@@ -4,21 +4,32 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 CHROME="${CHROME:-/opt/pw-browsers/chromium-1194/chrome-linux/chrome}"
+SCRATCH="$(mktemp -d)"
+trap 'rm -rf "$SCRATCH"' EXIT
 
 python3 tools/page_diagram.py
 
 for svg in docs/img/page-*.svg; do
   png="${svg%.svg}.png"
-  # Size the window to the SVG so the PNG has no dead margin.
   read -r w h < <(python3 - "$svg" <<'PY'
 import re, sys
 head = open(sys.argv[1]).read(400)
-w = re.search(r'width="(\d+)"', head).group(1)
-h = re.search(r'height="(\d+)"', head).group(1)
-print(int(w) + 16, int(h) + 60)
+print(re.search(r'width="(\d+)"', head).group(1),
+      re.search(r'height="(\d+)"', head).group(1))
 PY
 )
+  # Wrap the SVG in a page whose background matches it: the viewport is given
+  # slack so a large embedded screenshot is never clipped mid-decode, and the
+  # slack is invisible rather than a white band.
+  cat > "$SCRATCH/wrap.html" <<HTML
+<html><body style="margin:0;background:#141416">
+<img src="page-$(basename "${svg%.svg}" | sed 's/^page-//').svg" width="$w" height="$h" style="display:block">
+</body></html>
+HTML
+  cp "$SCRATCH/wrap.html" docs/img/.wrap.html
   "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars \
-    --window-size="$w,$h" --screenshot="$png" "file://$PWD/$svg" 2>/dev/null
-  echo "wrote $png (${w}x${h})"
+    --virtual-time-budget=8000 --window-size="$w,$((h + 40))" \
+    --screenshot="$png" "file://$PWD/docs/img/.wrap.html" 2>/dev/null
+  rm -f docs/img/.wrap.html
+  echo "wrote $png (${w}x$((h + 40)))"
 done

@@ -22,6 +22,18 @@ AUTO would rotate a layout to fill the screen when you turn the iPad, which
 fights the two-file approach — you would get the landscape layout sideways
 rather than the portrait one.
 
+### Regenerating the docs images
+
+`./tools/render_diagrams.sh` rebuilds the annotated page images in
+`docs/img/`. It draws over the device screenshots in `docs/img/screen-*.webp`
+when they exist, and falls back to `tools/preview.py`'s rendering when they do
+not — useful while a page is still being designed, since it needs no device.
+
+The screenshots are embedded into the SVG as data URIs rather than linked: an
+SVG rendered inside an `<img>`, which is how both a browser and GitHub treat
+it, does not load external images, so a linked screenshot silently renders as
+nothing at all.
+
 ### Inspecting a layout
 
 `tools/inspect_tosc.py` decompresses any `.tosc` and prints its control tree,
