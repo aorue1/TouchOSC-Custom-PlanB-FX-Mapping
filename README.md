@@ -1,8 +1,9 @@
-# PlanB-FX — TouchOSC surface for Resolume Arena + TouchDesigner
+# TouchOSC custom controller for TouchDesigner and Resolume
 
 A custom TouchOSC control surface that drives **Resolume Arena** and
 **TouchDesigner** from one iPad, with a tab bar to switch between views. Built
-for an iPad Air (4th gen), in both portrait and landscape.
+for an iPad Air (4th gen), in both portrait and landscape, and branded
+**PlanB-FX** on the surface itself.
 
 Everything in the layout is generated from one spec file. Change
 `spec/mapping.yaml`, run `make`, copy the `.tosc` to the tablet.
