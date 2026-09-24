@@ -125,10 +125,20 @@ current colour.
 (`Builder.num_pad`), or nudge with -/+. Tapping a tempo is not always
 realistic. It sits directly above RESYNC and TAP.
 
+**Values are two-way.** Every continuous control sends *and* receives on its
+address, so the surface follows Resolume when Resolume moves. That is what
+makes the tap workflow work: tap until Arena settles on 124.93, read it off the
+BPM field, type 125, hit RESYNC. It needs OSC Output enabled in Arena and
+pointed at the iPad; with it off everything still works one-way.
+
 **Names on the clip buttons** will appear if Resolume publishes them: the
 labels carry receive-only messages that write an incoming string into their
-caption. Requires OSC Output enabled in Arena and pointed at the iPad. Until
-then the buttons show clip numbers.
+caption. Until then the buttons show clip numbers.
+
+**Speed is in tempo multiples** — 0.25x, 0.5x, 1x, 2x, 4x — snapping to stops
+rather than sweeping, with the current multiple on its label. It drives
+composition speed, which is what clips play back at; it does not touch the
+tempo.
 
 **Dragging off a control** does not hand the gesture to its neighbour. Every
 continuous control sets `grabFocus`, applied by the writer rather than per page
@@ -151,6 +161,7 @@ the address it reports into the spec.
 | Column triggers | `/composition/columns/{n}/connect` | COL row does nothing |
 | Colour | Solid Colour effect's `color/red`, `/green`, `/blue` | Picker does nothing |
 | Tempo | `/composition/tempocontroller/tempo`, sent normalised across 20-500 BPM | Tempo jumps somewhere absurd |
+| Speed range | `speed.param_min` / `param_max`, 0-10 | 1x is not normal speed |
 | Clip / layer names | `.../clips/{n}/name`, `.../layers/{n}/name` | Captions keep showing numbers |
 
 Effects must already exist in the layer's (or composition's) chain in Arena —

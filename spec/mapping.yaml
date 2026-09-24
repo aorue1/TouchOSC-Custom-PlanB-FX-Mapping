@@ -141,6 +141,19 @@ touchdesigner:
   # round-trip through both hosts' settings.
   blackout: /td/blackout
 
+# Composition speed, as multiples of the tempo rather than a free slider: a
+# clip at 2x runs twice as fast as the beat, 0.5x half. The fader snaps to
+# these stops.
+#
+# param_min/param_max are what Resolume's Speed parameter spans, used to turn
+# a multiple into the 0-1 value OSC carries. Both are UNVERIFIED -- if 1x does
+# not come out as normal speed, this is the pair to correct.
+speed:
+  multiples: [0.25, 0.5, 1, 2, 4]
+  param_min: 0.0
+  param_max: 10.0
+  default: 1
+
 # BPM field on the master column: tap the number to type one, or nudge it.
 tempo:
   min_bpm: 20

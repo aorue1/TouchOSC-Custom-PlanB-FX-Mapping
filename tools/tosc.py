@@ -147,6 +147,7 @@ class OscMessage:
     receive: bool = True
     send: bool = True
     receive_key: str | None = None   # control value an incoming argument fills
+    value_key: str = "x"             # which value this message sends
     conversion: str = "FLOAT"        # FLOAT | STRING | BOOLEAN
 
     def to_xml(self, parent: ET.Element) -> None:
@@ -174,18 +175,21 @@ class OscMessage:
                 "type": "CONSTANT", "conversion": "FLOAT",
                 "value": str(const), "scaleMin": "0", "scaleMax": "1",
             })
+        key = self.receive_key or self.value_key
         if self.send_value or self.receive_key:
             ET.SubElement(args, "partial", {
                 "type": "VALUE", "conversion": self.conversion,
-                "value": self.receive_key or "x",
-                "scaleMin": "0", "scaleMax": "1",
+                "value": key, "scaleMin": "0", "scaleMax": "1",
             })
 
-        if self.receive_key:
+        # The mapping is what makes an incoming argument land on a value. A
+        # message without it parses but does nothing on receive, which is why
+        # every fader in this layout used to ignore anything the host sent.
+        if self.receive and (self.receive_key or self.send_value):
             values = ET.SubElement(osc, "values")
             value = ET.SubElement(values, "value")
             ET.SubElement(value, "type").text = "VALUE"
-            ET.SubElement(value, "key").text = self.receive_key
+            ET.SubElement(value, "key").text = key
             ET.SubElement(value, "scaleMin").text = "0"
             ET.SubElement(value, "scaleMax").text = "1"
 
@@ -231,6 +235,7 @@ class Node:
     tab_label: str | None = None       # set on a pager's pages
     value_default: float = 0.0         # starting value for x
     response: int | None = None        # Response.ABSOLUTE / RELATIVE
+    grid_steps: int | None = None      # snap to this many divisions
     script: str = ""
     extra_props: dict = field(default_factory=dict)
     messages: list = field(default_factory=list)
@@ -269,6 +274,9 @@ class Node:
             _prop(props, "i", "textAlignV", int(AlignV.MIDDLE))
             _prop(props, "c", "textColor", self.text_color)
             _prop(props, "b", "textClip", True)
+        if self.grid_steps is not None and self.type in (FADER, RADIAL):
+            _prop(props, "b", "grid", True)
+            _prop(props, "i", "gridSteps", self.grid_steps)
         if self.response is not None and self.type in (FADER, RADIAL, XY):
             _prop(props, "i", "response", int(self.response))
             _prop(props, "i", "responseFactor", 100)

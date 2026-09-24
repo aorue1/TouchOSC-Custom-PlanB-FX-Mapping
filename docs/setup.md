@@ -256,7 +256,27 @@ you actually want to drive; whatever address it reports goes in the spec.
 On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 `/b`, wired in `touchdesigner/osc_router.py` to a Constant TOP by default.
 
-## 8. The FX page
+## 8. Speed as tempo multiples
+
+The speed fader snaps to multiples of the tempo — 0.25x, 0.5x, 1x, 2x, 4x —
+rather than sweeping freely, and its label shows the current multiple. It
+drives composition speed, which is what clips play back at; it does not touch
+the tempo itself.
+
+```yaml
+speed:
+  multiples: [0.25, 0.5, 1, 2, 4]
+  param_min: 0.0      # what Resolume's Speed parameter spans, used to turn
+  param_max: 10.0     # a multiple into the 0-1 value OSC carries
+  default: 1
+```
+
+The fader's own value is which stop it is on, not the value to send, so it
+carries no message: the script converts the stop to a parameter value and
+sends it. `param_min`/`param_max` are **unverified** — if 1x does not come out
+as normal speed, they are the pair to correct.
+
+## 9. The FX page
 
 Layers run down the page and effects across: L1-L4 plus a **COMP** row that
 drives the same effects at composition level, over everything. One dial per
@@ -314,7 +334,35 @@ on a dark stage.
 Landscape draws these as dials, portrait as horizontal faders — the portrait
 cells are wide and short, where a dial wastes the width.
 
-## 9. Dragging off a control
+## 10. Two-way values
+
+Every continuous control now both sends and receives on its address, so when
+Resolume reports a value the control moves to match. This is what makes the
+tap-tempo workflow work: tap until Arena settles on, say, 124.93, read it off
+the BPM field, type 125, hit RESYNC.
+
+It needs Arena's OSC Output enabled and pointed at the iPad (see section 3).
+With it off, everything still works one-way and nothing on the surface ever
+moves by itself.
+
+Receiving needs the `<values>` mapping in the message, not just the argument
+partial — a message without it parses and does nothing. That mapping is now
+emitted for every value message; before, only the name labels had it, so no
+fader in this layout could be moved by the host.
+
+**Sharing control with someone on the computer.** Messages carry
+`feedback = 0`, so a control that moves because of an incoming message does not
+send that value straight back: no echo loops. What is not solved is both
+operators moving the same control at once — an absolute fader takes whatever
+arrives, so if someone drags layer opacity in Arena while your finger is on it,
+the fader will fight you. The FX dials are immune, being relative: an incoming
+value moves them and your drag continues from there. If this turns out to bite
+on the opacity faders, the two fixes are relative response on those faders
+(one property) or the Pickup module from
+[tshoppa/touchOSC](https://github.com/tshoppa/touchOSC), which holds a control
+inert until your finger crosses its current value.
+
+## 11. Dragging off a control
 
 Every continuous control in the layout — the FX dials, layer opacity, master,
 speed, the TouchDesigner faders and XY pads, the colour picker's own field —
@@ -327,7 +375,7 @@ Buttons deliberately do **not** grab focus: sliding off a button before
 lifting is how you abort a mis-press, and grabbing the touch would take that
 escape away.
 
-## 10. Changing the surface
+## 12. Changing the surface
 
 Everything about the layout comes from `spec/mapping.yaml` — grid sizes,
 colours, ports, addresses. Change it and re-run `make`. The uncompressed

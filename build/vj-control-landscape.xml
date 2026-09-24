@@ -38988,6 +38988,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -39224,6 +39232,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -39681,6 +39697,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -40275,6 +40299,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -40511,6 +40543,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -40968,6 +41008,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -41562,6 +41610,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -41798,6 +41854,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -42255,6 +42319,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -42849,6 +42921,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -43085,6 +43165,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -43542,6 +43630,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -43550,7 +43646,7 @@ end</value>
                 <properties>
                   <property type="s">
                     <key>name</key>
-                    <value>lbl_SPEED</value>
+                    <value>speed_label</value>
                   </property>
                   <property type="s">
                     <key>tag</key>
@@ -43726,7 +43822,41 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value />
+                    <value>local MULT = { 0.25, 0.5, 1, 2, 4 }
+local MIN, MAX = 0.00, 10.00
+local CONNS = { true, false, false, false, false }
+local PATH = '/composition/speed'
+
+local function stop()
+  return MULT[math.floor(self.values.x * (#MULT - 1) + 0.5) + 1]
+end
+
+local function caption(m)
+  local lbl = self.parent.children.speed_label
+  if lbl then lbl.values.text = string.format('SPEED %gx', m) end
+end
+
+function init()
+  -- Label only: pushing a speed at load would stamp on whatever Resolume
+  -- already has.
+  caption(stop())
+end
+
+function onValueChanged(key)
+  if key == 'x' then
+    local m = stop()
+    caption(m)
+    sendOSC(PATH, (m - MIN) / (MAX - MIN), CONNS)
+  end
+end</value>
+                  </property>
+                  <property type="b">
+                    <key>grid</key>
+                    <value>1</value>
+                  </property>
+                  <property type="i">
+                    <key>gridSteps</key>
+                    <value>4</value>
                   </property>
                 </properties>
                 <values>
@@ -43742,26 +43872,10 @@ end</value>
                     <locked>0</locked>
                     <lockedDefaultCurrent>0</lockedDefaultCurrent>
                     <defaultPull>0</defaultPull>
-                    <default>0.000000</default>
+                    <default>0.500000</default>
                   </value>
                 </values>
-                <messages>
-                  <osc enabled="1" send="1" receive="1" feedback="0" connections="10000">
-                    <triggers>
-                      <trigger>
-                        <var>x</var>
-                        <condition>ANY</condition>
-                      </trigger>
-                    </triggers>
-                    <path>
-                      <partial type="CONSTANT" conversion="STRING" value="composition" scaleMin="0" scaleMax="1" />
-                      <partial type="CONSTANT" conversion="STRING" value="speed" scaleMin="0" scaleMax="1" />
-                    </path>
-                    <arguments>
-                      <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
-                    </arguments>
-                  </osc>
-                </messages>
+                <messages />
                 <children />
               </node>
               <node ID="cc7dbd5e-5c21-5970-922c-6b1bf3c59055" type="LABEL">
@@ -43978,6 +44092,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -44495,6 +44617,14 @@ end</value>
                         <arguments>
                           <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                         </arguments>
+                        <values>
+                          <value>
+                            <type>VALUE</type>
+                            <key>x</key>
+                            <scaleMin>0</scaleMin>
+                            <scaleMax>1</scaleMax>
+                          </value>
+                        </values>
                       </osc>
                     </messages>
                     <children />
@@ -44606,6 +44736,14 @@ end</value>
                         <arguments>
                           <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                         </arguments>
+                        <values>
+                          <value>
+                            <type>VALUE</type>
+                            <key>x</key>
+                            <scaleMin>0</scaleMin>
+                            <scaleMax>1</scaleMax>
+                          </value>
+                        </values>
                       </osc>
                     </messages>
                     <children />
@@ -44717,6 +44855,14 @@ end</value>
                         <arguments>
                           <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                         </arguments>
+                        <values>
+                          <value>
+                            <type>VALUE</type>
+                            <key>x</key>
+                            <scaleMin>0</scaleMin>
+                            <scaleMax>1</scaleMax>
+                          </value>
+                        </values>
                       </osc>
                     </messages>
                     <children />
@@ -45721,6 +45867,14 @@ end</value>
                         <arguments>
                           <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                         </arguments>
+                        <values>
+                          <value>
+                            <type>VALUE</type>
+                            <key>x</key>
+                            <scaleMin>0</scaleMin>
+                            <scaleMax>1</scaleMax>
+                          </value>
+                        </values>
                       </osc>
                     </messages>
                     <children />
@@ -47029,6 +47183,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -47173,6 +47335,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -47317,6 +47487,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -47461,6 +47639,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -47719,6 +47905,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -47863,6 +48057,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -48007,6 +48209,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -48151,6 +48361,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -48409,6 +48627,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -48553,6 +48779,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -48697,6 +48931,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -48841,6 +49083,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -49099,6 +49349,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -49243,6 +49501,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -49387,6 +49653,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -49531,6 +49805,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -49787,6 +50069,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -49929,6 +50219,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -50071,6 +50369,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -50213,6 +50519,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -50554,6 +50868,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -50773,6 +51095,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -50992,6 +51322,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -51211,6 +51549,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -51430,6 +51776,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -51649,6 +52003,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -51868,6 +52230,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -52087,6 +52457,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -52322,6 +52700,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -52792,6 +53178,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -53262,6 +53656,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -53732,6 +54134,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -54202,6 +54612,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -54672,6 +55090,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -55142,6 +55568,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -55612,6 +56046,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -56188,6 +56630,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                   <osc enabled="1" send="1" receive="1" feedback="0" connections="01000">
                     <triggers>
@@ -56203,8 +56653,16 @@ end</value>
                       <partial type="CONSTANT" conversion="STRING" value="y" scaleMin="0" scaleMax="1" />
                     </path>
                     <arguments>
-                      <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
+                      <partial type="VALUE" conversion="FLOAT" value="y" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>y</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -56432,6 +56890,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                   <osc enabled="1" send="1" receive="1" feedback="0" connections="01000">
                     <triggers>
@@ -56447,8 +56913,16 @@ end</value>
                       <partial type="CONSTANT" conversion="STRING" value="y" scaleMin="0" scaleMax="1" />
                     </path>
                     <arguments>
-                      <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
+                      <partial type="VALUE" conversion="FLOAT" value="y" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>y</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -57074,6 +57548,14 @@ end</value>
                         <arguments>
                           <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                         </arguments>
+                        <values>
+                          <value>
+                            <type>VALUE</type>
+                            <key>x</key>
+                            <scaleMin>0</scaleMin>
+                            <scaleMax>1</scaleMax>
+                          </value>
+                        </values>
                       </osc>
                     </messages>
                     <children />
@@ -57179,6 +57661,14 @@ end</value>
                         <arguments>
                           <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                         </arguments>
+                        <values>
+                          <value>
+                            <type>VALUE</type>
+                            <key>x</key>
+                            <scaleMin>0</scaleMin>
+                            <scaleMax>1</scaleMax>
+                          </value>
+                        </values>
                       </osc>
                     </messages>
                     <children />
@@ -57284,6 +57774,14 @@ end</value>
                         <arguments>
                           <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                         </arguments>
+                        <values>
+                          <value>
+                            <type>VALUE</type>
+                            <key>x</key>
+                            <scaleMin>0</scaleMin>
+                            <scaleMax>1</scaleMax>
+                          </value>
+                        </values>
                       </osc>
                     </messages>
                     <children />
@@ -57504,6 +58002,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />
@@ -57722,6 +58228,14 @@ end</value>
                     <arguments>
                       <partial type="VALUE" conversion="FLOAT" value="x" scaleMin="0" scaleMax="1" />
                     </arguments>
+                    <values>
+                      <value>
+                        <type>VALUE</type>
+                        <key>x</key>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </value>
+                    </values>
                   </osc>
                 </messages>
                 <children />

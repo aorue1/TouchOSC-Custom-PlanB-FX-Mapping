@@ -86,6 +86,38 @@ def bake(script: str, **values) -> str:
     return script.strip()
 
 
+# Composition speed in multiples of the tempo. The fader's own value is which
+# stop it is on, not the value to send, so the script converts and sends.
+SPEED_SCRIPT = """
+local MULT = { @MULT@ }
+local MIN, MAX = @PMIN@, @PMAX@
+local CONNS = { @CONNS@ }
+local PATH = '@PATH@'
+
+local function stop()
+  return MULT[math.floor(self.values.x * (#MULT - 1) + 0.5) + 1]
+end
+
+local function caption(m)
+  local lbl = self.parent.children.speed_label
+  if lbl then lbl.values.text = string.format('SPEED %gx', m) end
+end
+
+function init()
+  -- Label only: pushing a speed at load would stamp on whatever Resolume
+  -- already has.
+  caption(stop())
+end
+
+function onValueChanged(key)
+  if key == 'x' then
+    local m = stop()
+    caption(m)
+    sendOSC(PATH, (m - MIN) / (MAX - MIN), CONNS)
+  end
+end
+""".strip()
+
 # Column triggers. Six buttons and a pair of arrows reach any number of
 # columns: the group keeps the offset, and the buttons ask it to fire. The
 # column number is only known at runtime, so the message cannot be a static
@@ -388,9 +420,9 @@ class Builder:
         return btn
 
     def fader(self, frame, name, path, conns, *, horizontal=False, color="panel",
-              script="", response=None) -> Node:
+              script="", response=None, grid_steps=None) -> Node:
         fdr = Node(FADER, frame, name=name, color=self.colors[color], script=script,
-                   response=response,
+                   response=response, grid_steps=grid_steps,
                    orientation=Orientation.EAST if horizontal else Orientation.NORTH)
         fdr.messages.append(OscMessage(path, conns))
         return fdr
@@ -405,7 +437,7 @@ class Builder:
     def xy(self, frame, name, path_x, path_y, conns, color="td") -> Node:
         pad = Node(XY, frame, name=name, color=self.colors[color])
         pad.messages.append(OscMessage(path_x, conns))
-        pad.messages.append(OscMessage(path_y, conns))
+        pad.messages.append(OscMessage(path_y, conns, value_key="y"))
         return pad
 
     # -- global strip ------------------------------------------------------
@@ -546,14 +578,32 @@ class Builder:
 
         half = (inner_w - pad) // 2
         fader_h = height - tempo_h - swatch_h - label_h - 5 * pad
-        for i, (caption, name, addr, colour) in enumerate(
-                (("SPEED", "speed", res["speed"], "accent"),
-                 ("MASTER", "master", res["master"], "master"))):
-            fx = x + pad + i * (half + pad)
-            page.add(self.label((fx, pad, half, label_h), caption, size=12,
-                                color=colour))
-            page.add(self.fader((fx, pad + label_h, half, fader_h), name, addr,
-                                self.res_conn, color=colour))
+
+        # Speed snaps to tempo multiples and sends from its script, so it
+        # carries no message of its own; its label shows the current multiple.
+        speed = self.spec["speed"]
+        speed_label = self.label((x + pad, pad, half, label_h), "SPEED", size=12,
+                                 color="accent")
+        speed_label.name = "speed_label"
+        page.add(speed_label)
+        stops = speed["multiples"]
+        page.add(Node(FADER, (x + pad, pad + label_h, half, fader_h),
+                      name="speed", color=self.colors["accent"],
+                      grid_steps=len(stops) - 1,
+                      value_default=stops.index(speed["default"]) / (len(stops) - 1),
+                      script=bake(SPEED_SCRIPT,
+                                  mult=", ".join(str(m) for m in stops),
+                                  pmin=float(speed["param_min"]),
+                                  pmax=float(speed["param_max"]),
+                                  path=res["speed"],
+                                  conns=", ".join("true" if c == "1" else "false"
+                                                  for c in self.res_conn))))
+
+        mx = x + pad + half + pad
+        page.add(self.label((mx, pad, half, label_h), "MASTER", size=12,
+                            color="master"))
+        page.add(self.fader((mx, pad + label_h, half, fader_h), "master",
+                            res["master"], self.res_conn, color="master"))
 
         y = pad + label_h + fader_h + pad
         self.color_swatch(page, (x + pad, y, inner_w, swatch_h), "resolume",
