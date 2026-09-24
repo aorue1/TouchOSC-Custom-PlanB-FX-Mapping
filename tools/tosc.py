@@ -219,6 +219,9 @@ class Node:
     interactive: bool = True
     visible: bool = True
     corner_radius: int = 1
+    # Keep the touch once a drag starts, so sliding off the control does not
+    # hand the gesture to whatever is underneath it.
+    grab_focus: bool = False
     shape: int | None = None           # BOX / BUTTON
     button_type: int | None = None
     orientation: int = Orientation.NORTH
@@ -245,7 +248,7 @@ class Node:
         _prop(props, "b", "background", self.background)
         _prop(props, "b", "outline", self.outline)
         _prop(props, "i", "outlineStyle", int(self.outline_style))
-        _prop(props, "b", "grabFocus", False)
+        _prop(props, "b", "grabFocus", self.grab_focus)
         _prop(props, "i", "pointerPriority", 0)
         _prop(props, "i", "cornerRadius", self.corner_radius)
         _prop(props, "i", "orientation", int(self.orientation))

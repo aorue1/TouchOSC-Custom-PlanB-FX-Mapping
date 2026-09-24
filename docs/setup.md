@@ -223,22 +223,29 @@ On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 ## 7. The FX page
 
 Layers run down the page and effects across: L1-L4 plus a **COMP** row that
-drives the same effects at composition level, over everything. Every cell is a
-dial with its bypass beside it — beside in a wide cell, beneath in a tall one,
-so the dial keeps as much room as the cell allows.
+drives the same effects at composition level, over everything. One dial per
+cell and nothing else — dialling to zero is the bypass, so the whole cell
+belongs to the dial (119pt in landscape, 171pt in portrait).
+
+`fx_bypass` and `fx_comp_bypass` are still in the spec but the page no longer
+uses them; they are there for whatever wants an explicit bypass later.
 
 The list is deliberately short — only the effects actually reached for in a
 set — because a dense matrix of small controls is easy to mistap in the dark.
 Three things guard against that:
 
-* **Large dials.** Four effects rather than eight roughly doubles each cell.
+* **Large dials.** Four effects rather than eight, and no bypass button
+  sharing the cell.
 * **Wide gutters.** A finger that lands off-target hits dead space instead of
   the neighbouring effect.
-* **Drag-only response.** FX controls use relative response, so a stray tap
-  does *nothing*: the value moves only while dragging, instead of jumping to
-  wherever the finger landed. That is the one that actually saves a set — size
-  and spacing reduce mistaps, this removes their cost. Set `fx_relative: false`
-  in the spec if you would rather have tap-to-jump.
+* **Drag-only response.** FX dials use relative response, so a stray tap does
+  *nothing*: the value moves only while dragging, instead of jumping to
+  wherever the finger landed. Set `fx_relative: false` in the spec for
+  tap-to-jump instead.
+* **Focus grab.** Every dial, fader and XY pad keeps the touch once a drag
+  starts. Without it, dragging up or down past a dial's edge hands the gesture
+  to the control above or below, and the value you were setting jumps to a
+  neighbour instead.
 
 Adding or removing an effect is a spec edit: entries in `resolume.fx_names`
 and `grid.fx_params`. Each effect must already exist in the layer's (or

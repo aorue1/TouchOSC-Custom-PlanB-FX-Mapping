@@ -311,7 +311,7 @@ class Builder:
     def fader(self, frame, name, path, conns, *, horizontal=False, color="panel",
               script="", response=None) -> Node:
         fdr = Node(FADER, frame, name=name, color=self.colors[color], script=script,
-                   response=response,
+                   response=response, grab_focus=True,
                    orientation=Orientation.EAST if horizontal else Orientation.NORTH)
         fdr.messages.append(OscMessage(path, conns))
         return fdr
@@ -319,7 +319,7 @@ class Builder:
     def radial(self, frame, name, path, conns, color="panel", script="",
                response=None) -> Node:
         knob = Node(RADIAL, frame, name=name, color=self.colors[color],
-                    script=script, response=response)
+                    script=script, response=response, grab_focus=True)
         knob.messages.append(OscMessage(path, conns))
         return knob
 
@@ -525,12 +525,14 @@ class Builder:
         return page
 
     def fx_page(self, width: int, height: int) -> Node:
-        """Layers down, effects across, every cell a dial.
+        """Layers down, effects across, one dial per cell and nothing else.
 
         The list is short on purpose — only the effects reached for in a set —
-        which leaves each dial big enough to aim at in the dark. Dials respond
-        to drag rather than to the touch position, so a mistap does nothing at
-        all instead of slamming the parameter.
+        and there are no bypass buttons: dialling to zero is the bypass, so the
+        whole cell belongs to the dial. Dials respond to drag rather than to
+        the touch position, so a mistap does nothing at all, and they hold the
+        touch once a drag starts, so sliding past a dial's edge does not hand
+        the gesture to its neighbour.
         """
         res, grid = self.spec["resolume"], self.spec["grid"]
         layers = grid["layers"]
@@ -541,10 +543,9 @@ class Builder:
 
         # Generous gutters: a finger that lands off-target hits dead space
         # rather than the neighbouring effect.
-        pad = 14
-        head_h = 24
-        gutter = 76
-        byp_h = 40
+        pad = 8
+        head_h = 22
+        gutter = 72
         response = (Response.RELATIVE if grid.get("fx_relative", True)
                     else Response.ABSOLUTE)
 
@@ -553,17 +554,17 @@ class Builder:
         row_h = (height - head_h) // rows
 
         def target(r):
-            """(caption, param address, bypass address) for row r."""
+            """(caption, parameter address) for row r."""
             if with_comp and r == layers:
-                return ("COMP", res["fx_comp_param"], res["fx_comp_bypass"])
-            return (f"L{r + 1}", res["fx_param"], res["fx_bypass"])
+                return ("COMP", res["fx_comp_param"])
+            return (f"L{r + 1}", res["fx_param"])
 
         for c, fx in enumerate(fx_list):
             page.add(self.label((gutter + c * col_w, 0, col_w, head_h),
                                 fx["name"], size=14, color="resolume"))
 
         for r in range(rows):
-            caption, param_addr, bypass_addr = target(r)
+            caption, param_addr = target(r)
             y = head_h + r * row_h
             page.add(self.label((0, y + row_h // 3, gutter, 26), caption,
                                 size=15,
@@ -577,28 +578,14 @@ class Builder:
                                          param=fx["param"])
                 accent = "accent" if caption == "COMP" else "fx_low"
 
-                # Bypass sits beside the dial in a wide cell and under it in a
-                # tall one, so the dial keeps as much room as the cell allows.
-                if cell_h > cell_w:
-                    size = min(cell_w, cell_h - byp_h - pad)
-                    byp = (x + pad, y + pad + size + pad, cell_w, byp_h)
-                    dial_x = x + pad + (cell_w - size) // 2
-                    dial_y = y + pad
-                else:
-                    size = min(cell_h, int(cell_w * 0.62))
-                    byp_w = cell_w - size - pad
-                    byp = (x + pad + size + pad, y + pad + (cell_h - byp_h) // 2,
-                           byp_w, byp_h)
-                    dial_x = x + pad
-                    dial_y = y + pad + (cell_h - size) // 2
-
-                page.add(self.radial((dial_x, dial_y, size, size), name, addr,
+                # No bypass button: dialling to zero is the bypass, and the
+                # whole cell goes to the dial instead.
+                size = min(cell_w, cell_h)
+                page.add(self.radial((x + pad + (cell_w - size) // 2,
+                                      y + pad + (cell_h - size) // 2,
+                                      size, size), name, addr,
                                      self.res_conn, color=accent,
                                      script=self.fx_script, response=response))
-                self.add_button(page, byp, f"{name}_byp",
-                                bypass_addr.format(layer=r + 1, fx=fx["fx"]),
-                                self.res_conn, toggle=True, color="panel",
-                                text="byp", text_size=11)
         return page
 
     def td_page(self, width: int, height: int) -> Node:

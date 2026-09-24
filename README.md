@@ -20,8 +20,8 @@ logo artwork cannot be placed on the surface.
 
 * **RESOLUME** — 4 layers × 32 clips in banks of 8, per-layer PREV/NEXT clip,
   bypass/solo/clear and opacity, master column with speed, colour and tempo.
-* **FX** — hue, saturation, RGB delay and datamosh across the four layers plus
-  a composition column; drag-only response so a mistap costs nothing.
+* **FX** — hue, saturation, RGB delay and datamosh over the four layers plus a
+  composition row; one large dial per cell, drag-only, dial to zero to bypass.
 * **TOUCHDESIGNER** — generic param bank: 8 faders, 8 toggles, 8 triggers,
   2 XY pads, intensity and scene faders.
 
