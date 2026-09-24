@@ -8,8 +8,13 @@ copyright (c) 2023 Schulzki. See `LICENSE.tshoppa-touchOSC`.
 
 `tools/vendor.py` lifts the `ColorPicker` group out of this file at build time
 and grafts it into the generated layout, re-framed to the document and with its
-dialog re-centred. The component's own controls and scripts are used unmodified,
-so it keeps working exactly as its author documented:
+dialog re-centred. The component's own scripts are used unmodified, so it keeps working exactly
+as its author documented. One property is forced: its dials and colour field
+are given `grabFocus`, matching the rest of the surface, so dragging off the
+edge of the colour field cannot hand the gesture to whatever is underneath.
+This component already sets it on all five of its continuous controls, so the
+graft changes nothing today — it is there so a future vendored component
+cannot arrive without it.
 
 ```lua
 ColorPicker:notify('pickColor', { callback = aControl, initial = aColor })

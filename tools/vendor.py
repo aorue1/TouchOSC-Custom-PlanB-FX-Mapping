@@ -57,6 +57,31 @@ def _set_tag(node: ET.Element, tag: str) -> None:
     value.text = tag
 
 
+# The one edit made to a vendored component's internals: its dials and colour
+# field also keep the touch once a drag starts, matching the rest of the
+# surface. The current picker already sets this on all five of its continuous
+# controls — its author had the same problem — so this changes nothing today
+# and guarantees it for whatever gets vendored next.
+GRABBING = {"FADER", "RADIAL", "XY", "ENCODER", "RADAR"}
+
+
+def _grab_focus(node: ET.Element) -> int:
+    changed = 0
+    if node.get("type") in GRABBING:
+        value = _props(node).get("grabFocus")
+        if value is None:
+            prop = ET.SubElement(node.find("properties"), "property",
+                                 {"type": "b"})
+            ET.SubElement(prop, "key").text = "grabFocus"
+            value = ET.SubElement(prop, "value")
+        value.text = "1"
+        changed = 1
+    kids = node.find("children")
+    for kid in (list(kids) if kids is not None else []):
+        changed += _grab_focus(kid)
+    return changed
+
+
 def _set_frame(node: ET.Element, x: int, y: int, w: int, h: int) -> None:
     value = _props(node).get("frame")
     if value is None:
@@ -90,6 +115,7 @@ def _component(path: str, group_name: str, dialog_name: str,
     group = copy.deepcopy(group)
     _set_frame(group, 0, 0, width, height)
     _set_tag(group, tag)
+    _grab_focus(group)
 
     dialog = _find(group, dialog_name)
     if dialog is not None:
@@ -107,6 +133,8 @@ def color_picker(width: int, height: int, path: str = PICKER_TOSC) -> ET.Element
 
 if __name__ == "__main__":
     el = color_picker(1180, 820)
-    print(f"ColorPicker: {len(list(el.iter('node')))} controls, frame {_frame_of(el)}")
+    grabbing = sum(1 for n in el.iter("node") if n.get("type") in GRABBING)
+    print(f"ColorPicker: {len(list(el.iter('node')))} controls "
+          f"({grabbing} grabbing focus), frame {_frame_of(el)}")
     dlg = _find(el, "ColorDialog")
     print(f"  dialog centred at {_frame_of(dlg)}")

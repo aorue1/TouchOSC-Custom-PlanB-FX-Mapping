@@ -245,7 +245,8 @@ Three things guard against that:
 * **Focus grab.** Every dial, fader and XY pad keeps the touch once a drag
   starts. Without it, dragging up or down past a dial's edge hands the gesture
   to the control above or below, and the value you were setting jumps to a
-  neighbour instead.
+  neighbour instead. This is the writer's default for continuous controls
+  everywhere in the layout, not a per-page setting — see below.
 
 Adding or removing an effect is a spec edit: entries in `resolume.fx_names`
 and `grid.fx_params`. Each effect must already exist in the layer's (or
@@ -277,7 +278,20 @@ on a dark stage.
 Landscape draws these as dials, portrait as horizontal faders — the portrait
 cells are wide and short, where a dial wastes the width.
 
-## 8. Changing the surface
+## 8. Dragging off a control
+
+Every continuous control in the layout — the FX dials, layer opacity, master,
+speed, the TouchDesigner faders and XY pads, the colour picker's own field —
+carries `grabFocus`, so a drag stays with the control it started on however
+far the finger travels. `tools/tosc.py` applies it to FADER, RADIAL and XY by
+default rather than each page asking for it, so a control added later cannot
+be forgotten, and `tools/vendor.py` forces it inside grafted components too.
+
+Buttons deliberately do **not** grab focus: sliding off a button before
+lifting is how you abort a mis-press, and grabbing the touch would take that
+escape away.
+
+## 9. Changing the surface
 
 Everything about the layout comes from `spec/mapping.yaml` — grid sizes,
 colours, ports, addresses. Change it and re-run `make`. The uncompressed

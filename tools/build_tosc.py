@@ -311,7 +311,7 @@ class Builder:
     def fader(self, frame, name, path, conns, *, horizontal=False, color="panel",
               script="", response=None) -> Node:
         fdr = Node(FADER, frame, name=name, color=self.colors[color], script=script,
-                   response=response, grab_focus=True,
+                   response=response,
                    orientation=Orientation.EAST if horizontal else Orientation.NORTH)
         fdr.messages.append(OscMessage(path, conns))
         return fdr
@@ -319,7 +319,7 @@ class Builder:
     def radial(self, frame, name, path, conns, color="panel", script="",
                response=None) -> Node:
         knob = Node(RADIAL, frame, name=name, color=self.colors[color],
-                    script=script, response=response, grab_focus=True)
+                    script=script, response=response)
         knob.messages.append(OscMessage(path, conns))
         return knob
 

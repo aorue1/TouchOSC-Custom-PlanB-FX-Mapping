@@ -43575,7 +43575,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>grabFocus</key>
-                        <value>0</value>
+                        <value>1</value>
                       </property>
                       <property type="i">
                         <key>pointerPriority</key>
@@ -44088,7 +44088,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>grabFocus</key>
-                        <value>0</value>
+                        <value>1</value>
                       </property>
                       <property type="i">
                         <key>pointerPriority</key>
@@ -44199,7 +44199,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>grabFocus</key>
-                        <value>0</value>
+                        <value>1</value>
                       </property>
                       <property type="i">
                         <key>pointerPriority</key>
@@ -44310,7 +44310,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>grabFocus</key>
-                        <value>0</value>
+                        <value>1</value>
                       </property>
                       <property type="i">
                         <key>pointerPriority</key>
@@ -54775,7 +54775,7 @@ end</value>
                   </property>
                   <property type="b">
                     <key>grabFocus</key>
-                    <value>0</value>
+                    <value>1</value>
                   </property>
                   <property type="i">
                     <key>pointerPriority</key>
@@ -55019,7 +55019,7 @@ end</value>
                   </property>
                   <property type="b">
                     <key>grabFocus</key>
-                    <value>0</value>
+                    <value>1</value>
                   </property>
                   <property type="i">
                     <key>pointerPriority</key>
@@ -55669,7 +55669,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>grabFocus</key>
-                        <value>0</value>
+                        <value>1</value>
                       </property>
                       <property type="i">
                         <key>pointerPriority</key>
@@ -55774,7 +55774,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>grabFocus</key>
-                        <value>0</value>
+                        <value>1</value>
                       </property>
                       <property type="i">
                         <key>pointerPriority</key>
@@ -55879,7 +55879,7 @@ end</value>
                       </property>
                       <property type="b">
                         <key>grabFocus</key>
-                        <value>0</value>
+                        <value>1</value>
                       </property>
                       <property type="i">
                         <key>pointerPriority</key>

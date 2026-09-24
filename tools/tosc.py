@@ -220,8 +220,11 @@ class Node:
     visible: bool = True
     corner_radius: int = 1
     # Keep the touch once a drag starts, so sliding off the control does not
-    # hand the gesture to whatever is underneath it.
-    grab_focus: bool = False
+    # hand the gesture to whatever is underneath it. Left as None, every
+    # continuous control gets it: a value you are dragging should not jump to
+    # a neighbour because your finger strayed over its edge. Buttons do not,
+    # so sliding off one before releasing still aborts a mis-press.
+    grab_focus: bool | None = None
     shape: int | None = None           # BOX / BUTTON
     button_type: int | None = None
     orientation: int = Orientation.NORTH
@@ -248,7 +251,9 @@ class Node:
         _prop(props, "b", "background", self.background)
         _prop(props, "b", "outline", self.outline)
         _prop(props, "i", "outlineStyle", int(self.outline_style))
-        _prop(props, "b", "grabFocus", self.grab_focus)
+        grab = (self.type in (FADER, RADIAL, XY) if self.grab_focus is None
+                else self.grab_focus)
+        _prop(props, "b", "grabFocus", grab)
         _prop(props, "i", "pointerPriority", 0)
         _prop(props, "i", "cornerRadius", self.corner_radius)
         _prop(props, "i", "orientation", int(self.orientation))
