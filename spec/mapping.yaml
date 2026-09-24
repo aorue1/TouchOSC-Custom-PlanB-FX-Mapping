@@ -52,6 +52,9 @@ colors:
   danger:    [0.85, 0.15, 0.25, 1.0]
   text:      [0.92, 0.92, 0.94, 1.0]
   brand:     [0.90, 0.90, 0.90, 1.0]
+  # Master opacity sits beside speed, so it gets its own colour: two identical
+  # faders side by side is a good way to grab the wrong one mid-set.
+  master:    [0.96, 0.96, 0.98, 1.0]
 # FX controls repaint themselves by value, interpolating between these three
 # stops. Cool at rest so an idle matrix reads as calm rather than alarming,
 # warming through cyan to green as a parameter is brought up.

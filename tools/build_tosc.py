@@ -476,13 +476,14 @@ class Builder:
 
         half = (inner_w - pad) // 2
         fader_h = height - tempo_h - swatch_h - label_h - 5 * pad
-        for i, (caption, name, addr) in enumerate(
-                (("SPEED", "speed", res["speed"]),
-                 ("MASTER", "master", res["master"]))):
+        for i, (caption, name, addr, colour) in enumerate(
+                (("SPEED", "speed", res["speed"], "accent"),
+                 ("MASTER", "master", res["master"], "master"))):
             fx = x + pad + i * (half + pad)
-            page.add(self.label((fx, pad, half, label_h), caption, size=12))
+            page.add(self.label((fx, pad, half, label_h), caption, size=12,
+                                color=colour))
             page.add(self.fader((fx, pad + label_h, half, fader_h), name, addr,
-                                self.res_conn, color="accent"))
+                                self.res_conn, color=colour))
 
         y = pad + label_h + fader_h + pad
         self.color_swatch(page, (x + pad, y, inner_w, swatch_h), "resolume",

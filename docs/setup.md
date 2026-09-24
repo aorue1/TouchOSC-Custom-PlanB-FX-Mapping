@@ -133,8 +133,10 @@ TouchDesigner side.
 
 Resolume is always the master, so there is no band across the top of every
 page holding a master fader, tap and blackout. Master opacity sits on the
-Resolume page as a narrow column beside composition speed, and BPM, resync and
-tap are grouped beneath the colour swatch. Every page gets back the 60pt the
+Resolume page as a narrow column beside composition speed — in white, against
+speed's yellow, because two identical faders side by side is a good way to
+grab the wrong one mid-set — and BPM, resync and tap are grouped beneath the
+colour swatch. Every page gets back the 60pt the
 strip was taking, which is why the FX dials and opacity faders are as large as
 they are.
 

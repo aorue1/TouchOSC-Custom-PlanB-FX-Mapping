@@ -27,7 +27,7 @@ rows on screen. The space that saves goes to the opacity faders.
 
 **There is no global strip.** Resolume is always the master, so its master
 opacity sits here as a narrow column beside composition speed — neither needs
-width — and BPM, resync and tap are grouped at the bottom because they are the
+width, and they are coloured differently so neither gets grabbed by mistake — and BPM, resync and tap are grouped at the bottom because they are the
 same job. Removing the strip gives every page back the 60pt it was taking.
 
 Banking moves every layer at once, and **only the clip buttons move**: the

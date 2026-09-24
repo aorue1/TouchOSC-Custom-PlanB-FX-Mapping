@@ -43605,9 +43605,9 @@
                   <property type="c">
                     <key>textColor</key>
                     <value>
-                      <r>0.920000</r>
-                      <g>0.920000</g>
-                      <b>0.940000</b>
+                      <r>0.950000</r>
+                      <g>0.800000</g>
+                      <b>0.200000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -43823,9 +43823,9 @@
                   <property type="c">
                     <key>textColor</key>
                     <value>
-                      <r>0.920000</r>
-                      <g>0.920000</g>
-                      <b>0.940000</b>
+                      <r>0.960000</r>
+                      <g>0.960000</g>
+                      <b>0.980000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
@@ -43868,9 +43868,9 @@
                   <property type="c">
                     <key>color</key>
                     <value>
-                      <r>0.950000</r>
-                      <g>0.800000</g>
-                      <b>0.200000</b>
+                      <r>0.960000</r>
+                      <g>0.960000</g>
+                      <b>0.980000</b>
                       <a>1.000000</a>
                     </value>
                   </property>
