@@ -140,7 +140,7 @@ the address it reports into the spec.
 | --- | --- | --- |
 | FX effects and parameters | `huerotate/rotation`, `saturation/saturation`, `rgbdelay/delay`, `datamosh/amount` | Dials do nothing |
 | Clip next / previous | `.../connectnextclip`, `.../connectpreviousclip` | Buttons do nothing |
-| Colour | Solid Colour effect's `color/red|green|blue` | Picker does nothing |
+| Colour | Solid Colour effect's `color/red`, `/green`, `/blue` | Picker does nothing |
 | Tempo | `/composition/tempocontroller/tempo`, sent normalised across 20-500 BPM | Tempo jumps somewhere absurd |
 | Clip / layer names | `.../clips/{n}/name`, `.../layers/{n}/name` | Captions keep showing numbers |
 
