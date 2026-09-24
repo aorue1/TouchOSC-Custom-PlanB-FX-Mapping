@@ -226,6 +226,11 @@ the button; `interactive=0` is what lets the touch fall through.
 
 ---
 
+## Licence
+
+MIT — see [`LICENSE`](LICENSE). Vendored components keep their own licences;
+see [`vendor/README.md`](vendor/README.md).
+
 ## Credits
 
 The colour picker is the ColorPicker module from
