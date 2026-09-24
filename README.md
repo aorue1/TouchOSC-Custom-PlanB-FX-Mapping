@@ -1,4 +1,4 @@
-# TouchOSC custom controller for TouchDesigner and Resolume
+# TouchOSC custom PlanB-FX controller for TouchDesigner and Resolume
 
 A custom TouchOSC control surface that drives **Resolume Arena** and
 **TouchDesigner** from one iPad, with a tab bar to switch between views. Built
