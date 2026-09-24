@@ -39,8 +39,9 @@ PAGES = [
          "Switches between the three pages. There is no global strip: Resolume "
          "is always the master, so its master opacity and tempo live on this "
          "page and every page keeps the 60pt a strip would have taken."),
-        ("Column triggers", ["COL1", "COL8"],
-         "Fires a whole column across every layer at once."),
+        ("Column triggers", ["columns"],
+         "Fires a whole column across every layer at once. Six at a time; the "
+         "arrows shift to the next six, rewriting the captions."),
         ("Clip group", ["tabbar:clipgroups"],
          "First bank row: picks a group of 16 clips."),
         ("Clip bank", ["tabbar:banks1"],

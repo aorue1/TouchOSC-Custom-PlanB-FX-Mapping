@@ -20,7 +20,10 @@ make            # build both layouts, regenerate the address map, verify
 ![The Resolume page, annotated](docs/img/page-resolume.png)
 
 Columns, clips and layer state. The top row fires **whole columns** across
-every layer at once. Below it, TouchOSC has no scrolling control, so clips are
+every layer at once: six at a time, with `<` and `>` to reach the rest
+(`columns_total` in the spec, 32 by default). Which column a button fires
+depends on the offset the arrows set, so those buttons carry no fixed address —
+the row keeps the offset, rewrites the captions and sends with `sendOSC`. Below it, TouchOSC has no scrolling control, so clips are
 reached by **banking** over two rows of tabs — the first picks a group of 16,
 the second a bank of 4 — which reaches 32 clips per layer while keeping only 4
 rows on screen. The space that saves goes to the opacity faders.
@@ -113,8 +116,10 @@ will fight the two-file approach.
 and grafted in at build time. A COLOUR swatch on the Resolume and TouchDesigner
 pages opens it. It notifies its caller continuously as the colour is dragged,
 so the change is live rather than on confirm. The picked colour is written into
-three hidden R/G/B faders, and *those* carry the OSC — the component sends none
-and TouchOSC's scripting has no OSC send of its own.
+three hidden R/G/B faders, and *those* carry the OSC: the component sends
+nothing itself, and a fader holds the value as well as sending it. Scripts can
+send directly with `sendOSC` — the column row does — but then nothing holds the
+current colour.
 
 **The BPM field** takes a typed number: tap it for a numeric keypad
 (`Builder.num_pad`), or nudge with -/+. Tapping a tempo is not always

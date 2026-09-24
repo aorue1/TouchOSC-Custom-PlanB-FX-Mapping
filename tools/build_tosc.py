@@ -76,10 +76,89 @@ def bake(script: str, **values) -> str:
     would try to read as fields of its own.
     """
     for key, value in values.items():
-        text = value if isinstance(value, str) else f"{float(value):.2f}"
+        if isinstance(value, str):
+            text = value
+        elif isinstance(value, int):
+            text = str(value)
+        else:
+            text = f"{float(value):.2f}"
         script = script.replace(f"@{key.upper()}@", text)
     return script.strip()
 
+
+# Column triggers. Six buttons and a pair of arrows reach any number of
+# columns: the group keeps the offset, and the buttons ask it to fire. The
+# column number is only known at runtime, so the message cannot be a static
+# path on the button — the group sends it with sendOSC instead.
+COLUMN_GROUP_SCRIPT = """
+local PER = @PER@
+local TOTAL = @TOTAL@
+local CONNS = { @CONNS@ }
+local offset = 0
+
+local function captions()
+  for i = 1, PER do
+    local col = offset * PER + i
+    local lbl = self.children['col_lbl_' .. i]
+    if lbl then
+      if col <= TOTAL then
+        lbl.values.text = string.format('COL %d', col)
+      else
+        lbl.values.text = '-'
+      end
+    end
+  end
+end
+
+local handlers = {}
+
+handlers.hit = function(i)
+  local col = offset * PER + i
+  if col <= TOTAL then
+    sendOSC(string.format('/composition/columns/%d/connect', col), 1, CONNS)
+  end
+end
+
+handlers.shift = function(dir)
+  local pages = math.ceil(TOTAL / PER)
+  offset = offset + dir
+  if offset < 0 then
+    offset = pages - 1
+  elseif offset > pages - 1 then
+    offset = 0
+  end
+  captions()
+end
+
+function init()
+  captions()
+end
+
+function onReceiveNotify(key, val)
+  local h = handlers[key]
+  if h then h(val) end
+end
+""".strip()
+
+COLUMN_BUTTON_SCRIPT = """
+local INDEX = @INDEX@
+
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 0 then
+    self.parent:notify('hit', INDEX)
+  end
+end
+""".strip()
+
+COLUMN_ARROW_SCRIPT = """
+local DIR = @DIR@
+
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 0 then
+    self.parent:notify('shift', DIR)
+  end
+end
+""".strip()
 
 # A numeric keypad, built here rather than vendored: the TextInput module is a
 # full QWERTY keyboard, and for a BPM every key but the digits is in the way.
@@ -359,17 +438,8 @@ class Builder:
         clip_h = grid["clip_height"]
         clip_area = clips * clip_h + 2 * tab_h
 
-        # --- column triggers, in the space the global strip used to take ---
-        n_cols = grid["columns"]
-        cw = (grid_w - (n_cols + 1) * pad) // n_cols
-        for i in range(n_cols):
-            column = i + 1
-            self.add_button(page, (pad + i * (cw + pad), pad, cw,
-                                   col_row - 2 * pad),
-                            f"COL{column}",
-                            res["column_connect"].format(column=column),
-                            self.res_conn, color="panel", text=f"COL {column}",
-                            text_size=13, constant_args=(1.0,))
+        # --- column triggers: six at a time, arrows to reach the rest ---
+        self.column_row(page, (0, 0, grid_w, col_row))
 
         top = col_row
         for li in range(layers):
@@ -635,6 +705,52 @@ class Builder:
             y += 56
         return page
 
+    def column_row(self, parent: Node, frame) -> Node:
+        """Six column buttons between < and > arrows.
+
+        Which column a button fires depends on the offset the arrows set, so
+        the message cannot be a static path on the button. The group keeps the
+        offset and sends with sendOSC; the buttons only report that they were
+        pressed, and their captions are rewritten when the offset moves.
+        """
+        x, y, w, h = frame
+        grid = self.spec["grid"]
+        per, total = grid["columns"], grid["columns_total"]
+        pad = 6
+        arrow_w = 58
+        btn_w = (w - 2 * arrow_w - (per + 3) * pad) // per
+
+        group = Node(GROUP, frame, name="columns", background=False,
+                     outline=False,
+                     script=bake(COLUMN_GROUP_SCRIPT, per=per, total=total,
+                                 conns=", ".join(
+                                     "true" if c == "1" else "false"
+                                     for c in self.res_conn)))
+
+        for i, (name, caption, direction) in enumerate(
+                (("col_prev", "<", -1), ("col_next", ">", 1))):
+            ax = 0 if i == 0 else w - arrow_w - pad
+            group.add(Node(BUTTON, (ax + pad, pad, arrow_w, h - 2 * pad),
+                           name=name, color=self.colors["accent"],
+                           button_type=MOMENTARY,
+                           script=bake(COLUMN_ARROW_SCRIPT, dir=direction)))
+            group.add(self.label((ax + pad, pad, arrow_w, h - 2 * pad), caption,
+                                 size=22))
+
+        for i in range(per):
+            bx = arrow_w + 2 * pad + i * (btn_w + pad)
+            group.add(Node(BUTTON, (bx, pad, btn_w, h - 2 * pad),
+                           name=f"col_btn_{i + 1}", color=self.colors["panel"],
+                           button_type=MOMENTARY,
+                           script=bake(COLUMN_BUTTON_SCRIPT, index=i + 1)))
+            caption = self.label((bx, pad, btn_w, h - 2 * pad),
+                                 f"COL {i + 1}", size=13)
+            caption.name = f"col_lbl_{i + 1}"
+            group.add(caption)
+
+        parent.add(group)
+        return group
+
     def num_pad(self, width: int, height: int) -> Node:
         """A modal numeric keypad: digits, a dot, backspace, cancel and OK.
 
@@ -752,9 +868,11 @@ class Builder:
 
         The three RGB faders behind it are hidden: the picker is the interface,
         and a set of sliders saying the same thing twice is just clutter. They
-        remain because they are what sends the OSC — the vendored component
-        sends none, and TouchOSC's scripting has no OSC send — so the callback
-        writes into them and their own messages go out as usual.
+        remain because they hold the colour and send it — the vendored
+        component sends nothing itself, so the callback writes into them and
+        their own messages go out as usual. A script could call sendOSC
+        directly (the column row does), but then nothing would hold the
+        current value for a control to show or a host to read back.
         """
         x, y, w, h = frame
         group = Node(GROUP, frame, name=f"{name}_color", background=False,

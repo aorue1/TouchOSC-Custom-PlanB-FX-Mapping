@@ -70,7 +70,8 @@ grid:
   banks: 4              # banks per group (second tab row)
   bank_groups: 2        # groups of banks (first tab row)
   clip_height: 64       # height of one clip button
-  columns: 8            # composition columns on the trigger row
+  columns: 6            # column buttons on screen at once
+  columns_total: 32     # columns reachable with the < > arrows
   column_row: 56        # height of that row
   bank_tabbar: 34       # height of each of the two bank selector rows
   fx_params: 4          # effects on the FX page

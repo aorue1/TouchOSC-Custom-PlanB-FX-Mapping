@@ -163,7 +163,20 @@ grid:
 
 The row above the grid fires whole **columns** across every layer
 (`/composition/columns/{n}/connect`), in the space the global strip used to
-occupy.
+occupy. Six columns are on screen at once, with `<` and `>` to reach the rest:
+
+```yaml
+grid:
+  columns: 6         # buttons on screen
+  columns_total: 32  # columns the arrows can reach
+```
+
+Those buttons carry no OSC message of their own, because which column they
+fire depends on where the arrows are. The row's group keeps the offset,
+rewrites the captions when it moves, and sends the message itself with
+`sendOSC` — the one place in the layout where a script sends rather than a
+control. Everything else drives a real control, so the value stays visible and
+can be read back.
 
 Raising `bank_groups` extends the reach without touching the layout: 3 groups
 gives 48 clips per layer, still 4 rows on screen. Banking moves every layer at
