@@ -76,9 +76,87 @@ def bake(script: str, **values) -> str:
     would try to read as fields of its own.
     """
     for key, value in values.items():
-        script = script.replace(f"@{key.upper()}@", f"{float(value):.2f}")
+        text = value if isinstance(value, str) else f"{float(value):.2f}"
+        script = script.replace(f"@{key.upper()}@", text)
     return script.strip()
 
+
+# A numeric keypad, built here rather than vendored: the TextInput module is a
+# full QWERTY keyboard, and for a BPM every key but the digits is in the way.
+NUMPAD_SCRIPT = """
+local caller = nil
+local entry = ''
+local display = self.children.dialog.children.display
+
+local function refresh()
+  display.values.text = (entry == '' and '0' or entry)
+end
+
+local handlers = {}
+
+handlers.showNumPad = function(val)
+  caller = val and val.callback or nil
+  entry = (val and val.initial) and tostring(val.initial) or ''
+  refresh()
+  self.visible = true
+end
+
+handlers.key = function(ch)
+  if ch == 'del' then
+    entry = string.sub(entry, 1, -2)
+  elseif ch == '.' then
+    if not string.find(entry, '%.') then entry = entry .. '.' end
+  elseif string.len(entry) < 6 then
+    entry = entry .. ch
+  end
+  refresh()
+end
+
+handlers.ok = function()
+  local n = tonumber(entry)
+  self.visible = false
+  if caller and n then caller:notify('numberEntered', n) end
+end
+
+handlers.cancel = function()
+  self.visible = false
+  if caller then caller:notify('numPadCanceled') end
+end
+
+function onReceiveNotify(key, val)
+  local h = handlers[key]
+  if h then h(val) end
+end
+"""
+
+NUMPAD_KEY_SCRIPT = """
+local KEY = '@KEY@'
+
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 0 then
+    self.parent.parent:notify('key', KEY)
+  end
+end
+"""
+
+NUMPAD_ACTION_SCRIPT = """
+local ACTION = '@ACTION@'
+
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 0 then
+    self.parent.parent:notify(ACTION)
+  end
+end
+"""
+
+# The dim pane is one control, so it notifies the pad directly.
+NUMPAD_PANE_SCRIPT = """
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 0 then
+    self.parent:notify('cancel')
+  end
+end
+"""
 
 # BPM field. The hidden fader holds the value and carries the OSC; the label
 # reads it back, the nudge buttons step it, and the display can be tapped to
@@ -102,19 +180,16 @@ BPM_EDIT_SCRIPT = BPM_HELPERS + """
 function onValueChanged(key)
   -- On release: the keyboard's overlay would swallow a touch still held.
   if key == 'x' and self.values.x == 0 then
-    root.children.TextInput:notify('showTextDialog', {
+    root.children.NumPad:notify('showNumPad', {
       callback = self,
-      initialText = string.format('%.1f', bpm()),
-      maxTextLength = 6,
-      advice = 'Enter BPM'
+      initial = string.format('%.1f', bpm())
     })
   end
 end
 
 function onReceiveNotify(key, val)
-  if key == 'heresYourText' then
-    local n = tonumber(val)
-    if n then setBpm(n) end
+  if key == 'numberEntered' then
+    setBpm(val)
   end
 end
 """
@@ -450,12 +525,12 @@ class Builder:
         return page
 
     def fx_page(self, width: int, height: int) -> Node:
-        """Effects down, targets across: the four layers plus composition.
+        """Layers down, effects across, every cell a dial.
 
-        Cut to the effects actually reached for in a set. With a short list the
-        cells are large enough to use in the dark, and the control follows the
-        cell's shape: a dial where it is roughly square, a fader where it is
-        long in one direction, because a squashed dial is hard to aim.
+        The list is short on purpose — only the effects reached for in a set —
+        which leaves each dial big enough to aim at in the dark. Dials respond
+        to drag rather than to the touch position, so a mistap does nothing at
+        all instead of slamming the parameter.
         """
         res, grid = self.spec["resolume"], self.spec["grid"]
         layers = grid["layers"]
@@ -464,70 +539,64 @@ class Builder:
         page = Node(GROUP, (0, 0, width, height), name="FX",
                     color=self.colors["accent"], background=False, outline=False)
 
-        # Generous gutters between cells: a finger that lands off-target hits
-        # dead space rather than the neighbouring effect.
+        # Generous gutters: a finger that lands off-target hits dead space
+        # rather than the neighbouring effect.
         pad = 14
-        head_h = 22
-        byp_h = 32
+        head_h = 24
         gutter = 76
-        # Relative response means a control only moves by dragging, so a
-        # mistap does nothing at all instead of slamming the parameter to
-        # wherever the finger landed.
+        byp_h = 40
         response = (Response.RELATIVE if grid.get("fx_relative", True)
                     else Response.ABSOLUTE)
-        targets = layers + (1 if with_comp else 0)
-        col_w = (width - gutter) // targets
-        row_h = (height - head_h) // len(fx_list)
 
-        def target(i):
-            """(caption, param address, bypass address) for column i."""
-            if with_comp and i == layers:
+        rows = layers + (1 if with_comp else 0)
+        col_w = (width - gutter) // len(fx_list)
+        row_h = (height - head_h) // rows
+
+        def target(r):
+            """(caption, param address, bypass address) for row r."""
+            if with_comp and r == layers:
                 return ("COMP", res["fx_comp_param"], res["fx_comp_bypass"])
-            return (f"L{i + 1}", res["fx_param"], res["fx_bypass"])
+            return (f"L{r + 1}", res["fx_param"], res["fx_bypass"])
 
-        for i in range(targets):
-            caption, _, _ = target(i)
-            page.add(self.label((gutter + i * col_w, 0, col_w, head_h), caption,
-                                size=13,
-                                color="accent" if caption == "COMP" else "resolume"))
+        for c, fx in enumerate(fx_list):
+            page.add(self.label((gutter + c * col_w, 0, col_w, head_h),
+                                fx["name"], size=14, color="resolume"))
 
-        for r, fx in enumerate(fx_list):
+        for r in range(rows):
+            caption, param_addr, bypass_addr = target(r)
             y = head_h + r * row_h
-            page.add(self.label((0, y + row_h // 3, gutter, 24), fx["name"],
-                                size=13, color="resolume"))
-            for c in range(targets):
-                caption, param_addr, bypass_addr = target(c)
-                layer = c + 1
+            page.add(self.label((0, y + row_h // 3, gutter, 26), caption,
+                                size=15,
+                                color="accent" if caption == "COMP" else "resolume"))
+            for c, fx in enumerate(fx_list):
                 x = gutter + c * col_w
                 cell_w = col_w - 2 * pad
-                cell_h = row_h - 2 * pad - byp_h - 2
+                cell_h = row_h - 2 * pad
                 name = f"{caption}_{fx['fx']}"
-                addr = param_addr.format(layer=layer, fx=fx["fx"],
+                addr = param_addr.format(layer=r + 1, fx=fx["fx"],
                                          param=fx["param"])
                 accent = "accent" if caption == "COMP" else "fx_low"
 
-                if cell_w > cell_h * 1.4:
-                    page.add(self.fader((x + pad, y + pad, cell_w, cell_h), name,
-                                        addr, self.res_conn, horizontal=True,
-                                        color=accent, script=self.fx_script,
-                                        response=response))
-                elif cell_h > cell_w * 1.4:
-                    page.add(self.fader((x + pad, y + pad, cell_w, cell_h), name,
-                                        addr, self.res_conn, color=accent,
-                                        script=self.fx_script, response=response))
+                # Bypass sits beside the dial in a wide cell and under it in a
+                # tall one, so the dial keeps as much room as the cell allows.
+                if cell_h > cell_w:
+                    size = min(cell_w, cell_h - byp_h - pad)
+                    byp = (x + pad, y + pad + size + pad, cell_w, byp_h)
+                    dial_x = x + pad + (cell_w - size) // 2
+                    dial_y = y + pad
                 else:
-                    size = min(cell_w, cell_h)
-                    page.add(self.radial((x + pad + (cell_w - size) // 2,
-                                          y + pad + (cell_h - size) // 2,
-                                          size, size), name, addr,
-                                         self.res_conn, color=accent,
-                                         script=self.fx_script,
-                                         response=response))
+                    size = min(cell_h, int(cell_w * 0.62))
+                    byp_w = cell_w - size - pad
+                    byp = (x + pad + size + pad, y + pad + (cell_h - byp_h) // 2,
+                           byp_w, byp_h)
+                    dial_x = x + pad
+                    dial_y = y + pad + (cell_h - size) // 2
 
-                self.add_button(page, (x + pad, y + pad + cell_h + 2,
-                                       cell_w, byp_h),
-                                f"{name}_byp",
-                                bypass_addr.format(layer=layer, fx=fx["fx"]),
+                page.add(self.radial((dial_x, dial_y, size, size), name, addr,
+                                     self.res_conn, color=accent,
+                                     script=self.fx_script, response=response))
+                self.add_button(page, byp, f"{name}_byp",
+                                bypass_addr.format(layer=r + 1, fx=fx["fx"]),
                                 self.res_conn, toggle=True, color="panel",
                                 text="byp", text_size=11)
         return page
@@ -601,6 +670,67 @@ class Builder:
                                 self.td_conn, horizontal=True, color="td"))
             y += 56
         return page
+
+    def num_pad(self, width: int, height: int) -> Node:
+        """A modal numeric keypad: digits, a dot, backspace, cancel and OK.
+
+        Same shape as the vendored dialogs — a hidden overlay covering the
+        surface, shown when notified — but built here, because the vendored
+        keyboard is a full QWERTY and for a BPM every key but the digits is in
+        the way.
+
+            NumPad:notify('showNumPad', { callback = aControl, initial = '128' })
+
+        The caller is notified with `numberEntered` and a number, or
+        `numPadCanceled`.
+        """
+        pad = 15
+        key_w, key_h, gap = 90, 70, 10
+        dlg_w = 3 * key_w + 2 * gap + 2 * pad
+        dlg_h = 60 + 4 * key_h + 3 * gap + 50 + 4 * pad
+        dx, dy = (width - dlg_w) // 2, (height - dlg_h) // 2
+
+        overlay = Node(GROUP, (0, 0, width, height), name="NumPad",
+                       background=False, outline=False, visible=False,
+                       script=NUMPAD_SCRIPT)
+        # Tapping outside the dialog cancels, like the vendored dialogs do.
+        overlay.add(Node(BUTTON, (0, 0, width, height), name="pane",
+                         color=(0.0, 0.0, 0.0, 0.7), button_type=MOMENTARY,
+                         background=True, outline=False,
+                         script=NUMPAD_PANE_SCRIPT))
+
+        dialog = Node(GROUP, (dx, dy, dlg_w, dlg_h), name="dialog",
+                      color=self.colors["panel"], background=True, outline=True)
+        display = Node(LABEL, (pad, pad, dlg_w - 2 * pad, 60), name="display",
+                       text="0", text_size=30, text_color=self.colors["text"],
+                       background=True, outline=True, interactive=False,
+                       color=self.colors["bg"])
+        dialog.add(display)
+
+        keys = (("7", "8", "9"), ("4", "5", "6"), ("1", "2", "3"),
+                (".", "0", "del"))
+        for r, row in enumerate(keys):
+            for c, key in enumerate(row):
+                kx = pad + c * (key_w + gap)
+                ky = pad + 60 + pad + r * (key_h + gap)
+                dialog.add(Node(BUTTON, (kx, ky, key_w, key_h),
+                                name=f"key_{key}", color=self.colors["panel"],
+                                button_type=MOMENTARY,
+                                script=bake(NUMPAD_KEY_SCRIPT, key=key)))
+                dialog.add(self.label((kx, ky, key_w, key_h),
+                                      "\u232b" if key == "del" else key, size=24))
+
+        act_y = dlg_h - pad - 50
+        act_w = (dlg_w - 2 * pad - gap) // 2
+        for i, (action, caption, colour) in enumerate(
+                (("cancel", "CANCEL", "panel"), ("ok", "OK", "accent"))):
+            ax = pad + i * (act_w + gap)
+            dialog.add(Node(BUTTON, (ax, act_y, act_w, 50), name=f"act_{action}",
+                            color=self.colors[colour], button_type=MOMENTARY,
+                            script=bake(NUMPAD_ACTION_SCRIPT, action=action)))
+            dialog.add(self.label((ax, act_y, act_w, 50), caption, size=16))
+        overlay.add(dialog)
+        return overlay
 
     def bpm_field(self, parent: Node, frame) -> Node:
         """Editable BPM: type it, nudge it, or leave the tap button to it.
@@ -723,7 +853,7 @@ class Builder:
         # dim everything behind the dialog, and must come last so it draws on
         # top of the pages. It ships hidden and shows itself when notified.
         root.add(Raw(vendor.color_picker(w, h)))
-        root.add(Raw(vendor.text_input(w, h)))
+        root.add(self.num_pad(w, h))
         return root
 
 

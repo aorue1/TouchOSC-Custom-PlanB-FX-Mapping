@@ -16,7 +16,6 @@ from xml.etree import ElementTree as ET
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PICKER_TOSC = os.path.join(ROOT, "vendor", "colorpicker-swatches.tosc")
-TEXTINPUT_TOSC = os.path.join(ROOT, "vendor", "textinput.tosc")
 
 
 def _props(node: ET.Element) -> dict:
@@ -47,7 +46,6 @@ def _find(node: ET.Element, name: str):
 # Marks a grafted subtree. tools/verify.py checks where such a component sits
 # but not how it is built inside: its internals are its author's business.
 VENDOR_TAG = "vendor:tshoppa-colorpicker"
-TEXTINPUT_TAG = "vendor:tshoppa-textinput"
 
 
 def _set_tag(node: ET.Element, tag: str) -> None:
@@ -75,58 +73,13 @@ def _frame_of(node: ET.Element) -> tuple:
     return tuple(int(value.findtext(a) or 0) for a in ("x", "y", "w", "h"))
 
 
-def _scale(node: ET.Element, factor: float) -> None:
-    """Scale a control and everything under it about the group's origin."""
-    x, y, w, h = _frame_of(node)
-    _set_frame(node, round(x * factor), round(y * factor),
-               round(w * factor), round(h * factor))
-    kids = node.find("children")
-    for kid in (list(kids) if kids is not None else []):
-        _scale(kid, factor)
-
-
-def _fit_children(group: ET.Element, width: int, height: int,
-                  margin: int = 8) -> None:
-    """Centre a component whose parts are laid out loose, scaling to fit.
-
-    The keyboard is built for a 1024x768 document and is 826pt wide, which
-    does not fit an 820pt-wide portrait layout, so it is scaled down before
-    being centred rather than hanging off the edge.
-    """
-    kids = group.find("children")
-    children = list(kids) if kids is not None else []
-    if not children:
-        return
-
-    frames = [_frame_of(c) for c in children]
-    left = min(f[0] for f in frames)
-    top = min(f[1] for f in frames)
-    right = max(f[0] + f[2] for f in frames)
-    bottom = max(f[1] + f[3] for f in frames)
-
-    factor = min(1.0, (width - 2 * margin) / (right - left),
-                 (height - 2 * margin) / (bottom - top))
-    if factor < 1.0:
-        for child in children:
-            _scale(child, factor)
-        left, top = left * factor, top * factor
-        right, bottom = right * factor, bottom * factor
-
-    dx = round((width - (right - left)) / 2 - left)
-    dy = round((height - (bottom - top)) / 2 - top)
-    for child in children:
-        x, y, w, h = _frame_of(child)
-        _set_frame(child, x + dx, y + dy, w, h)
-
-
 def _component(path: str, group_name: str, dialog_name: str,
                width: int, height: int, tag: str) -> ET.Element:
     """Lift one modal component out of a vendored layout.
 
-    Each of these is an overlay that covers the whole surface — so its dim
-    pane can grey out what is behind the dialog — with the dialog itself
-    centred inside. Both ship with ``visible = 0`` and show themselves when
-    notified.
+    The component is an overlay covering the whole surface — so its dim pane
+    can grey out what is behind the dialog — with the dialog centred inside.
+    It ships with ``visible = 0`` and shows itself when notified.
     """
     raw = zlib.decompress(open(path, "rb").read())
     root = ET.fromstring(raw).find("node")
@@ -138,12 +91,10 @@ def _component(path: str, group_name: str, dialog_name: str,
     _set_frame(group, 0, 0, width, height)
     _set_tag(group, tag)
 
-    dialog = _find(group, dialog_name) if dialog_name else None
+    dialog = _find(group, dialog_name)
     if dialog is not None:
         _, _, dw, dh = _frame_of(dialog)
         _set_frame(dialog, (width - dw) // 2, (height - dh) // 2, dw, dh)
-    else:
-        _fit_children(group, width, height)
     return group
 
 
@@ -153,14 +104,9 @@ def color_picker(width: int, height: int, path: str = PICKER_TOSC) -> ET.Element
                       VENDOR_TAG)
 
 
-def text_input(width: int, height: int, path: str = TEXTINPUT_TOSC) -> ET.Element:
-    """The TextInput keyboard overlay, framed to a width x height document."""
-    return _component(path, "TextInput", "", width, height, TEXTINPUT_TAG)
-
 
 if __name__ == "__main__":
-    for label, el, dialog in (("ColorPicker", color_picker(1180, 820), "ColorDialog"),
-                              ("TextInput", text_input(1180, 820), "TextInputDialog")):
-        print(f"{label}: {len(list(el.iter('node')))} controls, frame {_frame_of(el)}")
-        dlg = _find(el, dialog)
-        print(f"  dialog at {_frame_of(dlg) if dlg is not None else '(not found)'}")
+    el = color_picker(1180, 820)
+    print(f"ColorPicker: {len(list(el.iter('node')))} controls, frame {_frame_of(el)}")
+    dlg = _find(el, "ColorDialog")
+    print(f"  dialog centred at {_frame_of(dlg)}")

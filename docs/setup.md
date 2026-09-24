@@ -153,10 +153,14 @@ as are the colour parameters — confirm both in Arena under Shortcuts > Edit OS
 ### The BPM field
 
 Tapping a tempo is not always realistic, so the master column carries the
-number itself. Tap it to type an exact BPM on the vendored keyboard
-([TextInputDialog](https://github.com/tshoppa/touchOSC), same MIT module family
-as the colour picker), or use the -/+ buttons to nudge it a beat at a time.
-TAP and RESYNC are still there underneath.
+number itself. Tap it for a numeric keypad, or use the -/+ buttons to nudge it
+a beat at a time. TAP and RESYNC are still there underneath.
+
+The keypad is `Builder.num_pad`, built here rather than vendored — the
+TextInputDialog module is a full QWERTY keyboard, and for a BPM every key but
+the digits is in the way. It follows the same shape as the vendored dialogs: a
+hidden overlay shown when notified, which notifies its caller back with
+`numberEntered` or `numPadCanceled`.
 
 The value lives in a hidden fader, which is also what sends the OSC; the
 display reads that fader back every frame, so typing, nudging and anything
@@ -218,14 +222,16 @@ On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 
 ## 7. The FX page
 
-Effects run down the page, targets across: the four layers plus a **COMP**
-column that drives the same effect at composition level, over everything.
+Layers run down the page and effects across: L1-L4 plus a **COMP** row that
+drives the same effects at composition level, over everything. Every cell is a
+dial with its bypass beside it — beside in a wide cell, beneath in a tall one,
+so the dial keeps as much room as the cell allows.
 
 The list is deliberately short — only the effects actually reached for in a
 set — because a dense matrix of small controls is easy to mistap in the dark.
 Three things guard against that:
 
-* **Large cells.** Four effects rather than eight roughly doubles each cell.
+* **Large dials.** Four effects rather than eight roughly doubles each cell.
 * **Wide gutters.** A finger that lands off-target hits dead space instead of
   the neighbouring effect.
 * **Drag-only response.** FX controls use relative response, so a stray tap
