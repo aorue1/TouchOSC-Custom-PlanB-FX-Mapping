@@ -34,12 +34,13 @@ ACCENT = "#ffd23f"
 # "tabbar:<pager>" targets that pager's tab strip, which is drawn by the
 # renderer but is not made of controls.
 PAGES = [
-    ("resolume", 0, "RESOLUME", "Clip launching, layer state and master", [
-        ("Global strip", ["master_global", "tap", "blackout"],
-         "Always on screen, whichever page is showing: master opacity, tap "
-         "tempo, and a blackout that drops Resolume's master and TouchDesigner "
-         "together."),
-        ("Page tabs", ["tabbar:views"], "Switches between the three pages."),
+    ("resolume", 0, "RESOLUME", "Columns, clips, layer state and master", [
+        ("Page tabs", ["tabbar:views"],
+         "Switches between the three pages. There is no global strip: Resolume "
+         "is always the master, so its master opacity and tempo live on this "
+         "page and every page keeps the 60pt a strip would have taken."),
+        ("Column triggers", ["COL1", "COL8"],
+         "Fires a whole column across every layer at once."),
         ("Clip group", ["tabbar:clipgroups"],
          "First bank row: picks a group of 16 clips."),
         ("Clip bank", ["tabbar:banks1"],
@@ -55,9 +56,14 @@ PAGES = [
         ("Opacity", ["L1_opacity", "L4_opacity"],
          "Per-layer opacity. These stay put when you change bank, so the "
          "faders never move under your hand."),
-        ("Master", ["speed", "bpm", "resolume_color", "resync", "tap_page"],
-         "Composition speed, an editable BPM, the colour picker, and resync / "
-         "tap within reach of the grid."),
+        ("Speed and master", ["speed", "master"],
+         "Composition speed beside Resolume's master opacity. Neither needs "
+         "width, so they sit as two narrow columns."),
+        ("Colour", ["resolume_color"], "Opens the colour picker."),
+        ("Tempo", ["bpm", "resync", "tap_page"],
+         "BPM sits with resync and tap because they are the same job: tap it "
+         "for a numeric keypad when tapping a tempo is not realistic, or nudge "
+         "with -/+."),
     ]),
     ("fx", 1, "FX", "Four effects across five targets", [
         ("Effects", ["lbl_Hue", "lbl_Datamosh"],

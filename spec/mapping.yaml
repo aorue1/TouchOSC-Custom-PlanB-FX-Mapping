@@ -67,6 +67,8 @@ grid:
   banks: 4              # banks per group (second tab row)
   bank_groups: 2        # groups of banks (first tab row)
   clip_height: 64       # height of one clip button
+  columns: 8            # composition columns on the trigger row
+  column_row: 56        # height of that row
   bank_tabbar: 34       # height of each of the two bank selector rows
   fx_params: 4          # effects on the FX page
   fx_composition: true  # add a composition-wide column beside the layers
@@ -81,6 +83,8 @@ grid:
 # ---------------------------------------------------------------------------
 resolume:
   clip_connect:   /composition/layers/{layer}/clips/{clip}/connect
+  # Fires a whole column across every layer at once.
+  column_connect: /composition/columns/{column}/connect
   layer_opacity:  /composition/layers/{layer}/video/opacity
   layer_bypass:   /composition/layers/{layer}/bypassed
   layer_solo:     /composition/layers/{layer}/solo
@@ -128,6 +132,9 @@ touchdesigner:
   trigger:  /td/trigger/{n}
   scene:    /td/scene
   intensity: /td/intensity
+  # Defined but unsent: the blackout button lived in the global strip, which
+  # is gone. Kept so a panic button can be wired back to it without a
+  # round-trip through both hosts' settings.
   blackout: /td/blackout
 
 # BPM field on the master column: tap the number to type one, or nudge it.
@@ -172,7 +179,6 @@ colorpicker:
     green: /td/color/g
     blue:  /td/color/b
 
-# Global strip, always visible above the pager.
-globals:
-  blackout:  {label: BLACKOUT, targets: [resolume, touchdesigner]}
-  tap:       {label: TAP,      targets: [resolume]}
+# There is no global strip: Resolume is always the master, so its master
+# opacity and tempo belong on the Resolume page rather than in a band
+# stealing 60pt from every page.

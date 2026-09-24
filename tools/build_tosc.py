@@ -330,65 +330,16 @@ class Builder:
         return pad
 
     # -- global strip ------------------------------------------------------
-    def brand_mark(self, parent: Node, x: int, y: int, height: int) -> int:
-        """Wordmark in the top-left. Returns its right edge.
-
-        Text only: TouchOSC loads no images, and a mark drawn from primitives
-        read as a pseudo-logo rather than the real one.
-        """
-        brand = self.spec["branding"]
-        width = 0 if self.portrait else 150
-        if width:
-            parent.add(Node(LABEL, (x, y + 8, width, height - 16),
-                            name="brand_wordmark", text=brand["wordmark"],
-                            text_size=20, text_color=self.colors["brand"],
-                            background=False, outline=False, interactive=False))
-        return x + width
-
-    def global_strip(self, width: int, height: int) -> Node:
-        res, td = self.spec["resolume"], self.spec["touchdesigner"]
-        strip = Node(GROUP, (0, 0, width, height), name="globals",
-                     color=self.colors["bg"], outline=False)
-        pad = 8
-        btn_w = 150 if self.portrait else 178
-
-        # Portrait is too narrow for the wordmark, so the badge stands alone.
-        title_w = self.brand_mark(strip, 12, 0, height)
-
-        blackout_frame = (width - btn_w - pad, 8, btn_w, height - 16)
-        blackout = Node(BUTTON, blackout_frame, name="blackout",
-                        color=self.colors["danger"], button_type=TOGGLE)
-        blackout.messages.append(OscMessage(res["master"], self.res_conn,
-                                            send_value=False, constant_args=(0.0,),
-                                            trigger="RISE"))
-        blackout.messages.append(OscMessage(td["blackout"], self.td_conn))
-        strip.add(blackout)
-        strip.add(self.label(blackout_frame, "BLACKOUT", size=15))
-
-        self.add_button(strip, (width - 2 * btn_w - 2 * pad, 8, btn_w, height - 16),
-                        "tap", res["tempo_tap"], self.res_conn,
-                        color="accent", text="TAP", text_size=16,
-                        constant_args=(1.0,))
-
-        fader_x = title_w + 2 * pad
-        fader_w = width - 2 * btn_w - 3 * pad - fader_x
-        strip.add(self.fader((fader_x, 14, fader_w, height - 28), "master_global",
-                             res["master"], self.res_conn, horizontal=True,
-                             color="resolume"))
-        return strip
-
-    # -- pages -------------------------------------------------------------
     def resolume_page(self, width: int, height: int) -> Node:
-        """Layer columns over a two-row banked clip grid; master on the right.
+        """Column triggers, a banked clip grid, layer state, and master.
 
-        TouchOSC has no scrolling control, so clips are reached by banking.
-        Two rows of tabs rather than one: the first picks a group, the second
-        a bank within it, so 4 rows of clip buttons still reach 32 clips per
-        layer. Fewer rows on screen leaves the opacity faders long, which is
-        what they are actually used for during a set.
+        TouchOSC has no scrolling control, so clips are reached by banking over
+        two rows of tabs — the first picks a group of 16, the second a bank of
+        4 — which reaches 32 clips per layer while keeping four rows on screen
+        and leaving the opacity faders long.
 
-        Only the clip buttons move when banking — the nav row, state strip and
-        faders stay put, so nothing shifts under your hand.
+        Only the clip buttons move when banking: the column row, nav row, state
+        strip and faders all stay put, so nothing shifts under your hand.
         """
         res, grid = self.spec["resolume"], self.spec["grid"]
         fb = self.spec.get("feedback", {})
@@ -400,19 +351,29 @@ class Builder:
         col_w = width // (layers + 1)
         grid_w = layers * col_w
         pad = 6
+        col_row = grid["column_row"]
         header_h = 26
         nav_h = 44
         strip_h = 44
         tab_h = grid["bank_tabbar"]
         clip_h = grid["clip_height"]
         clip_area = clips * clip_h + 2 * tab_h
-        fader_y = header_h + clip_area + nav_h + strip_h + 3 * pad
-        fader_h = height - fader_y - pad
-        per_bank = clips
-        per_group = per_bank * banks
 
+        # --- column triggers, in the space the global strip used to take ---
+        n_cols = grid["columns"]
+        cw = (grid_w - (n_cols + 1) * pad) // n_cols
+        for i in range(n_cols):
+            column = i + 1
+            self.add_button(page, (pad + i * (cw + pad), pad, cw,
+                                   col_row - 2 * pad),
+                            f"COL{column}",
+                            res["column_connect"].format(column=column),
+                            self.res_conn, color="panel", text=f"COL {column}",
+                            text_size=13, constant_args=(1.0,))
+
+        top = col_row
         for li in range(layers):
-            header = self.label((li * col_w, 2, col_w, header_h),
+            header = self.label((li * col_w, top + 2, col_w, header_h),
                                 f"LAYER {li + 1}", size=15, color="resolume")
             header.name = f"L{li + 1}_name"
             page.add(self.name_feed(header, fb["layer_name"].format(layer=li + 1)))
@@ -429,9 +390,12 @@ class Builder:
                             "textSizeOn": ("i", size),
                         })
 
-        outer = tabs("clipgroups", (0, header_h, grid_w, clip_area), 12)
+        # --- banked clip grid ---
+        outer = tabs("clipgroups", (0, top + header_h, grid_w, clip_area), 12)
         group_h = clip_area - tab_h
         bank_h = group_h - tab_h
+        per_bank = clips
+        per_group = per_bank * banks
         for g in range(groups):
             g_first = g * per_group + 1
             g_page = Node(GROUP, (0, tab_h, grid_w, group_h),
@@ -465,8 +429,10 @@ class Builder:
         page.add(outer)
 
         # --- per-layer nav, state strip and opacity ---
-        nav_y = header_h + clip_area + pad
+        nav_y = top + header_h + clip_area + pad
         strip_y = nav_y + nav_h
+        fader_y = strip_y + strip_h
+        fader_h = height - fader_y - pad
         for li in range(layers):
             layer = li + 1
             x = li * col_w
@@ -495,33 +461,43 @@ class Builder:
                                 res["layer_opacity"].format(layer=layer),
                                 self.res_conn, color="resolume"))
 
-        # --- master column: speed, BPM, colour, tempo buttons ---
+        # --- master column ---
+        # Speed and master opacity are narrow columns side by side: neither
+        # needs width, and master opacity belongs here now that there is no
+        # global strip. Colour sits under them, and BPM with resync and tap at
+        # the bottom, since those three are the same job.
         x = layers * col_w
         inner_w = col_w - 2 * pad
-        page.add(self.label((x, 2, col_w, header_h), "MASTER", size=15, color="accent"))
-        y = header_h + pad
-        page.add(self.label((x + pad, y, inner_w, 22), "SPEED", size=12))
-        buttons_top = height - 2 * 52 - pad
-        speed_h = int(height * 0.26)
-        page.add(self.fader((x + pad, y + 22, inner_w, speed_h),
-                            "speed", res["speed"], self.res_conn, color="accent"))
+        label_h = 22
+        bpm_h = 46 + 40 + pad
+        buttons_h = 46
+        swatch_h = 72
+        tempo_h = bpm_h + pad + buttons_h
 
-        y = y + 22 + speed_h + pad
-        bpm_h = 96
+        half = (inner_w - pad) // 2
+        fader_h = height - tempo_h - swatch_h - label_h - 5 * pad
+        for i, (caption, name, addr) in enumerate(
+                (("SPEED", "speed", res["speed"]),
+                 ("MASTER", "master", res["master"]))):
+            fx = x + pad + i * (half + pad)
+            page.add(self.label((fx, pad, half, label_h), caption, size=12))
+            page.add(self.fader((fx, pad + label_h, half, fader_h), name, addr,
+                                self.res_conn, color="accent"))
+
+        y = pad + label_h + fader_h + pad
+        self.color_swatch(page, (x + pad, y, inner_w, swatch_h), "resolume",
+                          self.spec["colorpicker"]["resolume"], self.res_conn,
+                          "resolume")
+
+        y += swatch_h + pad
         self.bpm_field(page, (x + pad, y, inner_w, bpm_h))
         y += bpm_h + pad
-
-        self.color_swatch(page, (x + pad, y, inner_w, buttons_top - y - pad),
-                          "resolume", self.spec["colorpicker"]["resolume"],
-                          self.res_conn, "resolume")
-        self.add_button(page, (x + pad, buttons_top + 4, inner_w, 48),
-                        "resync", res["tempo_resync"], self.res_conn,
-                        color="accent", text="RESYNC", text_size=12,
-                        constant_args=(1.0,))
-        self.add_button(page, (x + pad, buttons_top + 56, inner_w, 48),
-                        "tap_page", res["tempo_tap"], self.res_conn,
-                        color="accent", text="TAP", text_size=15,
-                        constant_args=(1.0,))
+        for i, (name, addr, caption) in enumerate(
+                (("resync", res["tempo_resync"], "RESYNC"),
+                 ("tap_page", res["tempo_tap"], "TAP"))):
+            self.add_button(page, (x + pad + i * (half + pad), y, half, buttons_h),
+                            name, addr, self.res_conn, color="accent",
+                            text=caption, text_size=13, constant_args=(1.0,))
         return page
 
     def fx_page(self, width: int, height: int) -> Node:
@@ -635,7 +611,7 @@ class Builder:
         page.add(self.label((sx, sy, sw, 24), "XY / SCENE", size=14, color="td"))
         pads = grid["td_pads"]
         strips_h = 2 * 56
-        colour_h = 164
+        colour_h = 82
         pad_w = (sw - (pads + 1) * pad) // pads
         pad_h = sh - strips_h - colour_h - 26 - 24
         for i in range(pads):
@@ -806,15 +782,16 @@ class Builder:
     def build(self) -> Node:
         layout = self.spec["layout"]
         w, h = self.width, self.height
-        strip_h = layout["tabbar_height"]
 
         root = Node(GROUP, (0, 0, w, h), name="root", color=self.colors["bg"],
                     outline=False)
-        root.add(self.global_strip(w, strip_h))
 
-        pager_h = h - strip_h
+        # No global strip: Resolume is always the master, so master opacity,
+        # tempo and colour live on its own page, and every page gets back the
+        # 60pt the strip was taking.
+        pager_h = h
         page_h = pager_h - layout["tabbar_height"]
-        pager = Node(PAGER, (0, strip_h, w, pager_h), name="views",
+        pager = Node(PAGER, (0, 0, w, pager_h), name="views",
                      color=self.colors["panel"],
                      background=False, outline=False,
                      extra_props={

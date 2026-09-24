@@ -123,10 +123,26 @@ mode: it shows the exact address for the control you click.
   parameters; values arrive normalised 0..1 and are scaled into the range you
   give.
 
-`/td/blackout` is handled specially by the router: it drops every mapped
-parameter to its low value.
+`/td/blackout` is handled specially by the router — it drops every mapped
+parameter to its low value — but **nothing currently sends it**: the blackout
+button lived in the global strip, which is gone. The handler and the address
+are kept so a panic button can be wired back without changing anything on the
+TouchDesigner side.
 
-## 5. Clip banks and names
+## 5. No global strip
+
+Resolume is always the master, so there is no band across the top of every
+page holding a master fader, tap and blackout. Master opacity sits on the
+Resolume page as a narrow column beside composition speed, and BPM, resync and
+tap are grouped beneath the colour swatch. Every page gets back the 60pt the
+strip was taking, which is why the FX dials and opacity faders are as large as
+they are.
+
+If a panic blackout is wanted later, the cheapest version is a button sending
+`0` to `/composition/master` — the layout had exactly that before, and
+`Builder.add_button` with `constant_args=(0.0,)` is all it takes.
+
+## 6. Clip banks and names
 
 TouchOSC has no scrolling control, so clips are reached by **banking**, over
 two rows of tabs: the first row picks a group of 16, the second a bank of 4
@@ -140,7 +156,12 @@ grid:
   banks: 4          # banks per group (second tab row)
   bank_groups: 2    # groups of banks (first tab row)
   clip_height: 64
+  columns: 8        # composition columns on the trigger row
 ```
+
+The row above the grid fires whole **columns** across every layer
+(`/composition/columns/{n}/connect`), in the space the global strip used to
+occupy.
 
 Raising `bank_groups` extends the reach without touching the layout: 3 groups
 gives 48 clips per layer, still 4 rows on screen. Banking moves every layer at
@@ -198,7 +219,7 @@ name. That needs two things:
 Names arrive as OSC strings written into each label's `text` value. Set
 `feedback.enabled: false` in the spec to strip the receive messages entirely.
 
-## 6. The colour picker
+## 7. The colour picker
 
 Each picker is an XY pad -- hue across, shade up -- over R, G and B faders,
 with a live swatch beside it. The pad only moves the faders; the faders carry
@@ -220,7 +241,7 @@ you actually want to drive; whatever address it reports goes in the spec.
 On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 `/b`, wired in `touchdesigner/osc_router.py` to a Constant TOP by default.
 
-## 7. The FX page
+## 8. The FX page
 
 Layers run down the page and effects across: L1-L4 plus a **COMP** row that
 drives the same effects at composition level, over everything. One dial per
@@ -278,7 +299,7 @@ on a dark stage.
 Landscape draws these as dials, portrait as horizontal faders — the portrait
 cells are wide and short, where a dial wastes the width.
 
-## 8. Dragging off a control
+## 9. Dragging off a control
 
 Every continuous control in the layout — the FX dials, layer opacity, master,
 speed, the TouchDesigner faders and XY pads, the colour picker's own field —
@@ -291,7 +312,7 @@ Buttons deliberately do **not** grab focus: sliding off a button before
 lifting is how you abort a mis-press, and grabbing the touch would take that
 escape away.
 
-## 9. Changing the surface
+## 10. Changing the surface
 
 Everything about the layout comes from `spec/mapping.yaml` — grid sizes,
 colours, ports, addresses. Change it and re-run `make`. The uncompressed

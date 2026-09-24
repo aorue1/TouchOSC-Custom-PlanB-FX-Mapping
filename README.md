@@ -19,10 +19,16 @@ make            # build both layouts, regenerate the address map, verify
 
 ![The Resolume page, annotated](docs/img/page-resolume.png)
 
-Clip launching and layer state. TouchOSC has no scrolling control, so clips are
+Columns, clips and layer state. The top row fires **whole columns** across
+every layer at once. Below it, TouchOSC has no scrolling control, so clips are
 reached by **banking** over two rows of tabs — the first picks a group of 16,
 the second a bank of 4 — which reaches 32 clips per layer while keeping only 4
 rows on screen. The space that saves goes to the opacity faders.
+
+**There is no global strip.** Resolume is always the master, so its master
+opacity sits here as a narrow column beside composition speed — neither needs
+width — and BPM, resync and tap are grouped at the bottom because they are the
+same job. Removing the strip gives every page back the 60pt it was taking.
 
 Banking moves every layer at once, and **only the clip buttons move**: the
 PREV/NEXT row, bypass/solo/clear and the faders stay put, so nothing shifts
@@ -72,11 +78,8 @@ than re-mapping by hand.
 
 | Slot | Target | Port | Drives |
 | --- | --- | --- | --- |
-| 1 | Resolume Arena | 7000 | RESOLUME and FX pages, master, tap, colour |
-| 2 | TouchDesigner | 7001 | TOUCHDESIGNER page, blackout bus |
-
-**BLACKOUT** is the one control that hits both: it sends `0` to
-`/composition/master` and `1` to `/td/blackout` at once.
+| 1 | Resolume Arena | 7000 | RESOLUME and FX pages, columns, master, tempo, colour |
+| 2 | TouchDesigner | 7001 | TOUCHDESIGNER page |
 
 ---
 
@@ -115,7 +118,7 @@ and TouchOSC's scripting has no OSC send of its own.
 
 **The BPM field** takes a typed number: tap it for a numeric keypad
 (`Builder.num_pad`), or nudge with -/+. Tapping a tempo is not always
-realistic. TAP and RESYNC are still there.
+realistic. It sits directly above RESYNC and TAP.
 
 **Names on the clip buttons** will appear if Resolume publishes them: the
 labels carry receive-only messages that write an incoming string into their
@@ -140,6 +143,7 @@ the address it reports into the spec.
 | --- | --- | --- |
 | FX effects and parameters | `huerotate/rotation`, `saturation/saturation`, `rgbdelay/delay`, `datamosh/amount` | Dials do nothing |
 | Clip next / previous | `.../connectnextclip`, `.../connectpreviousclip` | Buttons do nothing |
+| Column triggers | `/composition/columns/{n}/connect` | COL row does nothing |
 | Colour | Solid Colour effect's `color/red`, `/green`, `/blue` | Picker does nothing |
 | Tempo | `/composition/tempocontroller/tempo`, sent normalised across 20-500 BPM | Tempo jumps somewhere absurd |
 | Clip / layer names | `.../clips/{n}/name`, `.../layers/{n}/name` | Captions keep showing numbers |
