@@ -8,10 +8,28 @@
 <rect x="808.0" y="8.0" width="178.0" height="44.0" rx="2" fill="rgba(242,204,51,1.000)" stroke="rgba(242,204,51,1.000)" stroke-width="1.5"/>
 <text x="897.0" y="35.8" font-family="Helvetica,Arial,sans-serif" font-size="16" fill="rgba(234,234,239,1.000)" text-anchor="middle">TAP</text>
 <rect x="178.0" y="14.0" width="622.0" height="32.0" rx="2" fill="rgba(237,89,40,1.000)" stroke="rgba(237,89,40,1.000)" stroke-width="1.5"/>
+<rect x="0.0" y="60.0" width="393.3" height="60.0" fill="rgba(63,63,63,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="196.7" y="95.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(255,255,255,1.000)" text-anchor="middle">RESOLUME</text>
+<rect x="393.3" y="60.0" width="393.3" height="60.0" fill="rgba(25,25,25,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="590.0" y="95.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(178,178,183,1.000)" text-anchor="middle">FX</text>
+<rect x="786.7" y="60.0" width="393.3" height="60.0" fill="rgba(25,25,25,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="983.3" y="95.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(178,178,183,1.000)" text-anchor="middle">TOUCHDESIGNER</text>
 <text x="118.0" y="140.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(237,89,40,1.000)" text-anchor="middle">LAYER 1</text>
 <text x="354.0" y="140.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(237,89,40,1.000)" text-anchor="middle">LAYER 2</text>
 <text x="590.0" y="140.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(237,89,40,1.000)" text-anchor="middle">LAYER 3</text>
 <text x="826.0" y="140.4" font-family="Helvetica,Arial,sans-serif" font-size="15" fill="rgba(237,89,40,1.000)" text-anchor="middle">LAYER 4</text>
+<rect x="0.0" y="146.0" width="472.0" height="34.0" fill="rgba(63,63,63,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="236.0" y="167.3" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="rgba(255,255,255,1.000)" text-anchor="middle">1-16</text>
+<rect x="472.0" y="146.0" width="472.0" height="34.0" fill="rgba(25,25,25,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="708.0" y="167.3" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="rgba(178,178,183,1.000)" text-anchor="middle">17-32</text>
+<rect x="0.0" y="180.0" width="236.0" height="34.0" fill="rgba(63,63,63,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="118.0" y="201.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(255,255,255,1.000)" text-anchor="middle">1-4</text>
+<rect x="236.0" y="180.0" width="236.0" height="34.0" fill="rgba(25,25,25,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="354.0" y="201.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(178,178,183,1.000)" text-anchor="middle">5-8</text>
+<rect x="472.0" y="180.0" width="236.0" height="34.0" fill="rgba(25,25,25,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="590.0" y="201.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(178,178,183,1.000)" text-anchor="middle">9-12</text>
+<rect x="708.0" y="180.0" width="236.0" height="34.0" fill="rgba(25,25,25,1.000)" stroke="#000" stroke-width="0.5"/>
+<text x="826.0" y="201.0" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="rgba(178,178,183,1.000)" text-anchor="middle">13-16</text>
 <rect x="6.0" y="214.0" width="224.0" height="58.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>
 <text x="118.0" y="247.7" font-family="Helvetica,Arial,sans-serif" font-size="13" fill="rgba(234,234,239,1.000)" text-anchor="middle">1</text>
 <rect x="6.0" y="278.0" width="224.0" height="58.0" rx="2" fill="rgba(40,40,48,1.000)" stroke="rgba(40,40,48,1.000)" stroke-width="1.5"/>

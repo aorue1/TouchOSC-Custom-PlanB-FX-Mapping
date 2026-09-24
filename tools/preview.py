@@ -105,6 +105,33 @@ def draw(node: ET.Element, ox: float, oy: float, out: list) -> None:
 
     kids = node.find("children")
     children = list(kids) if kids is not None else []
+
+    if ntype == "PAGER" and children:
+        # Draw the tab bar: a pager's tabs are not controls, so without this
+        # the page looks like it has an unexplained empty strip at the top.
+        bar_h = float(p.get("tabbarSize") or 0)
+        if bar_h:
+            tab_w = w / len(children)
+            active = min(PAGE_INDEX[0], len(children) - 1)
+            for i, page_node in enumerate(children):
+                tp = props(page_node)
+                tx = x + i * tab_w
+                on = i == active
+                out.append(f'<rect x="{tx:.1f}" y="{y:.1f}" width="{tab_w:.1f}" '
+                           f'height="{bar_h:.1f}" fill="'
+                           f'{css_color(tp.get("tabColorOn" if on else "tabColorOff"), "#222")}"'
+                           f' stroke="#000" stroke-width="0.5"/>')
+                label = tp.get("tabLabel") or ""
+                if isinstance(label, str) and label:
+                    size = float(p.get("textSizeOn" if on else "textSizeOff") or 14)
+                    out.append(
+                        f'<text x="{tx + tab_w / 2:.1f}" '
+                        f'y="{y + bar_h / 2 + size * 0.36:.1f}" '
+                        f'font-family="Helvetica,Arial,sans-serif" '
+                        f'font-size="{size:.0f}" fill="'
+                        f'{css_color(tp.get("textColorOn" if on else "textColorOff"), "#ddd")}"'
+                        f' text-anchor="middle">{label}</text>')
+
     if ntype == "PAGER" and children:
         # Only one page is on screen at a time; drawing them all just stacks
         # every page's controls on top of each other.
