@@ -218,6 +218,27 @@ On the TouchDesigner side the three channels arrive as `/td/color/r`, `/g` and
 
 ## 7. The FX page
 
+Effects run down the page, targets across: the four layers plus a **COMP**
+column that drives the same effect at composition level, over everything.
+
+The list is deliberately short — only the effects actually reached for in a
+set — because a dense matrix of small controls is easy to mistap in the dark.
+Three things guard against that:
+
+* **Large cells.** Four effects rather than eight roughly doubles each cell.
+* **Wide gutters.** A finger that lands off-target hits dead space instead of
+  the neighbouring effect.
+* **Drag-only response.** FX controls use relative response, so a stray tap
+  does *nothing*: the value moves only while dragging, instead of jumping to
+  wherever the finger landed. That is the one that actually saves a set — size
+  and spacing reduce mistaps, this removes their cost. Set `fx_relative: false`
+  in the spec if you would rather have tap-to-jump.
+
+Adding or removing an effect is a spec edit: entries in `resolume.fx_names`
+and `grid.fx_params`. Each effect must already exist in the layer's (or
+composition's) chain in Arena, since Resolume addresses effects by their name
+in the chain.
+
 Every FX control repaints itself by value, interpolating between three stops:
 deep blue at rest, cyan halfway, green at full. A glance across the matrix
 reads as a level meter rather than a wall of identical grey, and the resting

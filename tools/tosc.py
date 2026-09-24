@@ -55,6 +55,11 @@ class Outline(IntEnum):
     EDGES = 2
 
 
+class Response(IntEnum):
+    ABSOLUTE = 0    # value jumps to wherever the touch lands
+    RELATIVE = 1    # value only moves by drag, so a stray tap does nothing
+
+
 class Orientation(IntEnum):
     NORTH = 0
     EAST = 1
@@ -219,6 +224,7 @@ class Node:
     orientation: int = Orientation.NORTH
     tab_label: str | None = None       # set on a pager's pages
     value_default: float = 0.0         # starting value for x
+    response: int | None = None        # Response.ABSOLUTE / RELATIVE
     script: str = ""
     extra_props: dict = field(default_factory=dict)
     messages: list = field(default_factory=list)
@@ -255,6 +261,9 @@ class Node:
             _prop(props, "i", "textAlignV", int(AlignV.MIDDLE))
             _prop(props, "c", "textColor", self.text_color)
             _prop(props, "b", "textClip", True)
+        if self.response is not None and self.type in (FADER, RADIAL, XY):
+            _prop(props, "i", "response", int(self.response))
+            _prop(props, "i", "responseFactor", 100)
         if self.button_type is not None:
             _prop(props, "i", "buttonType", int(self.button_type))
             _prop(props, "b", "press", True)

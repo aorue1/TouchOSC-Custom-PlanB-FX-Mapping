@@ -68,7 +68,9 @@ grid:
   bank_groups: 2        # groups of banks (first tab row)
   clip_height: 64       # height of one clip button
   bank_tabbar: 34       # height of each of the two bank selector rows
-  fx_params: 8          # knobs on the FX page
+  fx_params: 4          # effects on the FX page
+  fx_composition: true  # add a composition-wide column beside the layers
+  fx_relative: true     # FX controls move by drag only, so a mistap does nothing
   td_faders: 8          # faders in the TD param bank
   td_pads: 2            # XY pads in the TD param bank
   td_toggles: 8         # toggle buttons in the TD param bank
@@ -99,15 +101,21 @@ resolume:
   # index below lines up with its slot order in the layer's effect chain.
   fx_param:       /composition/layers/{layer}/video/effects/{fx}/effect/{param}
   fx_bypass:      /composition/layers/{layer}/video/effects/{fx}/bypassed
+  # Same effects at composition level, applied over everything.
+  fx_comp_param:  /composition/video/effects/{fx}/effect/{param}
+  fx_comp_bypass: /composition/video/effects/{fx}/bypassed
+  # Only the effects actually reached for in a set. Each must already exist in
+  # the layer's (or composition's) effect chain in Arena -- Resolume addresses
+  # effects by name in the chain, so adding them once and saving the
+  # composition is what makes these addresses resolve.
+  #
+  # The fx and param names below follow Resolume's naming style but are
+  # UNVERIFIED. Confirm each in Shortcuts > Edit OSC and correct it here.
   fx_names:
-    - {name: Blur,       fx: blur,          param: radius}
-    - {name: RGB Shift,  fx: rgbshift,      param: shift}
-    - {name: Hue,        fx: huerotate,     param: rotation}
-    - {name: Sat,        fx: saturation,    param: saturation}
-    - {name: Zoom,       fx: transform,     param: scale}
-    - {name: Kaleido,    fx: kaleidoscope,  param: segments}
-    - {name: Glitch,     fx: glitch,        param: amount}
-    - {name: Strobe,     fx: strobe,        param: speed}
+    - {name: Hue,       fx: huerotate,  param: rotation}
+    - {name: Sat,       fx: saturation, param: saturation}
+    - {name: RGB Delay, fx: rgbdelay,   param: delay}
+    - {name: Datamosh,  fx: datamosh,   param: amount}
 
 # ---------------------------------------------------------------------------
 # TouchDesigner addresses. Flat and predictable so an OSC In CHOP turns them

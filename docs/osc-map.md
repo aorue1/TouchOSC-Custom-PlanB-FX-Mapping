@@ -29,14 +29,10 @@ One knob and one bypass per layer per effect. The effect must already exist in t
 
 | Knob | Address |
 | --- | --- |
-| Blur | `/composition/layers/{layer}/video/effects/blur/effect/radius` |
-| RGB Shift | `/composition/layers/{layer}/video/effects/rgbshift/effect/shift` |
 | Hue | `/composition/layers/{layer}/video/effects/huerotate/effect/rotation` |
 | Sat | `/composition/layers/{layer}/video/effects/saturation/effect/saturation` |
-| Zoom | `/composition/layers/{layer}/video/effects/transform/effect/scale` |
-| Kaleido | `/composition/layers/{layer}/video/effects/kaleidoscope/effect/segments` |
-| Glitch | `/composition/layers/{layer}/video/effects/glitch/effect/amount` |
-| Strobe | `/composition/layers/{layer}/video/effects/strobe/effect/speed` |
+| RGB Delay | `/composition/layers/{layer}/video/effects/rgbdelay/effect/delay` |
+| Datamosh | `/composition/layers/{layer}/video/effects/datamosh/effect/amount` |
 
 ## TouchDesigner
 

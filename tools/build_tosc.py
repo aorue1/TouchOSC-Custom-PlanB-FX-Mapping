@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tosc  # noqa: E402
 import vendor  # noqa: E402
 from tosc import (BOX, BUTTON, FADER, GROUP, LABEL, PAGER, RADIAL, XY,  # noqa: E402
-                  Node, OscMessage, Orientation, Outline, Raw, Shape)
+                  Node, OscMessage, Orientation, Outline, Raw, Response, Shape)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "mapping.yaml")
@@ -234,14 +234,17 @@ class Builder:
         return btn
 
     def fader(self, frame, name, path, conns, *, horizontal=False, color="panel",
-              script="") -> Node:
+              script="", response=None) -> Node:
         fdr = Node(FADER, frame, name=name, color=self.colors[color], script=script,
+                   response=response,
                    orientation=Orientation.EAST if horizontal else Orientation.NORTH)
         fdr.messages.append(OscMessage(path, conns))
         return fdr
 
-    def radial(self, frame, name, path, conns, color="panel", script="") -> Node:
-        knob = Node(RADIAL, frame, name=name, color=self.colors[color], script=script)
+    def radial(self, frame, name, path, conns, color="panel", script="",
+               response=None) -> Node:
+        knob = Node(RADIAL, frame, name=name, color=self.colors[color],
+                    script=script, response=response)
         knob.messages.append(OscMessage(path, conns))
         return knob
 
@@ -447,69 +450,84 @@ class Builder:
         return page
 
     def fx_page(self, width: int, height: int) -> Node:
-        """Knob matrix of effects against layers.
+        """Effects down, targets across: the four layers plus composition.
 
-        Landscape runs effects across and layers down; portrait transposes so
-        the knobs stay roughly square instead of stretching into thin columns.
+        Cut to the effects actually reached for in a set. With a short list the
+        cells are large enough to use in the dark, and the control follows the
+        cell's shape: a dial where it is roughly square, a fader where it is
+        long in one direction, because a squashed dial is hard to aim.
         """
         res, grid = self.spec["resolume"], self.spec["grid"]
         layers = grid["layers"]
         fx_list = res["fx_names"][: grid["fx_params"]]
+        with_comp = grid.get("fx_composition", False)
         page = Node(GROUP, (0, 0, width, height), name="FX",
                     color=self.colors["accent"], background=False, outline=False)
 
-        pad = 6
+        # Generous gutters between cells: a finger that lands off-target hits
+        # dead space rather than the neighbouring effect.
+        pad = 14
         head_h = 22
         byp_h = 32
-        gutter = 70 if self.portrait else 90
+        gutter = 76
+        # Relative response means a control only moves by dragging, so a
+        # mistap does nothing at all instead of slamming the parameter to
+        # wherever the finger landed.
+        response = (Response.RELATIVE if grid.get("fx_relative", True)
+                    else Response.ABSOLUTE)
+        targets = layers + (1 if with_comp else 0)
+        col_w = (width - gutter) // targets
+        row_h = (height - head_h) // len(fx_list)
 
-        # cols x rows: effects across in landscape, layers across in portrait.
-        across = layers if self.portrait else len(fx_list)
-        down = len(fx_list) if self.portrait else layers
-        col_w = (width - gutter) // across
-        row_h = (height - head_h) // down
+        def target(i):
+            """(caption, param address, bypass address) for column i."""
+            if with_comp and i == layers:
+                return ("COMP", res["fx_comp_param"], res["fx_comp_bypass"])
+            return (f"L{i + 1}", res["fx_param"], res["fx_bypass"])
 
-        def across_title(i):
-            return f"L{i + 1}" if self.portrait else fx_list[i]["name"]
+        for i in range(targets):
+            caption, _, _ = target(i)
+            page.add(self.label((gutter + i * col_w, 0, col_w, head_h), caption,
+                                size=13,
+                                color="accent" if caption == "COMP" else "resolume"))
 
-        def down_title(i):
-            return fx_list[i]["name"] if self.portrait else f"L{i + 1}"
-
-        for i in range(across):
-            page.add(self.label((gutter + i * col_w, 0, col_w, head_h), across_title(i),
-                                size=12, color="resolume"))
-
-        for r in range(down):
+        for r, fx in enumerate(fx_list):
             y = head_h + r * row_h
-            page.add(self.label((0, y + row_h // 3, gutter, 24), down_title(r),
+            page.add(self.label((0, y + row_h // 3, gutter, 24), fx["name"],
                                 size=13, color="resolume"))
-            for c in range(across):
-                layer = (c if self.portrait else r) + 1
-                fx = fx_list[r if self.portrait else c]
+            for c in range(targets):
+                caption, param_addr, bypass_addr = target(c)
+                layer = c + 1
                 x = gutter + c * col_w
                 cell_w = col_w - 2 * pad
-                knob_h = row_h - 2 * pad - byp_h - 2
-                addr = res["fx_param"].format(layer=layer, fx=fx["fx"],
-                                              param=fx["param"])
-                name = f"L{layer}_{fx['fx']}"
-                if cell_w > knob_h * 1.4:
-                    # A wide, short cell (portrait) makes a poor dial; a
-                    # horizontal fader uses the width and reads at a glance.
-                    page.add(self.fader((x + pad, y + pad, cell_w, knob_h), name,
+                cell_h = row_h - 2 * pad - byp_h - 2
+                name = f"{caption}_{fx['fx']}"
+                addr = param_addr.format(layer=layer, fx=fx["fx"],
+                                         param=fx["param"])
+                accent = "accent" if caption == "COMP" else "fx_low"
+
+                if cell_w > cell_h * 1.4:
+                    page.add(self.fader((x + pad, y + pad, cell_w, cell_h), name,
                                         addr, self.res_conn, horizontal=True,
-                                        color="fx_low", script=self.fx_script))
+                                        color=accent, script=self.fx_script,
+                                        response=response))
+                elif cell_h > cell_w * 1.4:
+                    page.add(self.fader((x + pad, y + pad, cell_w, cell_h), name,
+                                        addr, self.res_conn, color=accent,
+                                        script=self.fx_script, response=response))
                 else:
-                    # Keep dials circular: square them and centre in the cell.
-                    size = min(cell_w, knob_h)
+                    size = min(cell_w, cell_h)
                     page.add(self.radial((x + pad + (cell_w - size) // 2,
-                                          y + pad + (knob_h - size) // 2,
+                                          y + pad + (cell_h - size) // 2,
                                           size, size), name, addr,
-                                         self.res_conn, color="fx_low",
-                                         script=self.fx_script))
-                self.add_button(page, (x + pad, y + pad + knob_h + 2,
-                                       col_w - 2 * pad, byp_h),
-                                f"L{layer}_{fx['fx']}_byp",
-                                res["fx_bypass"].format(layer=layer, fx=fx["fx"]),
+                                         self.res_conn, color=accent,
+                                         script=self.fx_script,
+                                         response=response))
+
+                self.add_button(page, (x + pad, y + pad + cell_h + 2,
+                                       cell_w, byp_h),
+                                f"{name}_byp",
+                                bypass_addr.format(layer=layer, fx=fx["fx"]),
                                 self.res_conn, toggle=True, color="panel",
                                 text="byp", text_size=11)
         return page
