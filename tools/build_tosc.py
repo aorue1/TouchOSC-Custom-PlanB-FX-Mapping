@@ -69,6 +69,73 @@ def fx_color_script(scale: dict) -> str:
                                     high=stop("high"))
 
 
+def bake(script: str, **values) -> str:
+    """Substitute @TOKEN@ placeholders in a Lua script.
+
+    Not str.format: these scripts are full of Lua table braces, which format
+    would try to read as fields of its own.
+    """
+    for key, value in values.items():
+        script = script.replace(f"@{key.upper()}@", f"{float(value):.2f}")
+    return script.strip()
+
+
+# BPM field. The hidden fader holds the value and carries the OSC; the label
+# reads it back, the nudge buttons step it, and the display can be tapped to
+# type an exact number through the vendored keyboard -- tapping a tempo is not
+# always realistic.
+BPM_HELPERS = """
+local MIN, MAX = @MIN@, @MAX@
+local f = self.parent.children.bpm_value
+
+local function bpm()
+  return MIN + f.values.x * (MAX - MIN)
+end
+
+local function setBpm(v)
+  if v < MIN then v = MIN elseif v > MAX then v = MAX end
+  f.values.x = (v - MIN) / (MAX - MIN)
+end
+"""
+
+BPM_EDIT_SCRIPT = BPM_HELPERS + """
+function onValueChanged(key)
+  -- On release: the keyboard's overlay would swallow a touch still held.
+  if key == 'x' and self.values.x == 0 then
+    root.children.TextInput:notify('showTextDialog', {
+      callback = self,
+      initialText = string.format('%.1f', bpm()),
+      maxTextLength = 6,
+      advice = 'Enter BPM'
+    })
+  end
+end
+
+function onReceiveNotify(key, val)
+  if key == 'heresYourText' then
+    local n = tonumber(val)
+    if n then setBpm(n) end
+  end
+end
+"""
+
+BPM_NUDGE_SCRIPT = BPM_HELPERS + """
+local STEP = @STEP@
+local dir = string.find(self.name, 'plus') and 1 or -1
+
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 0 then
+    setBpm(bpm() + dir * STEP)
+  end
+end
+"""
+
+BPM_DISPLAY_SCRIPT = BPM_HELPERS + """
+function update()
+  self.values.text = string.format('%.1f BPM', bpm())
+end
+"""
+
 # Opens the vendored ColorPicker and writes the result into the R/G/B faders
 # beside it, which are what actually send the OSC.
 SWATCH_SCRIPT = """
@@ -234,17 +301,21 @@ class Builder:
 
     # -- pages -------------------------------------------------------------
     def resolume_page(self, width: int, height: int) -> Node:
-        """Layer columns with a banked clip grid; master column on the right.
+        """Layer columns over a two-row banked clip grid; master on the right.
 
-        TouchOSC has no scrolling control, so more clips than fit on screen are
-        reached by banking: the clip grid lives in its own pager whose tabs are
-        clip ranges (1-8, 9-16, ...). Banking moves every layer's column at
-        once, and only the clip buttons move — opacity, bypass and the nav row
-        stay put, so the controls you hold during a set never shift under you.
+        TouchOSC has no scrolling control, so clips are reached by banking.
+        Two rows of tabs rather than one: the first picks a group, the second
+        a bank within it, so 4 rows of clip buttons still reach 32 clips per
+        layer. Fewer rows on screen leaves the opacity faders long, which is
+        what they are actually used for during a set.
+
+        Only the clip buttons move when banking — the nav row, state strip and
+        faders stay put, so nothing shifts under your hand.
         """
         res, grid = self.spec["resolume"], self.spec["grid"]
         fb = self.spec.get("feedback", {})
-        layers, clips, banks = grid["layers"], grid["clips"], grid["banks"]
+        layers, clips = grid["layers"], grid["clips"]
+        banks, groups = grid["banks"], grid["bank_groups"]
         page = Node(GROUP, (0, 0, width, height), name="RESOLUME",
                     color=self.colors["resolume"], background=False, outline=False)
 
@@ -254,9 +325,13 @@ class Builder:
         header_h = 26
         nav_h = 44
         strip_h = 44
-        fader_h = 200 if self.portrait else 150
-        bank_tab_h = grid["bank_tabbar"]
-        clip_area = height - header_h - nav_h - strip_h - fader_h - 5 * pad
+        tab_h = grid["bank_tabbar"]
+        clip_h = grid["clip_height"]
+        clip_area = clips * clip_h + 2 * tab_h
+        fader_y = header_h + clip_area + nav_h + strip_h + 3 * pad
+        fader_h = height - fader_y - pad
+        per_bank = clips
+        per_group = per_bank * banks
 
         for li in range(layers):
             header = self.label((li * col_w, 2, col_w, header_h),
@@ -264,47 +339,56 @@ class Builder:
             header.name = f"L{li + 1}_name"
             page.add(self.name_feed(header, fb["layer_name"].format(layer=li + 1)))
 
-        # --- banked clip grid ---
-        bank_pager = Node(PAGER, (0, header_h, grid_w, clip_area),
-                          name="clipbanks", color=self.colors["panel"],
-                          background=False, outline=False,
-                          extra_props={
-                              "tabbar": ("b", 1),
-                              "tabbarSize": ("i", bank_tab_h),
-                              "tabbarDoubleTap": ("b", 0),
-                              "tabLabels": ("b", 1),
-                              "textSizeOff": ("i", 12),
-                              "textSizeOn": ("i", 12),
-                          })
-        bank_h = clip_area - bank_tab_h
-        clip_h = bank_h // clips
-        for b in range(banks):
-            first = b * clips + 1
-            bank = Node(GROUP, (0, bank_tab_h, grid_w, bank_h),
-                        name=f"bank{b + 1}", color=self.colors["bg"],
+        def tabs(name, frame, size):
+            return Node(PAGER, frame, name=name, color=self.colors["panel"],
                         background=False, outline=False,
-                        tab_label=f"{first}-{first + clips - 1}")
-            for li in range(layers):
-                x = li * col_w
-                for ci in range(clips):
-                    clip = first + ci
-                    frame = (x + pad, ci * clip_h, col_w - 2 * pad, clip_h - pad)
-                    self.add_button(
-                        bank, frame, f"L{li + 1}C{clip}",
-                        res["clip_connect"].format(layer=li + 1, clip=clip),
-                        self.res_conn, color="panel", constant_args=(1.0,))
-                    caption = self.label(frame, str(clip), size=13)
-                    caption.name = f"L{li + 1}C{clip}_name"
-                    self.name_feed(caption, fb["clip_name"].format(
-                        layer=li + 1, clip=clip))
-                    bank.add(caption)
-            bank_pager.add(bank)
-        page.add(bank_pager)
+                        extra_props={
+                            "tabbar": ("b", 1),
+                            "tabbarSize": ("i", tab_h),
+                            "tabbarDoubleTap": ("b", 0),
+                            "tabLabels": ("b", 1),
+                            "textSizeOff": ("i", size),
+                            "textSizeOn": ("i", size),
+                        })
+
+        outer = tabs("clipgroups", (0, header_h, grid_w, clip_area), 12)
+        group_h = clip_area - tab_h
+        bank_h = group_h - tab_h
+        for g in range(groups):
+            g_first = g * per_group + 1
+            g_page = Node(GROUP, (0, tab_h, grid_w, group_h),
+                          name=f"group{g + 1}", background=False, outline=False,
+                          tab_label=f"{g_first}-{g_first + per_group - 1}")
+            inner = tabs(f"banks{g + 1}", (0, 0, grid_w, group_h), 11)
+            for b in range(banks):
+                b_first = g_first + b * per_bank
+                bank = Node(GROUP, (0, tab_h, grid_w, bank_h),
+                            name=f"g{g + 1}bank{b + 1}", background=False,
+                            outline=False,
+                            tab_label=f"{b_first}-{b_first + per_bank - 1}")
+                for li in range(layers):
+                    x = li * col_w
+                    for ci in range(clips):
+                        clip = b_first + ci
+                        frame = (x + pad, ci * clip_h, col_w - 2 * pad,
+                                 clip_h - pad)
+                        self.add_button(
+                            bank, frame, f"L{li + 1}C{clip}",
+                            res["clip_connect"].format(layer=li + 1, clip=clip),
+                            self.res_conn, color="panel", constant_args=(1.0,))
+                        caption = self.label(frame, str(clip), size=13)
+                        caption.name = f"L{li + 1}C{clip}_name"
+                        self.name_feed(caption, fb["clip_name"].format(
+                            layer=li + 1, clip=clip))
+                        bank.add(caption)
+                inner.add(bank)
+            g_page.add(inner)
+            outer.add(g_page)
+        page.add(outer)
 
         # --- per-layer nav, state strip and opacity ---
         nav_y = header_h + clip_area + pad
         strip_y = nav_y + nav_h
-        fader_y = strip_y + strip_h
         for li in range(layers):
             layer = li + 1
             x = li * col_w
@@ -328,31 +412,35 @@ class Builder:
                     toggle=toggle, color="panel", text=text, text_size=11,
                     constant_args=() if toggle else (1.0,))
 
-            page.add(self.fader((x + pad, fader_y, col_w - 2 * pad, fader_h - pad),
+            page.add(self.fader((x + pad, fader_y, col_w - 2 * pad, fader_h),
                                 f"L{layer}_opacity",
                                 res["layer_opacity"].format(layer=layer),
                                 self.res_conn, color="resolume"))
 
-        # --- master column ---
+        # --- master column: speed, BPM, colour, tempo buttons ---
         x = layers * col_w
+        inner_w = col_w - 2 * pad
         page.add(self.label((x, 2, col_w, header_h), "MASTER", size=15, color="accent"))
         y = header_h + pad
-        page.add(self.label((x + pad, y, col_w - 2 * pad, 22), "SPEED", size=12))
-        fader_bottom = height - 2 * 52 - pad
-        speed_h = min(fader_bottom - y - 22, int(height * 0.34))
-        page.add(self.fader((x + pad, y + 22, col_w - 2 * pad, speed_h),
+        page.add(self.label((x + pad, y, inner_w, 22), "SPEED", size=12))
+        buttons_top = height - 2 * 52 - pad
+        speed_h = int(height * 0.26)
+        page.add(self.fader((x + pad, y + 22, inner_w, speed_h),
                             "speed", res["speed"], self.res_conn, color="accent"))
 
-        colour_y = y + 22 + speed_h + pad
-        self.color_swatch(page, (x + pad, colour_y, col_w - 2 * pad,
-                                 fader_bottom - colour_y - pad),
+        y = y + 22 + speed_h + pad
+        bpm_h = 96
+        self.bpm_field(page, (x + pad, y, inner_w, bpm_h))
+        y += bpm_h + pad
+
+        self.color_swatch(page, (x + pad, y, inner_w, buttons_top - y - pad),
                           "resolume", self.spec["colorpicker"]["resolume"],
                           self.res_conn, "resolume")
-        self.add_button(page, (x + pad, fader_bottom + 4, col_w - 2 * pad, 48),
+        self.add_button(page, (x + pad, buttons_top + 4, inner_w, 48),
                         "resync", res["tempo_resync"], self.res_conn,
                         color="accent", text="RESYNC", text_size=12,
                         constant_args=(1.0,))
-        self.add_button(page, (x + pad, fader_bottom + 56, col_w - 2 * pad, 48),
+        self.add_button(page, (x + pad, buttons_top + 56, inner_w, 48),
                         "tap_page", res["tempo_tap"], self.res_conn,
                         color="accent", text="TAP", text_size=15,
                         constant_args=(1.0,))
@@ -496,6 +584,56 @@ class Builder:
             y += 56
         return page
 
+    def bpm_field(self, parent: Node, frame) -> Node:
+        """Editable BPM: type it, nudge it, or leave the tap button to it.
+
+        The value lives in a hidden fader, which is also what sends the OSC.
+        The display reads that fader back each frame, so typing, nudging and
+        anything Resolume sends all show up the same way.
+        """
+        x, y, w, h = frame
+        tempo = self.spec["tempo"]
+        fmt = dict(min=float(tempo["min_bpm"]), max=float(tempo["max_bpm"]),
+                   step=float(tempo["nudge"]))
+        span = fmt["max"] - fmt["min"]
+        start = (float(tempo["default_bpm"]) - fmt["min"]) / span
+
+        group = Node(GROUP, frame, name="bpm", background=False, outline=False)
+        gap = 4
+        nudge_h = min(44, (h - gap) // 2)
+        display_h = h - nudge_h - gap
+
+        group.add(Node(BOX, (0, 0, w, display_h), name="bpm_chip",
+                       color=self.colors["panel"], shape=Shape.RECTANGLE,
+                       background=True, outline=True, interactive=False))
+        group.add(Node(BUTTON, (0, 0, w, display_h), name="bpm_edit",
+                       color=self.colors["accent"], button_type=MOMENTARY,
+                       background=False, outline=False,
+                       script=bake(BPM_EDIT_SCRIPT, **fmt)))
+        display = self.label((0, 0, w, display_h), "BPM", size=16,
+                             color="accent")
+        display.name = "bpm_display"
+        display.script = bake(BPM_DISPLAY_SCRIPT, **fmt)
+        group.add(display)
+
+        half = (w - gap) // 2
+        for i, (suffix, caption) in enumerate((("minus", "-"), ("plus", "+"))):
+            bx = i * (half + gap)
+            group.add(Node(BUTTON, (bx, display_h + gap, half, nudge_h),
+                           name=f"bpm_{suffix}", color=self.colors["panel"],
+                           button_type=MOMENTARY,
+                           script=bake(BPM_NUDGE_SCRIPT, **fmt)))
+            group.add(self.label((bx, display_h + gap, half, nudge_h),
+                                 caption, size=20))
+
+        group.add(Node(FADER, (0, 0, w, display_h), name="bpm_value",
+                       color=self.colors["accent"], visible=False,
+                       value_default=start,
+                       messages=[OscMessage(self.spec["resolume"]["tempo"],
+                                            self.res_conn)]))
+        parent.add(group)
+        return group
+
     def color_swatch(self, parent: Node, frame, name: str, addrs: dict,
                      conns: str, accent: str) -> Node:
         """A swatch button that opens the ColorPicker.
@@ -567,6 +705,7 @@ class Builder:
         # dim everything behind the dialog, and must come last so it draws on
         # top of the pages. It ships hidden and shows itself when notified.
         root.add(Raw(vendor.color_picker(w, h)))
+        root.add(Raw(vendor.text_input(w, h)))
         return root
 
 

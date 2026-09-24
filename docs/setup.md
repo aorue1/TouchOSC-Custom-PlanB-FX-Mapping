@@ -128,15 +128,53 @@ parameter to its low value.
 
 ## 5. Clip banks and names
 
-TouchOSC has no scrolling control, so more clips than fit on screen are reached
-by **banking**. The clip grid sits in its own pager whose tabs are clip ranges
-(1-8, 9-16, ...), 4 banks of 8 by default — `clips:` and `banks:` in the spec.
-Banking moves every layer at once, and only the clip buttons move: opacity,
-bypass/solo/clear and the PREV/NEXT row stay where they are, so the controls
-you hold during a set never shift under your hand.
+TouchOSC has no scrolling control, so clips are reached by **banking**, over
+two rows of tabs: the first row picks a group of 16, the second a bank of 4
+within it. Four rows of clip buttons therefore reach 32 clips per layer, and
+the space saved goes to the opacity faders, which is what actually gets used
+mid-set.
+
+```yaml
+grid:
+  clips: 4          # clip rows on screen at once
+  banks: 4          # banks per group (second tab row)
+  bank_groups: 2    # groups of banks (first tab row)
+  clip_height: 64
+```
+
+Raising `bank_groups` extends the reach without touching the layout: 3 groups
+gives 48 clips per layer, still 4 rows on screen. Banking moves every layer at
+once, and only the clip buttons move — the PREV/NEXT row, bypass/solo/clear
+and the faders stay where they are, so nothing shifts under your hand.
 
 Each layer also has PREV/NEXT clip buttons. **Their addresses are unverified**,
 as are the colour parameters — confirm both in Arena under Shortcuts > Edit OSC.
+
+### The BPM field
+
+Tapping a tempo is not always realistic, so the master column carries the
+number itself. Tap it to type an exact BPM on the vendored keyboard
+([TextInputDialog](https://github.com/tshoppa/touchOSC), same MIT module family
+as the colour picker), or use the -/+ buttons to nudge it a beat at a time.
+TAP and RESYNC are still there underneath.
+
+The value lives in a hidden fader, which is also what sends the OSC; the
+display reads that fader back every frame, so typing, nudging and anything
+Resolume sends all show up the same way.
+
+```yaml
+tempo:
+  min_bpm: 20       # Arena's range
+  max_bpm: 500
+  default_bpm: 128
+  nudge: 1          # BPM per -/+ press
+```
+
+**Unverified, like the other Resolume addresses:** the layout sends a
+normalised 0-1 value across that range to `/composition/tempocontroller/tempo`,
+which is how Resolume treats most parameters, but it may want the BPM directly.
+If the tempo jumps to something absurd when you type 128, that is the reason —
+check Shortcuts > Edit OSC and adjust the spec.
 
 ### Names on the buttons
 

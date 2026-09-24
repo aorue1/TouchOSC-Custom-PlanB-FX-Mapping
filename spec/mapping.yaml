@@ -63,9 +63,11 @@ fx_scale:
 # Geometry knobs used by the page builders.
 grid:
   layers: 4             # Resolume layers exposed
-  clips: 8              # clips per layer per bank
-  banks: 4              # banks of clips; 4 x 8 = clips 1-32 per layer
-  bank_tabbar: 34       # height of the bank selector strip
+  clips: 4              # clip rows on screen at once
+  banks: 4              # banks per group (second tab row)
+  bank_groups: 2        # groups of banks (first tab row)
+  clip_height: 64       # height of one clip button
+  bank_tabbar: 34       # height of each of the two bank selector rows
   fx_params: 8          # knobs on the FX page
   td_faders: 8          # faders in the TD param bank
   td_pads: 2            # XY pads in the TD param bank
@@ -88,6 +90,10 @@ resolume:
   master:         /composition/master
   speed:          /composition/speed
   tempo_tap:      /composition/tempocontroller/tempotap
+  # Tempo as a number. Arena's range is 20-500 BPM; whether it takes the BPM
+  # directly or a 0-1 value across that range is UNVERIFIED -- the layout
+  # sends the normalised value, which is how Resolume treats most parameters.
+  tempo:          /composition/tempocontroller/tempo
   tempo_resync:   /composition/tempocontroller/resync
   # Per-layer effect slots. Add the effect in Arena first, then the parameter
   # index below lines up with its slot order in the layer's effect chain.
@@ -115,6 +121,13 @@ touchdesigner:
   scene:    /td/scene
   intensity: /td/intensity
   blackout: /td/blackout
+
+# BPM field on the master column: tap the number to type one, or nudge it.
+tempo:
+  min_bpm: 20
+  max_bpm: 500
+  default_bpm: 128
+  nudge: 1
 
 # ---------------------------------------------------------------------------
 # Feedback from Resolume into the surface: clip and layer names on the labels

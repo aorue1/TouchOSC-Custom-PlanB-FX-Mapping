@@ -23,6 +23,8 @@ RECTANGLE, CIRCLE, TRIANGLE, DIAMOND, PENTAGON, HEXAGON = range(1, 7)
 
 # Which pager page to render; set from --page.
 PAGE_INDEX = [0]
+# Whether to draw controls marked invisible; set from --hidden.
+SHOW_HIDDEN = [False]
 
 
 def props(node: ET.Element) -> dict:
@@ -67,6 +69,10 @@ def draw(node: ET.Element, ox: float, oy: float, out: list) -> None:
         return
 
     ntype = node.get("type", "")
+    if p.get("visible", "1") == "0" and not SHOW_HIDDEN[0]:
+        # Modal overlays ship hidden and show themselves when notified;
+        # drawing them would bury the page they sit over.
+        return
     fill = css_color(p.get("color"))
     has_bg = p.get("background", "1") == "1"
     has_outline = p.get("outline", "1") == "1"
@@ -127,9 +133,12 @@ def main() -> int:
     ap.add_argument("-z", "--zoom", type=float, default=1.0)
     ap.add_argument("-p", "--page", type=int, default=0,
                     help="which pager page to draw (0-based)")
+    ap.add_argument("--hidden", action="store_true",
+                    help="also draw controls marked invisible")
     args = ap.parse_args()
 
     PAGE_INDEX[0] = args.page
+    SHOW_HIDDEN[0] = args.hidden
     root = read_xml(args.path)
     node = root.find("node") if root.tag == "lexml" else root
     if args.node:

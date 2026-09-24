@@ -218,6 +218,7 @@ class Node:
     button_type: int | None = None
     orientation: int = Orientation.NORTH
     tab_label: str | None = None       # set on a pager's pages
+    value_default: float = 0.0         # starting value for x
     script: str = ""
     extra_props: dict = field(default_factory=dict)
     messages: list = field(default_factory=list)
