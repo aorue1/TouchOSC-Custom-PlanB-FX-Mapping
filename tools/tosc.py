@@ -132,16 +132,25 @@ def connections(*slots: int) -> str:
 class OscMessage:
     """One OSC message attached to a control.
 
-    Outgoing by default. Set ``receive_key`` to make it an incoming message
-    instead: the argument is written into that value of the control, which is
-    how a LABEL picks up a name sent by the host (``receive_key="text"``,
-    ``conversion="STRING"``). Receiving needs the ``<values>`` mapping as well
-    as the argument partial — a message without it parses but lands nowhere.
+    The XML shape is copied from real layouts saved by the TouchOSC editor
+    (410 messages across the vendored module files), not inferred:
+
+    * every field is a child element -- ``<enabled>1</enabled>``, never an
+      attribute. The app loads a file written with attributes without
+      complaint and then ignores them, which leaves every message disabled,
+      bound to no connection and with an empty path: nothing is ever sent.
+    * the path is a run of partials that concatenate, with each ``/`` as a
+      partial of its own.
+    * there is no ``<values>`` block. Receiving works through the VALUE
+      argument partial alone: an incoming argument lands on the value it names.
+
+    Set ``receive_key`` for a receive-only message, e.g. a LABEL taking its
+    caption from the host (``receive_key="text"``, ``conversion="STRING"``).
     """
 
     path: str
     conns: str
-    send_value: bool = True          # append the control's value as a float
+    send_value: bool = True          # append the control's value as an argument
     constant_args: tuple = ()        # extra fixed float arguments, sent first
     trigger: str = "ANY"             # ANY | RISE | FALL
     receive: bool = True
@@ -150,48 +159,42 @@ class OscMessage:
     value_key: str = "x"             # which value this message sends
     conversion: str = "FLOAT"        # FLOAT | STRING | BOOLEAN
 
+    @staticmethod
+    def _partial(parent: ET.Element, ptype: str, conversion: str,
+                 value: str) -> None:
+        p = ET.SubElement(parent, "partial")
+        ET.SubElement(p, "type").text = ptype
+        ET.SubElement(p, "conversion").text = conversion
+        ET.SubElement(p, "value").text = value
+        ET.SubElement(p, "scaleMin").text = "0"
+        ET.SubElement(p, "scaleMax").text = "1"
+
     def to_xml(self, parent: ET.Element) -> None:
-        osc = ET.SubElement(parent, "osc", {
-            "enabled": "1",
-            "send": "1" if self.send else "0",
-            "receive": "1" if self.receive else "0",
-            "feedback": "0", "connections": self.conns,
-        })
+        osc = ET.SubElement(parent, "osc")
+        ET.SubElement(osc, "enabled").text = "1"
+        ET.SubElement(osc, "send").text = "1" if self.send else "0"
+        ET.SubElement(osc, "receive").text = "1" if self.receive else "0"
+        ET.SubElement(osc, "feedback").text = "0"
+        ET.SubElement(osc, "connections").text = self.conns
+
+        key = self.receive_key or self.value_key
         triggers = ET.SubElement(osc, "triggers")
         trig = ET.SubElement(triggers, "trigger")
-        ET.SubElement(trig, "var").text = "x"
+        # Fire on the value this message carries: an XY pad's y message has to
+        # trigger on y, or it only goes out when x happens to move.
+        ET.SubElement(trig, "var").text = key
         ET.SubElement(trig, "condition").text = self.trigger
 
         path = ET.SubElement(osc, "path")
-        for part in self.path.strip("/").split("/"):
-            ET.SubElement(path, "partial", {
-                "type": "CONSTANT", "conversion": "STRING",
-                "value": part, "scaleMin": "0", "scaleMax": "1",
-            })
+        for segment in self.path.strip("/").split("/"):
+            self._partial(path, "CONSTANT", "STRING", "/")
+            self._partial(path, "CONSTANT", "STRING", segment)
 
         args = ET.SubElement(osc, "arguments")
         for const in self.constant_args:
-            ET.SubElement(args, "partial", {
-                "type": "CONSTANT", "conversion": "FLOAT",
-                "value": str(const), "scaleMin": "0", "scaleMax": "1",
-            })
-        key = self.receive_key or self.value_key
+            self._partial(args, "CONSTANT", "FLOAT", str(const))
         if self.send_value or self.receive_key:
-            ET.SubElement(args, "partial", {
-                "type": "VALUE", "conversion": self.conversion,
-                "value": key, "scaleMin": "0", "scaleMax": "1",
-            })
-
-        # The mapping is what makes an incoming argument land on a value. A
-        # message without it parses but does nothing on receive, which is why
-        # every fader in this layout used to ignore anything the host sent.
-        if self.receive and (self.receive_key or self.send_value):
-            values = ET.SubElement(osc, "values")
-            value = ET.SubElement(values, "value")
-            ET.SubElement(value, "type").text = "VALUE"
-            ET.SubElement(value, "key").text = key
-            ET.SubElement(value, "scaleMin").text = "0"
-            ET.SubElement(value, "scaleMax").text = "1"
+            self._partial(args, "VALUE", self.conversion, key)
 
 
 class Raw:

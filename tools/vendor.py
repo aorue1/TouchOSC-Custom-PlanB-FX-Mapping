@@ -82,6 +82,23 @@ def _grab_focus(node: ET.Element) -> int:
     return changed
 
 
+def _silence(node: ET.Element) -> int:
+    """Disable a component's own OSC messages.
+
+    The picker's controls carry TouchOSC's default message -- /<parent>/<index>
+    on all five connections -- from the author's demo layout. The component
+    works entirely through scripts, so those messages do nothing but spray
+    meaningless addresses at every host while a colour is dragged.
+    """
+    count = 0
+    for osc in node.iter("osc"):
+        enabled = osc.find("enabled")
+        if enabled is not None and enabled.text != "0":
+            enabled.text = "0"
+            count += 1
+    return count
+
+
 def _set_frame(node: ET.Element, x: int, y: int, w: int, h: int) -> None:
     value = _props(node).get("frame")
     if value is None:
@@ -116,6 +133,7 @@ def _component(path: str, group_name: str, dialog_name: str,
     _set_frame(group, 0, 0, width, height)
     _set_tag(group, tag)
     _grab_focus(group)
+    _silence(group)
 
     dialog = _find(group, dialog_name)
     if dialog is not None:

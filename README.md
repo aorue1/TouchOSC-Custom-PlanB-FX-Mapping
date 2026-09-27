@@ -218,7 +218,7 @@ uncompressed XML is committed next to each `.tosc` for the same reason.
 
 `tools/tosc.py` follows [NicoG60/TouchMCU](https://github.com/NicoG60/TouchMCU),
 a working Mk2 layout generator, rather than inferring property names from how
-the app behaves. Four mistakes that each cost a round on the device:
+the app behaves. Five mistakes that each cost a round on the device:
 
 * **A LABEL's caption is a value named `text`**, not a property. Written as a
   property it is ignored and the control shows its default "Label".
@@ -227,8 +227,16 @@ the app behaves. Four mistakes that each cost a round on the device:
   node's `name` is not used — and **each page's frame must be offset below the
   tab bar** (`y = tabbarSize`). Getting this wrong gives a working pager with
   an empty tab bar.
-* **A receiving message needs a `<values>` mapping** naming the control value
-  an argument fills. Without it the message parses but lands nowhere.
+* **An OSC message's fields are child elements, never attributes** —
+  `<enabled>1</enabled>`, `<connections>01000</connections>`, and each path
+  part as `<partial><type>…</type><value>…</value>…</partial>`. The app loads a
+  file written with attributes without complaint and then ignores them, so
+  every message is disabled, bound to no connection and has an empty path.
+  The path is a run of partials that concatenate, with each `/` its own part.
+  This one went unnoticed longest, because everything that runs on the iPad
+  itself — scripts, captions, dial colours — worked perfectly while nothing
+  was ever sent. The shape is now copied from 410 messages in real
+  editor-saved layouts rather than inferred.
 
 A BUTTON draws no text at all, so captions are non-interactive LABELs laid over
 the button; `interactive=0` is what lets the touch fall through.

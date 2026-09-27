@@ -64,9 +64,10 @@ def walk(node: ET.Element, depth: int, out: list, want: str | None, full: bool):
             for key, default in values_of(node):
                 out.append(f"{indent}  value {key} = {default!r}")
             for osc in node.findall("./messages/osc"):
-                parts = [p.get("value", "") for p in osc.findall("./path/partial")]
-                out.append(f"{indent}  osc /{'/'.join(parts)} "
-                           f"conns={osc.get('connections')}")
+                path = "".join(p.findtext("value") or ""
+                               for p in osc.findall("./path/partial"))
+                out.append(f"{indent}  osc {path} "
+                           f"conns={osc.findtext('connections')}")
     kids = node.find("children")
     for kid in (list(kids) if kids is not None else []):
         walk(kid, depth + 1, out, want, full)

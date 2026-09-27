@@ -86,11 +86,13 @@ def address_of(node: ET.Element):
     """
     out = []
     for osc in node.findall("./messages/osc"):
-        sends_value = any(p.get("type") == "VALUE" for p in osc.findall("./arguments/partial"))
+        sends_value = any(p.findtext("type") == "VALUE"
+                          for p in osc.findall("./arguments/partial"))
         if not sends_value:
             continue
-        parts = [p.get("value", "") for p in osc.findall("./path/partial")]
-        out.append("/" + "/".join(parts))
+        # Partials concatenate, with each "/" as a partial of its own.
+        out.append("".join(p.findtext("value") or ""
+                           for p in osc.findall("./path/partial")))
     return out
 
 

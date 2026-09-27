@@ -357,10 +357,10 @@ It needs Arena's OSC Output enabled and pointed at the iPad (see section 3).
 With it off, everything still works one-way and nothing on the surface ever
 moves by itself.
 
-Receiving needs the `<values>` mapping in the message, not just the argument
-partial — a message without it parses and does nothing. That mapping is now
-emitted for every value message; before, only the name labels had it, so no
-fader in this layout could be moved by the host.
+Receiving works through the message's VALUE argument: an incoming argument
+lands on the control value that argument names (`x` for a fader, `text` for a
+label). There is no separate mapping block — an earlier version of this layout
+emitted one, which real TouchOSC files never contain.
 
 **Sharing control with someone on the computer.** Messages carry
 `feedback = 0`, so a control that moves because of an incoming message does not

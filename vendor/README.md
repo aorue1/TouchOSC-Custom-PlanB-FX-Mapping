@@ -16,6 +16,12 @@ This component already sets it on all five of its continuous controls, so the
 graft changes nothing today — it is there so a future vendored component
 cannot arrive without it.
 
+Its OSC messages are also disabled. Every control in it carries TouchOSC's
+default message (`/<parent>/<index>` on all five connections) from the
+author's demo layout; the picker works entirely through scripts, so those
+only sprayed meaningless addresses at Resolume and TouchDesigner whenever a
+colour was dragged.
+
 ```lua
 ColorPicker:notify('pickColor', { callback = aControl, initial = aColor })
 ```
