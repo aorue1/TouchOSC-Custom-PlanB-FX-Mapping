@@ -372,7 +372,8 @@ class Builder:
         self.colors = {k: tuple(v) for k, v in spec["colors"].items()}
         self.fx_script = fx_color_script(spec["fx_scale"])
         self.colors["fx_low"] = tuple(spec["fx_scale"]["low"])
-        self.res_conn = tosc.connections(spec["connections"]["resolume"]["slot"])
+        self.res_slot = spec["connections"]["resolume"]["slot"]
+        self.res_conn = tosc.connections(self.res_slot)
         self.td_conn = tosc.connections(spec["connections"]["touchdesigner"]["slot"])
 
     # -- small control factories ------------------------------------------
@@ -596,8 +597,7 @@ class Builder:
                                   pmin=float(speed["param_min"]),
                                   pmax=float(speed["param_max"]),
                                   path=res["speed"],
-                                  conns=", ".join("true" if c == "1" else "false"
-                                                  for c in self.res_conn))))
+                                  conns=tosc.lua_connections(self.res_slot))))
 
         mx = x + pad + half + pad
         page.add(self.label((mx, pad, half, label_h), "MASTER", size=12,
@@ -773,9 +773,7 @@ class Builder:
         group = Node(GROUP, frame, name="columns", background=False,
                      outline=False,
                      script=bake(COLUMN_GROUP_SCRIPT, per=per, total=total,
-                                 conns=", ".join(
-                                     "true" if c == "1" else "false"
-                                     for c in self.res_conn)))
+                                 conns=tosc.lua_connections(self.res_slot)))
 
         for i, (name, caption, direction) in enumerate(
                 (("col_prev", "<", -1), ("col_next", ">", 1))):

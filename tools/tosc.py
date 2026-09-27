@@ -119,13 +119,28 @@ def _prop(parent: ET.Element, ptype: str, key: str, value) -> None:
 
 
 def connections(*slots: int) -> str:
-    """Build TouchOSC's 5-character connection mask, e.g. slot 1 -> "10000"."""
+    """TouchOSC's 5-character connection mask for a message.
+
+    The mask reads RIGHT TO LEFT: the last character is connection 1, so
+    slot 1 is "00001" and slot 2 is "00010". Built the other way round,
+    connection 1 comes out as connection 5 -- which on a device with only
+    connections 1 and 2 enabled means nothing is ever sent. Confirmed against
+    NicoG60/TouchMCU, whose messages carry "00001" and whose setup has the
+    user configure the first connection.
+    """
     mask = ["0"] * 5
     for slot in slots:
         if not 1 <= slot <= 5:
             raise ValueError(f"connection slot out of range: {slot}")
-        mask[slot - 1] = "1"
+        mask[5 - slot] = "1"
     return "".join(mask)
+
+
+def lua_connections(*slots: int) -> str:
+    """The same choice as a Lua table for sendOSC, which reads it the other
+    way: first entry is connection 1. Built from slot numbers, never from a
+    mask string, because the two orders are opposite."""
+    return ", ".join("true" if i in slots else "false" for i in range(1, 6))
 
 
 @dataclass

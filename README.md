@@ -218,7 +218,7 @@ uncompressed XML is committed next to each `.tosc` for the same reason.
 
 `tools/tosc.py` follows [NicoG60/TouchMCU](https://github.com/NicoG60/TouchMCU),
 a working Mk2 layout generator, rather than inferring property names from how
-the app behaves. Five mistakes that each cost a round on the device:
+the app behaves. Six mistakes that each cost a round on the device:
 
 * **A LABEL's caption is a value named `text`**, not a property. Written as a
   property it is ignored and the control shows its default "Label".
@@ -228,7 +228,7 @@ the app behaves. Five mistakes that each cost a round on the device:
   tab bar** (`y = tabbarSize`). Getting this wrong gives a working pager with
   an empty tab bar.
 * **An OSC message's fields are child elements, never attributes** —
-  `<enabled>1</enabled>`, `<connections>01000</connections>`, and each path
+  `<enabled>1</enabled>`, `<connections>00010</connections>`, and each path
   part as `<partial><type>…</type><value>…</value>…</partial>`. The app loads a
   file written with attributes without complaint and then ignores them, so
   every message is disabled, bound to no connection and has an empty path.
@@ -237,6 +237,12 @@ the app behaves. Five mistakes that each cost a round on the device:
   itself — scripts, captions, dial colours — worked perfectly while nothing
   was ever sent. The shape is now copied from 410 messages in real
   editor-saved layouts rather than inferred.
+* **The connection mask reads right to left.** `00001` is connection 1,
+  `00010` connection 2. Written the other way round, the layout's two
+  connections became 5 and 4 — both disabled — so nothing was sent even once
+  the message format was right. `sendOSC` in Lua takes the opposite order (a
+  table whose first entry is connection 1), so the two are built separately,
+  from slot numbers, never one from the other.
 
 A BUTTON draws no text at all, so captions are non-interactive LABELs laid over
 the button; `interactive=0` is what lets the touch fall through.

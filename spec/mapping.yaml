@@ -23,8 +23,9 @@ layout:
       width: 820
       height: 1180
 
-# TouchOSC connection slots. The connection string in a message is 5 chars,
-# one per slot, e.g. "10000" = slot 1 only, "01000" = slot 2 only.
+# TouchOSC connection slots. A message stores its connection as a 5-char
+# mask read RIGHT TO LEFT: "00001" is slot 1, "00010" is slot 2. The builder
+# derives it from the slot number here, so this is only ever edited as a slot.
 connections:
   resolume:
     slot: 1
