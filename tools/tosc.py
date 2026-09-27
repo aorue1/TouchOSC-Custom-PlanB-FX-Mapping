@@ -306,8 +306,8 @@ class Node:
             ET.SubElement(v, "key").text = key
             ET.SubElement(v, "locked").text = "0"
             ET.SubElement(v, "lockedDefaultCurrent").text = "0"
-            ET.SubElement(v, "defaultPull").text = "0"
             ET.SubElement(v, "default").text = default
+            ET.SubElement(v, "defaultPull").text = "0"
 
         if self.type == LABEL:
             _value("text", self.text)
@@ -328,24 +328,30 @@ class Node:
         for msg in self.messages:
             msg.to_xml(messages)
 
-        kids = ET.SubElement(el, "children")
-        for child in self.children:
-            child.to_xml(kids)
+        if self.children:
+            kids = ET.SubElement(el, "children")
+            for child in self.children:
+                child.to_xml(kids)
         return el
 
 
-def to_xml_bytes(root: Node) -> bytes:
+def to_xml_bytes(root: Node, pretty: bool = False) -> bytes:
     reset_ids()
     lexml = ET.Element("lexml", {"version": "3"})
     lexml.append(root.to_xml())
-    ET.indent(lexml, space="  ")
-    return b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(lexml, encoding="utf-8")
+    if pretty:
+        ET.indent(lexml, space="  ")
+    return (b'<?xml version="1.0" encoding="UTF-8"?>'
+            + (b"\n" if pretty else b"")
+            + ET.tostring(lexml, encoding="utf-8", xml_declaration=False))
 
 
 def write(root: Node, tosc_path: str, xml_path: str | None = None) -> None:
-    raw = to_xml_bytes(root)
+    # The .tosc goes to the app exactly as the editor would write it: compact,
+    # with no whitespace between elements. The .xml beside it is indented,
+    # purely so a rebuild shows a readable diff.
     with open(tosc_path, "wb") as fh:
-        fh.write(zlib.compress(raw))
+        fh.write(zlib.compress(to_xml_bytes(root)))
     if xml_path:
         with open(xml_path, "wb") as fh:
-            fh.write(raw)
+            fh.write(to_xml_bytes(root, pretty=True))
