@@ -1,42 +1,77 @@
-"""OSC In DAT callbacks for the TouchOSC VJ surface (TouchDesigner side).
+"""OSC In DAT callbacks for the TouchOSC surface (TouchDesigner side).
 
 Setup
 -----
-1. Add an ``OSC In DAT``, set Network Port to 7001 (must match
-   ``spec/mapping.yaml`` -> connections.touchdesigner.port).
-2. Set its callbacks DAT to a Text DAT holding this file.
-3. Point the entries in ``MAPPING`` at the operators/parameters you want driven.
+1. Add an ``OSC In DAT``, Network Port 7001 (connections.touchdesigner.port
+   in spec/mapping.yaml), Active on.
+2. Paste this file into a Text DAT and point the OSC In DAT's
+   **Callbacks DAT** parameter at it.
+3. Fill in the tables below. Every value arrives from the iPad as 0..1 and is
+   scaled into the low..high range given for it.
 
-Anything not listed in ``MAPPING`` is still readable as a channel from a
-parallel ``OSC In CHOP`` on the same port — the addresses are flat
-(``/td/fader/1`` -> channel ``td/fader/1``) precisely so that works.
+Parameter names are TouchDesigner's *internal* Python names: built-in
+parameters are lowercase (``tx``, ``ry``, ``amp``, ``colorr``); custom
+parameters start with a capital. Hover a parameter in TD to see its name.
+
+A path or parameter that does not exist is reported once in the textport
+rather than skipped silently, so a typo shows up instead of just doing nothing.
+
+Only one operator can listen on a port: if this DAT has 7001, an OSC In CHOP
+cannot also have it. Use one or the other.
 """
 
-# address -> (operator path, parameter name, low, high)
-# Values arrive normalised 0..1 from TouchOSC and are scaled into [low, high].
+# Change this to your camera's path if it is not the default. The path is
+# shown at the top of the camera's parameter window.
+CAMERA = "/project1/cam1"
+
+# address -> (operator path, parameter, low, high)
 MAPPING = {
-    "/td/fader/1": ("/project1/geo1", "Sx", 0.0, 4.0),
-    "/td/fader/2": ("/project1/geo1", "Sy", 0.0, 4.0),
-    "/td/fader/3": ("/project1/noise1", "Amp", 0.0, 2.0),
-    "/td/fader/4": ("/project1/noise1", "Period", 0.01, 8.0),
-    "/td/pad/1/x": ("/project1/geo1", "Tx", -5.0, 5.0),
-    "/td/pad/1/y": ("/project1/geo1", "Ty", -5.0, 5.0),
-    "/td/intensity": ("/project1/level1", "Opacity", 0.0, 1.0),
-    # Colour picker: the three channels arrive independently, already 0..1.
-    "/td/color/r": ("/project1/constant1", "Colorr", 0.0, 1.0),
-    "/td/color/g": ("/project1/constant1", "Colorg", 0.0, 1.0),
-    "/td/color/b": ("/project1/constant1", "Colorb", 0.0, 1.0),
+    # Pad 2 turns the camera: x pans left/right, y tilts up/down. The centre
+    # of the pad is straight ahead. Swap low and high to invert an axis.
+    "/td/pad/2/x": (CAMERA, "ry", -180.0, 180.0),
+    "/td/pad/2/y": (CAMERA, "rx", -60.0, 60.0),
+
+    # Examples, kept off until pointed at operators that exist in the project:
+    # "/td/fader/1":   ("/project1/noise1", "amp", 0.0, 2.0),
+    # "/td/pad/1/x":   ("/project1/geo1", "tx", -5.0, 5.0),
+    # "/td/intensity": ("/project1/level1", "opacity", 0.0, 1.0),
+    # "/td/color/r":   ("/project1/constant1", "colorr", 0.0, 1.0),
+    # "/td/color/g":   ("/project1/constant1", "colorg", 0.0, 1.0),
+    # "/td/color/b":   ("/project1/constant1", "colorb", 0.0, 1.0),
 }
 
-# Addresses that toggle a parameter on/off rather than scaling a range.
+# address -> (operator path, parameter): on at >= 0.5, off below.
 TOGGLES = {
-    "/td/toggle/1": ("/project1/geo1", "Display"),
+    # "/td/toggle/1": ("/project1/geo1", "display"),
 }
 
-# Addresses that pulse a parameter once on the rising edge.
+# address -> (operator path, parameter): pulsed once when pressed.
 TRIGGERS = {
-    "/td/trigger/1": ("/project1/moviefilein1", "Reloadpulse"),
+    # "/td/trigger/1": ("/project1/moviefilein1", "reloadpulse"),
 }
+
+
+_reported = set()
+
+
+def _warn_once(key, text):
+    """Say it once: these callbacks run on every message, many per second."""
+    if key not in _reported:
+        _reported.add(key)
+        debug(text)
+
+
+def _par(op_path, par_name, address):
+    target = op(op_path)
+    if target is None:
+        _warn_once((address, "op"), f"{address}: no operator at {op_path}")
+        return None
+    par = getattr(target.par, par_name, None)
+    if par is None:
+        _warn_once((address, "par"),
+                   f"{address}: {op_path} has no parameter '{par_name}' "
+                   "(built-in names are lowercase)")
+    return par
 
 
 def _first_float(args, default=0.0):
@@ -51,35 +86,35 @@ def _first_float(args, default=0.0):
 def onReceiveOSC(dat, rowIndex, message, bytes, timeStamp, address, args, peer):
     value = _first_float(args)
 
-    if address == "/td/blackout":
-        for op_path, par_name, low, high in MAPPING.values():
-            target = op(op_path)
-            if target is not None and value >= 0.5:
-                setattr(target.par, par_name, low)
-        return
-
     entry = MAPPING.get(address)
     if entry is not None:
         op_path, par_name, low, high = entry
-        target = op(op_path)
-        if target is not None:
-            setattr(target.par, par_name, low + (high - low) * value)
+        par = _par(op_path, par_name, address)
+        if par is not None:
+            par.val = low + (high - low) * value
         return
 
     entry = TOGGLES.get(address)
     if entry is not None:
-        op_path, par_name = entry
-        target = op(op_path)
-        if target is not None:
-            setattr(target.par, par_name, value >= 0.5)
+        par = _par(*entry, address)
+        if par is not None:
+            par.val = value >= 0.5
         return
 
     entry = TRIGGERS.get(address)
-    if entry is not None and value >= 0.5:
-        op_path, par_name = entry
-        target = op(op_path)
-        if target is not None:
-            target.par[par_name].pulse()
+    if entry is not None:
+        par = _par(*entry, address)
+        if par is not None and value >= 0.5:
+            par.pulse()
         return
 
-    debug(f"unmapped OSC address: {address} {args}")
+    if address == "/td/blackout" and value >= 0.5:
+        for op_path, par_name, low, high in MAPPING.values():
+            par = _par(op_path, par_name, address)
+            if par is not None:
+                par.val = low
+        return
+
+    # Unmapped controls are normal while a project is half-wired; mention
+    # each one once so the textport stays readable.
+    _warn_once((address, "unmapped"), f"unmapped OSC address: {address}")

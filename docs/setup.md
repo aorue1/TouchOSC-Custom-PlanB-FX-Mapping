@@ -127,13 +127,23 @@ mode: it shows the exact address for the control you click.
 
 ## 4. TouchDesigner
 
-* **Raw channels**: add an `OSC In CHOP`, port **7001**. Every control shows up
+Pick **one** of these — only one operator can listen on a port, so an OSC In
+CHOP and an OSC In DAT cannot both have 7001.
+
+* **Raw channels**: an `OSC In CHOP` on port **7001**. Every control shows up
   as a channel (`td/fader/1`, `td/pad/1/x`, …) ready to reference.
-* **Driving parameters directly**: add an `OSC In DAT` on the same port and
-  point its callbacks at `touchdesigner/osc_router.py`. Edit `MAPPING`,
-  `TOGGLES` and `TRIGGERS` in that file to name your own operators and
-  parameters; values arrive normalised 0..1 and are scaled into the range you
-  give.
+* **Driving parameters directly**: an `OSC In DAT` on port **7001**, with its
+  **Callbacks DAT** pointed at a Text DAT holding
+  `touchdesigner/osc_router.py`. Name operators and parameters in its
+  `MAPPING`, `TOGGLES` and `TRIGGERS` tables; values arrive 0..1 and are
+  scaled into the range you give. Parameter names are TouchDesigner's
+  internal ones — **lowercase** for built-ins (`tx`, `ry`, `amp`). A path or
+  parameter that does not exist is reported once in the textport rather than
+  ignored.
+
+Pad 2 is mapped out of the box to the camera at `/project1/cam1`: x pans,
+y tilts, centre is straight ahead. Change `CAMERA` at the top of the router if
+yours lives elsewhere.
 
 `/td/blackout` is handled specially by the router — it drops every mapped
 parameter to its low value — but **nothing currently sends it**: the blackout
