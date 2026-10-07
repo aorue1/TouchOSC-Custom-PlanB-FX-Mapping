@@ -87,8 +87,9 @@ with the same builder pieces — so every format fix applies to them too.
 make boris      # just the Boris layout, verified
 ```
 
-Boris has three pages: **SHOW** (scenes, banked clips with PREV/NEXT on every
-layer, crossfader, master, a whole-output saturation fader, tempo), **FX**
+Boris has three pages: **SHOW** (banked columns and clips that move
+together, with `<` `>` and PREV/NEXT on every layer, crossfader, master, a
+whole-output saturation fader, tempo), **FX**
 (the five layers and the composition against four effects) and **TD** (the
 Spiderweb, Side Audios and Boris blocks, over a pink strip of hue and
 saturation that drives all three). Side Audios never gets a bypass button:

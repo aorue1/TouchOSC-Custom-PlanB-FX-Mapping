@@ -58,8 +58,10 @@ than the camera itself.
 
 A show-specific layout built next to the generic one (`make boris`), from the
 brief. Three pages:
-- **SHOW**: 9 scenes; 5 layer rows of clips, banked like the generic layout
-  (group tabs 1-36 / 37-72 over bank tabs of 9 → 72 clips per layer); per
+- **SHOW**: banked like the generic layout (group tabs 1-36 / 37-72 over
+  bank tabs of 9 → 72 per layer, `<` `>` step through banks). Each bank page
+  holds its own column buttons above its 5 layer rows of clips, so the column
+  row always follows the bank (no fixed scenes row, per the brief); per
   layer PREV/NEXT, CLEAR, opacity; crossfader Panorama A ◀ ▶ B Mirror;
   master/blackout; **SATURATION · Resolume** (composition Saturation effect,
   grey→colour strip, default full = normal); tap/resync.
@@ -85,8 +87,8 @@ It reuses the generic builder's factories and writer.
   keys as booleans.
 
 **Check at soundcheck** (none confirmed against a running Resolume yet):
-crossfader direction (A = Panorama on the left), scene/clip/clear/opacity and
-PREV/NEXT addresses, the composition saturation address and its range
+crossfader direction (A = Panorama on the left), column/clip/clear/opacity and
+PREV/NEXT addresses, the bank `<` `>` arrows (script sets pager pages), the composition saturation address and its range
 (Shortcuts → Edit OSC), FX effect names, BLACKOUT dropping master, and TD
 feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights
 BORIS LOCK).

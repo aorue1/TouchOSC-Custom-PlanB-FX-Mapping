@@ -107,6 +107,33 @@ function onValueChanged(key)
 end
 """
 
+# The bank arrows step one bank at a time through every bank in order,
+# crossing into the next group tab when a group runs out. Pager pages are
+# 0-based; names are built from floored numbers so a float page index can
+# never turn "group1" into "group1.0". Fires on release, like the generic
+# column arrows.
+BANK_ARROW_SCRIPT = """
+local DIR = @DIR@
+local BANKS = @BANKS@
+local GROUPS = @GROUPS@
+
+local function banks_of(outer, g)
+  local n = math.floor(g) + 1
+  return outer.children['group' .. n].children['banks' .. n]
+end
+
+function onValueChanged(key)
+  if key ~= 'x' or self.values.x ~= 0 then return end
+  local outer = self.parent.children.clipgroups
+  local g = math.floor(outer.values.page)
+  local i = g * BANKS + math.floor(banks_of(outer, g).values.page) + DIR
+  if i < 0 or i >= BANKS * GROUPS then return end
+  local ng = math.floor(i / BANKS)
+  outer.values.page = ng
+  banks_of(outer, ng).values.page = i % BANKS
+end
+""".strip()
+
 # Blackout drives the master fader to zero, so the fader visibly drops and the
 # iPad never shows a master Resolume does not have. The button also sends the
 # 0 directly (see show_page).
@@ -259,7 +286,7 @@ class BorisBuilder(Builder):
 
         pad = 8
         right_w = 186                       # master column
-        main_w = width - right_w            # layer rows, scenes, crossfader
+        main_w = width - right_w            # layer rows, columns, crossfader
         name_w = 118                        # layer names
         nav_w = 62                          # PREV over NEXT
         clear_w = 62
@@ -275,38 +302,41 @@ class BorisBuilder(Builder):
         def clip_frame(i, y, h):
             return (clip_x + i * (clip_w + pad), y, clip_w, h)
 
-        # --- scenes: whole columns, aligned over the first clip bank ---
-        scenes_h = 60
-        page.add(self.caption((0, pad, name_w, scenes_h), "SCENES", 15,
-                              "accent"))
-        for i in range(clips):
-            column = i + 1
-            self.add_button(page, clip_frame(i, pad, scenes_h),
-                            f"scene_{column}",
-                            addr["column_connect"].format(column=column),
-                            self.res_conn, color="accent",
-                            text=f"SCENE {column}", text_size=12,
-                            constant_args=(1.0,))
-
         # --- crossfader: the most important control, full width at the foot ---
         xf_label_h = 24
         xf_h = 80
         xf_y = height - xf_h - pad
         rows_bottom = xf_y - xf_label_h - pad
 
-        # --- bank tabs, then layer rows (layer 5 at the top, as in Resolume) ---
+        # --- bank tabs, the bank's columns, then its clips per layer ---
+        # Each bank page carries its own column buttons, so the column row
+        # always fires the columns of the clips under it: Andrés works by
+        # bank. Layer 5 is at the top, as Resolume draws it.
         tab_h = 34
-        tabs_y = pad + scenes_h + pad
-        rows_top = tabs_y + 2 * tab_h
+        col_h = 56
+        tabs_y = pad
+        cols_top = tabs_y + 2 * tab_h
+        rows_top = cols_top + col_h + pad
         layers = show["layers"]
         row_h = (rows_bottom - rows_top) // len(layers)
         rows_h = row_h * len(layers)
-        for caption, x, w in (("BANK", 0, name_w), ("CLIP", nav_x, nav_w),
-                              ("", clear_x, clear_w),
+        bank_h = col_h + pad + rows_h
+        page.add(self.caption((0, tabs_y, name_w, tab_h), "CLIPS", 12))
+        page.add(self.caption((0, tabs_y + tab_h, name_w, tab_h), "BANK", 12))
+        for caption, x, w in (("CLIP", nav_x, nav_w),
                               ("OPACITY", opacity_x, opacity_w)):
-            if caption:
-                page.add(self.caption((x, tabs_y + tab_h, w, tab_h), caption,
-                                      12))
+            page.add(self.caption((x, cols_top, w, col_h), caption, 12))
+
+        # < > step through every bank in order, across the group tabs too.
+        arrow_w = (name_w - pad) // 2
+        for i, (name, text, direction) in enumerate(
+                (("bank_prev", "<", -1), ("bank_next", ">", 1))):
+            frame = (i * (arrow_w + pad), cols_top, arrow_w, col_h)
+            page.add(Node(BUTTON, frame, name=name,
+                          color=self.colors["accent"], button_type=MOMENTARY,
+                          script=bake(BANK_ARROW_SCRIPT, dir=direction,
+                                      banks=banks, groups=groups)))
+            page.add(self.caption(frame, text, 22))
 
         def tabs(name, frame, size):
             return Node(PAGER, frame, name=name, color=self.colors["panel"],
@@ -322,28 +352,36 @@ class BorisBuilder(Builder):
 
         per_group = clips * banks
         outer = tabs("clipgroups", (clip_x, tabs_y, clip_area,
-                                    2 * tab_h + rows_h), 12)
+                                    2 * tab_h + bank_h), 12)
         for g in range(groups):
             g_first = g * per_group + 1
-            g_page = Node(GROUP, (0, tab_h, clip_area, tab_h + rows_h),
+            g_page = Node(GROUP, (0, tab_h, clip_area, tab_h + bank_h),
                           name=f"group{g + 1}", background=False,
                           outline=False,
                           tab_label=f"CLIPS {g_first}-{g_first + per_group - 1}")
-            inner = tabs(f"banks{g + 1}", (0, 0, clip_area, tab_h + rows_h),
+            inner = tabs(f"banks{g + 1}", (0, 0, clip_area, tab_h + bank_h),
                          11)
             for b in range(banks):
                 b_first = g_first + b * clips
-                bank = Node(GROUP, (0, tab_h, clip_area, rows_h),
+                bank = Node(GROUP, (0, tab_h, clip_area, bank_h),
                             name=f"g{g + 1}bank{b + 1}", background=False,
                             outline=False,
                             tab_label=f"{b_first}-{b_first + clips - 1}")
+                for i in range(clips):
+                    column = b_first + i
+                    self.add_button(
+                        bank, (i * (clip_w + pad), 0, clip_w, col_h),
+                        f"column{column}",
+                        addr["column_connect"].format(column=column),
+                        self.res_conn, color="accent", text=f"COL {column}",
+                        text_size=12, constant_args=(1.0,))
                 for r, layer in enumerate(layers):
                     n = layer["layer"]
                     for i in range(clips):
                         clip = b_first + i
                         self.add_button(
-                            bank, (i * (clip_w + pad), r * row_h, clip_w,
-                                   row_h - pad),
+                            bank, (i * (clip_w + pad), col_h + pad + r * row_h,
+                                   clip_w, row_h - pad),
                             f"layer{n}_clip{clip}",
                             addr["clip_connect"].format(layer=n, clip=clip),
                             self.res_conn, color="panel", text=str(clip),

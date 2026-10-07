@@ -50,10 +50,11 @@ fx_scale:
 # Page 1 · SHOW (Resolume)
 # ---------------------------------------------------------------------------
 show:
-  # Clips are banked as on the generic layout: the first tab row picks a
-  # group, the second a bank within it, and only the clip buttons move.
-  # 9 per bank x 4 banks x 2 groups reaches 72 clips per layer.
-  clips: 9               # clip buttons on screen per layer (= scene count)
+  # Banked as on the generic layout: the first tab row picks a group, the
+  # second a bank within it, and < > step through banks in order. Each bank
+  # shows its own column buttons over its clips, so the column row follows
+  # the bank (no fixed scenes row). 9 x 4 x 2 reaches 72 columns and clips.
+  clips: 9               # columns and clips per bank (the composition has 9)
   banks: 4               # banks per group (second tab row)
   bank_groups: 2         # groups (first tab row)
   # Top to bottom as Resolume draws them: layer 1 sits at the bottom.
