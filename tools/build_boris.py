@@ -655,25 +655,34 @@ class BorisBuilder(Builder):
                               text_size=16 if wgt > 1 else 13)
             y += h + pad
 
-        # --- MASTER strip (pink): hue over a rainbow, saturation over grey
-        # to pink, stacked full width. Both follow TD and the APC40.
-        ms = td["master"]
-        fw = width - 2 * pad
-        y = top_h + 2 * pad
-        hu, sa = ms["hue"], ms["saturation"]
-        page.add(self.caption((pad, y, fw, label_h), hu["label"], 14, "hue"))
-        y += label_h
-        self.banded_fader(page, (pad, y, fw, strip_fader_h), "hue",
-                          hu["address"], self.td_conn, outline="hue",
-                          band=lambda t: colorsys.hsv_to_rgb(t, 0.75, 0.85)
-                          + (1.0,))
-        y += strip_fader_h + pad
-        page.add(self.caption((pad, y, fw, label_h), sa["label"], 14, "hue"))
-        y += label_h
-        self.banded_fader(page, (pad, y, fw, strip_fader_h), "saturation",
-                          sa["address"], self.td_conn, outline="hue",
-                          band=lambda t: desaturate(self.colors["hue"], t),
-                          default=float(sa.get("default", 1.0)))
+        # --- COLOUR strip: two halves side by side, each a hue fader over a
+        # saturation fader, outlined in its part's colour. All four follow
+        # TD and the APC40.
+        half_w = (width - 3 * pad) // 2
+        for i, part in enumerate(td["colour"]):
+            x = pad + i * (half_w + pad)
+            y = top_h + 2 * pad
+            color = part["color"]
+            hu, sa = part["hue"], part["saturation"]
+            page.add(self.caption((x, y, half_w, label_h), hu["label"], 13,
+                                  color))
+            y += label_h
+            key = hu["address"].rsplit("/", 1)[-1]
+            self.banded_fader(page, (x, y, half_w, strip_fader_h),
+                              f"hue_{key}", hu["address"], self.td_conn,
+                              outline=color,
+                              band=lambda t: colorsys.hsv_to_rgb(t, 0.75, 0.85)
+                              + (1.0,))
+            y += strip_fader_h + pad
+            page.add(self.caption((x, y, half_w, label_h), sa["label"], 13,
+                                  color))
+            y += label_h
+            self.banded_fader(page, (x, y, half_w, strip_fader_h),
+                              f"saturation_{key}", sa["address"], self.td_conn,
+                              outline=color,
+                              band=lambda t, c=color: desaturate(self.colors[c],
+                                                                 t),
+                              default=float(sa.get("default", 1.0)))
         return page
 
     # -- assembly --------------------------------------------------------------

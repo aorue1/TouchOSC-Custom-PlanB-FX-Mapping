@@ -91,8 +91,9 @@ Boris has three pages: **SHOW** (banked columns and clips that move
 together, with `<` `>` and PREV/NEXT on every layer, crossfader, master, a
 whole-output saturation fader, tempo), **FX**
 (the five layers and the composition against four effects) and **TD** (the
-Spiderweb, Side Audios and Boris blocks, over a pink strip of hue and
-saturation that drives all three). Side Audios never gets a bypass button:
+Spiderweb, Side Audios and Boris blocks, over a colour strip with hue and
+saturation for the Spiderweb on one half and for Side Audios and Boris on the
+other). Side Audios never gets a bypass button:
 its Bypass must stay on in Resolume.
 
 ---

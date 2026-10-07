@@ -68,14 +68,18 @@ brief. Three pages:
 - **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY/DATAMOSH, drag-only
   dials. Composition SAT is the SHOW fader, so that cell is a caption.
 - **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
-  auto height, 7 palettes), Boris toggles, and a pink MASTER strip: HUE
-  `/td/scene` over a rainbow, SATURATION `/td/saturation` (default 1) below.
+  auto height, 7 palettes), Boris toggles, and a COLOUR strip in two halves:
+  SPIDERWEB (purple) `/td/hue/web` + `/td/saturation/web`, and SIDE + BORIS
+  (green) `/td/hue/side` + `/td/saturation/side`; hue over a rainbow,
+  saturation over grey→part colour, saturations default 1.
 
 It reuses the generic builder's factories and writer.
 
 - The TD addresses are exactly the ones TD routes on. Changing one breaks TD.
 - Every TD value control sends *and* receives, so the iPad follows the APC40.
 - `/td/toggle/4` (Panorama / wide) is **retired**: on no page, never re-add it.
+- `/td/scene` and `/td/saturation` stay **off the iPad**: `/td/scene` is only
+  for APC track fader 8 (moves both hues), `/td/saturation` is retired.
 - Side Audios (layer 3) never gets a bypass button: its Bypass must stay ON in
   Resolume. It has its own clips and PREV/NEXT but no CLEAR, deliberately.
 - Resolume saturation's top is `show.saturation.top` in the spec, sent as the

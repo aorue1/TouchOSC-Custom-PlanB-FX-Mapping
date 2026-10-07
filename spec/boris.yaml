@@ -34,7 +34,6 @@ colors:
   spiderweb: [0.71, 0.48, 1.00, 1.0]
   side:      [0.24, 0.88, 0.66, 1.0]
   boris:     [1.00, 0.71, 0.28, 1.0]
-  hue:       [1.00, 0.37, 0.64, 1.0]
 
 # FX dials repaint themselves by value between these stops, as in the
 # generic layout: cool at rest, warming to green at full.
@@ -116,8 +115,8 @@ fx:
 # Page 3 · TD (TouchDesigner)
 #
 # Addresses are exactly the ones TD already routes on. Only labels, grouping
-# and look are new -- plus /td/toggle/5 and /td/saturation, wired on the TD
-# side. /td/toggle/4 (Panorama / wide) is retired: it changed the Spiderweb
+# and look are new -- plus /td/toggle/5 and the four colour-strip addresses,
+# wired on the TD side. /td/toggle/4 (Panorama / wide) is retired: it changed the Spiderweb
 # resolution live, so it is on no page at all.
 # Every control here sends AND receives on its address, so the iPad follows
 # the APC40 and the computer.
@@ -166,12 +165,19 @@ td:
       - {address: /td/toggle/2, on_text: BORIS LOCKED, off_text: BORIS LOCK}
       - {address: /td/toggle/3, on_text: PIRATE TAGS ON, off_text: PIRATE TAGS OFF}
 
-  # Pink MASTER strip at the foot: two wide faders, stacked.
-  master:
-    hue:
-      label: "HUE · Spiderweb + Side + Boris"
-      address: /td/scene         # APC track fader 8 drives the same value
-    saturation:
-      label: "SATURATION · Spiderweb + Side + Boris"
-      address: /td/saturation    # 0 = black and white, 1 = normal colour
-      default: 1.0
+  # COLOUR strip at the foot, in two halves side by side, each a hue fader
+  # over a saturation fader. The Boris detection frame follows the Side
+  # Audios colour, so it shares the right half. /td/scene (kept only for APC
+  # track fader 8, which moves both hues) and /td/saturation (retired) are
+  # deliberately on no page.
+  colour:
+    - label: SPIDERWEB
+      color: spiderweb
+      hue:        {label: SPIDERWEB HUE, address: /td/hue/web}
+      saturation: {label: SPIDERWEB SATURATION, address: /td/saturation/web,
+                   default: 1.0}       # 0 = black and white, 1 = normal colour
+    - label: SIDE AUDIOS + BORIS
+      color: side
+      hue:        {label: SIDE + BORIS HUE, address: /td/hue/side}
+      saturation: {label: SIDE + BORIS SATURATION, address: /td/saturation/side,
+                   default: 1.0}
