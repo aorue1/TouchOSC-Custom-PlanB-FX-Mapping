@@ -150,6 +150,12 @@ def rgb(color) -> dict:
     return {"r": color[0], "g": color[1], "b": color[2]}
 
 
+def saturated(color, t):
+    """The hue of `color` at saturation 0.8 * t, mid-bright: grey at 0."""
+    h, _, _ = colorsys.rgb_to_hsv(*color[:3])
+    return colorsys.hsv_to_rgb(h, 0.8 * t, 0.8) + (1.0,)
+
+
 def desaturate(color, t):
     """`color` at saturation t: 0 is its grey, 1 the colour itself."""
     grey = 0.3 * color[0] + 0.59 * color[1] + 0.11 * color[2]
@@ -680,8 +686,11 @@ class BorisBuilder(Builder):
             self.banded_fader(page, (x, y, half_w, strip_fader_h),
                               f"saturation_{key}", sa["address"], self.td_conn,
                               outline=color,
-                              band=lambda t, c=color: desaturate(self.colors[c],
-                                                                 t),
+                              # Grey into a strong version of the part's
+                              # own hue: bone is too pale to show
+                              # saturation by itself, so it runs to gold.
+                              band=lambda t, c=color: saturated(
+                                  self.colors[c], t),
                               default=float(sa.get("default", 1.0)))
         return page
 

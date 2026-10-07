@@ -31,8 +31,11 @@ colors:
   master:    [0.96, 0.96, 0.98, 1.0]
   accent:    [0.95, 0.80, 0.20, 1.0]
   # One colour per part of the TD rig.
-  spiderweb: [0.71, 0.48, 1.00, 1.0]
-  side:      [0.24, 0.88, 0.66, 1.0]
+  # Off the brief's purple/green on request: that pairing read as generic.
+  # Steel blue and bone, next to Boris's orange, are calmer and still tell
+  # the three parts apart at a glance.
+  spiderweb: [0.42, 0.62, 0.80, 1.0]     # steel blue
+  side:      [0.86, 0.83, 0.74, 1.0]     # bone
   boris:     [1.00, 0.71, 0.28, 1.0]
 
 # FX dials repaint themselves by value between these stops, as in the
@@ -146,8 +149,8 @@ td:
       on_text:  AUTO HEIGHT ON
       off_text: AUTO HEIGHT OFF
     # Momentary, each sending 1 on press; the last one pressed stays lit.
-    # JOKER (/td/trigger/1) is dropped from the iPad on request; TD keeps it.
     palettes:
+      - {name: JOKER,        address: /td/trigger/1}
       - {name: RED LASER,    address: /td/trigger/2}
       - {name: ULTRAVIOLET,  address: /td/trigger/3}
       - {name: GOLD MASK,    address: /td/trigger/4}
