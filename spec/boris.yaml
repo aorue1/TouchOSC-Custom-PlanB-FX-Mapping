@@ -1,0 +1,127 @@
+# ---------------------------------------------------------------------------
+# Boris Brejcha · Pedregal · 09 Oct 2026 — gig-specific layout.
+#
+# Built by tools/build_boris.py into build/boris-landscape.tosc, next to the
+# generic PlanB-FX layout (spec/mapping.yaml), which it does not touch.
+#
+# Two pages, SHOW (Resolume) and TD. Every control carries a real name, and
+# anything this show does not use is left out rather than kept spare.
+# ---------------------------------------------------------------------------
+
+layout:
+  width: 1180            # iPad Air 4, landscape, in points
+  height: 820
+  tabbar_height: 60
+
+# Unchanged from the generic layout. The slot is what the builder uses; host
+# and port are for setting up the iPad.
+connections:
+  resolume:      {slot: 1, host: 192.168.20.231, port: 7000, receive: 9000}
+  touchdesigner: {slot: 2, host: 192.168.20.231, port: 7001, receive: 9001}
+
+colors:
+  bg:        [0.11, 0.11, 0.13, 1.0]
+  panel:     [0.16, 0.16, 0.19, 1.0]
+  text:      [0.92, 0.92, 0.94, 1.0]
+  unlit:     [0.22, 0.22, 0.25, 1.0]     # a toggle that is off
+  # Carried over from the generic layout, per the brief.
+  resolume:  [0.93, 0.35, 0.16, 1.0]
+  danger:    [0.85, 0.15, 0.25, 1.0]
+  master:    [0.96, 0.96, 0.98, 1.0]
+  accent:    [0.95, 0.80, 0.20, 1.0]
+  # One colour per part of the TD rig.
+  spiderweb: [0.71, 0.48, 1.00, 1.0]
+  side:      [0.24, 0.88, 0.66, 1.0]
+  boris:     [1.00, 0.71, 0.28, 1.0]
+  hue:       [1.00, 0.37, 0.64, 1.0]
+
+# Toggle captions are on_text/off_text, never bare on:/off: -- YAML reads an
+# unquoted `on` or `off` key as the boolean true/false.
+
+# ---------------------------------------------------------------------------
+# Page 1 · SHOW (Resolume)
+# ---------------------------------------------------------------------------
+show:
+  clips: 9               # the composition has 9 columns
+  # Top to bottom as Resolume draws them: layer 1 sits at the bottom.
+  layers:
+    - {layer: 5, name: MIRROR L/R}
+    - {layer: 4, name: DJ BOOTH}
+    # Feeds the LED strips. Its Bypass must stay ON in Resolume, which keeps
+    # it off the main canvas, so this row has no bypass, no clips and no
+    # clear: opacity only, and nothing a stray finger can break.
+    - {layer: 3, name: SIDE AUDIOS, opacity_only: true,
+       note: "LED strips · opacity only · bypass stays ON in Resolume"}
+    - {layer: 2, name: CIRCULO CENTRAL}
+    - {layer: 1, name: PANORAMA}
+
+  addresses:
+    clip_connect:   /composition/layers/{layer}/clips/{clip}/connect
+    column_connect: /composition/columns/{column}/connect
+    layer_opacity:  /composition/layers/{layer}/video/opacity
+    layer_clear:    /composition/layers/{layer}/clear
+    # A = Panorama on the left, B = Mirror L/R on the right.
+    crossfader:     /composition/crossfader/phase
+    master:         /composition/master
+    tempo_tap:      /composition/tempocontroller/tempotap
+    tempo_resync:   /composition/tempocontroller/resync
+
+# ---------------------------------------------------------------------------
+# Page 2 · TD (TouchDesigner)
+#
+# Addresses are exactly the ones TD already routes on. Only labels, grouping
+# and look are new — plus /td/toggle/5, which is wired on the TD side.
+# Every control here sends AND receives on its address, so the iPad follows
+# the APC40 and the computer.
+# ---------------------------------------------------------------------------
+td:
+  spiderweb:
+    label: SPIDERWEB
+    faders:
+      - {label: ZOOM,        address: /td/fader/1}   # inverted in TD
+      - {label: NOISE SPEED, address: /td/fader/2}   # inverted in TD
+      - {label: RGB DELAY,   address: /td/fader/3}
+      - {label: INTENSITY,   address: /td/intensity}
+    pad: {label: CAMERA ORBIT, x: /td/pad/2/x, y: /td/pad/2/y}
+    toggle:
+      address: /td/toggle/4
+      on_text:  PANORAMA · WIDE
+      off_text: SCREEN SIZE
+
+  side:
+    label: SIDE AUDIOS
+    faders:
+      - {label: BASS,        address: /td/fader/4}
+      - {label: MID,         address: /td/fader/5}
+      - {label: HIGH,        address: /td/fader/6}
+      - {label: BRIGHTNESS,  address: /td/fader/7}
+      - {label: PEAK HEIGHT, address: /td/fader/8}
+    toggle:
+      address: /td/toggle/5
+      on_text:  AUTO HEIGHT ON
+      off_text: AUTO HEIGHT OFF
+    # Momentary, each sending 1 on press; the last one pressed stays lit.
+    palettes:
+      - {name: JOKER,        address: /td/trigger/1}
+      - {name: RED LASER,    address: /td/trigger/2}
+      - {name: ULTRAVIOLET,  address: /td/trigger/3}
+      - {name: GOLD MASK,    address: /td/trigger/4}
+      - {name: TOXIC,        address: /td/trigger/5}
+      - {name: MINIMAL MONO, address: /td/trigger/6}
+      - {name: RGB DEBUG,    address: /td/trigger/7}
+
+  boris:
+    label: BORIS
+    toggles:
+      # OFF is the panic state (hides every tag), so it is shown in danger red.
+      # It starts ON -- the normal running state -- rather than loading as a
+      # red PANIC before TD has reported anything; TD's feedback corrects it.
+      - {address: /td/toggle/1, on_text: LABELS ON, off_text: "LABELS OFF · PANIC",
+         off_color: danger, size: large, start_on: true}
+      # TD switches this on by itself when it recognises his face.
+      - {address: /td/toggle/2, on_text: BORIS LOCKED, off_text: BORIS LOCK}
+      - {address: /td/toggle/3, on_text: PIRATE TAGS ON, off_text: PIRATE TAGS OFF}
+
+  hue:
+    label: "HUE · Spiderweb + Side + Boris"
+    address: /td/scene           # APC track fader 8 drives the same value

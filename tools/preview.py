@@ -82,8 +82,13 @@ def value_of_x(p) -> float:
 def fader(x, y, w, h, colour, p):
     """Dark track, a bar from the low end, and grid ticks when it snaps."""
     vertical = int(p.get("orientation") or 0) in (0, 2)
-    out = [f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" '
-           f'rx="3" fill="{TRACK}" stroke="{EDGE}" stroke-width="1"/>']
+    out = []
+    # A fader can be drawn with no track and no bar -- just its cursor -- so
+    # whatever sits behind it (the Boris hue strip's rainbow) stays visible.
+    if p.get("background", "1") != "0":
+        out.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" '
+                   f'height="{h:.1f}" rx="3" fill="{TRACK}" stroke="{EDGE}" '
+                   f'stroke-width="1"/>')
 
     steps = int(p.get("gridSteps") or 0) if p.get("grid") == "1" else 0
     if steps > 1:
@@ -103,6 +108,11 @@ def fader(x, y, w, h, colour, p):
     # A doc image of controls all sitting at zero reads as broken rather than
     # idle, so the bar is drawn at a nominal level to show which way it runs.
     level = 0.34
+    if p.get("bar", "1") == "0":
+        cx = x + w * level
+        out.append(f'<rect x="{cx - 3:.1f}" y="{y + 2:.1f}" width="6" '
+                   f'height="{h - 4:.1f}" rx="2" fill="{colour}"/>')
+        return out
     if vertical:
         bh = h * level
         out.append(f'<rect x="{x + 2:.1f}" y="{y + h - bh:.1f}" '

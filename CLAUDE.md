@@ -20,6 +20,8 @@ Only dependency: Python 3 + PyYAML.
 | `tools/vendor.py` | Grafts the vendored ColorPicker (`vendor/`) into the layout |
 | `tools/verify.py` | Fails the build on overlaps, escapes, tiny targets, address clashes |
 | `touchdesigner/osc_router.py` | OSC In DAT callbacks: address → TD parameter |
+| `spec/boris.yaml` + `tools/build_boris.py` | Boris gig layout → `build/boris-landscape.tosc` |
+| `docs/boris-osc-map.md` | Generated: every Boris control and its address |
 | `build/vj-control-{landscape,portrait}.tosc` | What goes on the iPad |
 | `docs/setup.md`, `README.md` | Full user docs, incl. annotated page screenshots |
 
@@ -51,6 +53,27 @@ so the network is known good.
 The user may instead want the camera to **orbit** the scene rather than turn
 in place. The usual way is to rotate a parent COMP the camera sits in, rather
 than the camera itself.
+
+## Boris Brejcha gig · Pedregal · 09 Oct 2026
+
+A show-specific layout built next to the generic one (`make boris`), from the
+brief: SHOW page (5 Resolume layers, 9 scenes, crossfader Panorama A ◀ ▶ B
+Mirror, master/blackout, tap/resync) and TD page (Spiderweb, Side Audios,
+Boris, hue strip). It reuses the generic builder's factories and writer.
+
+- The TD addresses are exactly the ones TD routes on. Changing one breaks TD.
+- Every TD value control sends *and* receives, so the iPad follows the APC40.
+- Side Audios (layer 3) has opacity only, deliberately: its Bypass must stay
+  ON in Resolume, so nothing on the iPad can touch it.
+- Toggles show state as a solid colour chip repainted by script on any value
+  change, touch or feedback. LABELS starts ON; its OFF state is danger red.
+- `on_text`/`off_text` in the YAML, never bare `on:`/`off:`: YAML reads those
+  keys as booleans.
+
+**Check at soundcheck** (none confirmed against a running Resolume yet):
+crossfader direction (A = Panorama on the left), scene/clip/clear/opacity
+addresses, BLACKOUT dropping master, and TD feedback moving the iPad
+(`/td/toggle/2 1` sent to the iPad on 9001 lights BORIS LOCK).
 
 ## Format rules learned the hard way
 

@@ -74,6 +74,21 @@ drives named parameters, with ranges you set per address.
 
 ---
 
+## Gig layouts
+
+Show-specific surfaces are built next to the generic one, from their own spec,
+with the same builder pieces — so every format fix applies to them too.
+
+| Gig | Spec | Layout | Address map |
+| --- | --- | --- | --- |
+| Boris Brejcha · Pedregal · 09 Oct 2026 | `spec/boris.yaml` | `build/boris-landscape.tosc` | [`docs/boris-osc-map.md`](docs/boris-osc-map.md) |
+
+```sh
+make boris      # just the Boris layout, verified
+```
+
+---
+
 ## Transport
 
 OSC to both hosts on separate connections. The slot numbers are baked into the
