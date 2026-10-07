@@ -8,7 +8,7 @@ builder's control factories and the same .tosc writer, so every format fix
 made there (child-element messages, the right-to-left connection mask,
 grabFocus, receive-capable values) applies here too.
 
-Two pages: SHOW for Resolume and TD for TouchDesigner. Every TD control both
+Three pages: SHOW and FX for Resolume, TD for TouchDesigner. Every TD control both
 sends and receives on its address, so the iPad follows the APC40 and the
 computer as well as driving them.
 """
@@ -21,8 +21,10 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tosc  # noqa: E402
-from build_tosc import Builder, bake, load_spec, MOMENTARY, TOGGLE  # noqa: E402
-from tosc import BOX, BUTTON, GROUP, LABEL, PAGER, Node, OscMessage, Shape  # noqa: E402
+from build_tosc import (Builder, bake, fx_color_script, load_spec,  # noqa: E402
+                        MOMENTARY, TOGGLE)
+from tosc import (BOX, BUTTON, GROUP, LABEL, PAGER, Node, OscMessage,  # noqa: E402
+                  Response, Shape)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "boris.yaml")
@@ -121,6 +123,12 @@ def rgb(color) -> dict:
     return {"r": color[0], "g": color[1], "b": color[2]}
 
 
+def desaturate(color, t):
+    """`color` at saturation t: 0 is its grey, 1 the colour itself."""
+    grey = 0.3 * color[0] + 0.59 * color[1] + 0.11 * color[2]
+    return tuple(grey + (c - grey) * t for c in color[:3]) + (1.0,)
+
+
 class BorisBuilder(Builder):
     """The generic builder's factories, with this show's pages."""
 
@@ -134,6 +142,8 @@ class BorisBuilder(Builder):
         self.res_slot = spec["connections"]["resolume"]["slot"]
         self.res_conn = tosc.connections(self.res_slot)
         self.td_conn = tosc.connections(spec["connections"]["touchdesigner"]["slot"])
+        self.fx_script = fx_color_script(spec["fx_scale"])
+        self.colors["fx_low"] = tuple(spec["fx_scale"]["low"])
 
     # -- show-specific factories --------------------------------------------
 
@@ -194,34 +204,79 @@ class BorisBuilder(Builder):
         parent.add(group)
         return group
 
+    def banded_fader(self, parent, frame, name, address, conns, *, outline,
+                     band, default=None, scale=(0.0, 1.0), segments=60):
+        """A horizontal fader drawn over a strip of colour showing what it does.
+
+        TouchOSC draws no gradients, so the strip is a run of thin boxes, with
+        band(t) the colour at position t (0 left, 1 right). The fader draws
+        only its cursor, white so it reads against every band: a coloured bar
+        would cover the very colours it selects between. The outline carries
+        the part colour.
+        """
+        x, y, w, h = frame
+        seg_w = w / segments
+        for i in range(segments):
+            x0 = x + round(i * seg_w)
+            x1 = x + round((i + 1) * seg_w)
+            parent.add(Node(BOX, (x0, y, x1 - x0, h), name=f"{name}_band_{i}",
+                            color=band((i + 0.5) / segments),
+                            shape=Shape.RECTANGLE, background=True,
+                            outline=False, interactive=False))
+        fdr = self.fader(frame, name, address, conns, horizontal=True,
+                         color="master")
+        fdr.background = False
+        fdr.outline = False
+        fdr.extra_props = {"bar": ("b", False), "cursor": ("b", True)}
+        if default is not None:
+            fdr.value_default = default
+        fdr.messages[0].scale = scale
+        parent.add(Node(BOX, frame, name=f"{name}_frame",
+                        color=self.colors[outline], shape=Shape.RECTANGLE,
+                        background=False, outline=True,
+                        outline_style=tosc.Outline.FULL, interactive=False))
+        parent.add(fdr)
+        return fdr
+
     def block_header(self, parent, frame, text, color):
         parent.add(self.caption(frame, text, 17, color))
 
     # -- page 1: SHOW --------------------------------------------------------
 
     def show_page(self, width: int, height: int) -> Node:
+        """Scenes, banked clip rows per layer, crossfader, master column.
+
+        Clips bank as on the generic layout -- a tab row of groups over a tab
+        row of banks -- and only the clip buttons move: names, PREV/NEXT,
+        CLEAR and opacity stay put, so nothing shifts under a finger.
+        """
         show = self.spec["show"]
         addr = show["addresses"]
-        clips = show["clips"]
+        clips, banks, groups = show["clips"], show["banks"], show["bank_groups"]
         page = Node(GROUP, (0, 0, width, height), name="SHOW",
                     color=self.colors["resolume"], background=False,
                     outline=False)
 
         pad = 8
-        right_w = 170                       # master column
+        right_w = 186                       # master column
         main_w = width - right_w            # layer rows, scenes, crossfader
-        name_w = 132                        # layer names
-        opacity_w = 150
-        clear_w = 66
+        name_w = 118                        # layer names
+        nav_w = 62                          # PREV over NEXT
+        clear_w = 62
+        opacity_w = 136
         clip_x = name_w + pad
-        clip_area = main_w - clip_x - opacity_w - clear_w - 3 * pad
+        clip_area = (main_w - clip_x - nav_w - clear_w - opacity_w - 4 * pad)
         clip_w = (clip_area - (clips - 1) * pad) // clips
+        clip_area = clips * clip_w + (clips - 1) * pad
+        nav_x = clip_x + clip_area + pad
+        clear_x = nav_x + nav_w + pad
+        opacity_x = clear_x + clear_w + pad
 
         def clip_frame(i, y, h):
             return (clip_x + i * (clip_w + pad), y, clip_w, h)
 
-        # --- scenes: whole columns, aligned over the clip grid ---
-        scenes_h = 64
+        # --- scenes: whole columns, aligned over the first clip bank ---
+        scenes_h = 60
         page.add(self.caption((0, pad, name_w, scenes_h), "SCENES", 15,
                               "accent"))
         for i in range(clips):
@@ -232,45 +287,106 @@ class BorisBuilder(Builder):
                             self.res_conn, color="accent",
                             text=f"SCENE {column}", text_size=12,
                             constant_args=(1.0,))
-        page.add(self.caption((clip_x + clip_area + pad, pad,
-                               opacity_w, scenes_h), "OPACITY", 12))
 
         # --- crossfader: the most important control, full width at the foot ---
         xf_label_h = 24
-        xf_h = 84
+        xf_h = 80
         xf_y = height - xf_h - pad
-        rows_top = pad + scenes_h + pad
         rows_bottom = xf_y - xf_label_h - pad
 
-        # --- layer rows, layer 5 at the top as in Resolume ---
+        # --- bank tabs, then layer rows (layer 5 at the top, as in Resolume) ---
+        tab_h = 34
+        tabs_y = pad + scenes_h + pad
+        rows_top = tabs_y + 2 * tab_h
         layers = show["layers"]
         row_h = (rows_bottom - rows_top) // len(layers)
+        rows_h = row_h * len(layers)
+        for caption, x, w in (("BANK", 0, name_w), ("CLIP", nav_x, nav_w),
+                              ("", clear_x, clear_w),
+                              ("OPACITY", opacity_x, opacity_w)):
+            if caption:
+                page.add(self.caption((x, tabs_y + tab_h, w, tab_h), caption,
+                                      12))
+
+        def tabs(name, frame, size):
+            return Node(PAGER, frame, name=name, color=self.colors["panel"],
+                        background=False, outline=False,
+                        extra_props={
+                            "tabbar": ("b", 1),
+                            "tabbarSize": ("i", tab_h),
+                            "tabbarDoubleTap": ("b", 0),
+                            "tabLabels": ("b", 1),
+                            "textSizeOff": ("i", size),
+                            "textSizeOn": ("i", size),
+                        })
+
+        per_group = clips * banks
+        outer = tabs("clipgroups", (clip_x, tabs_y, clip_area,
+                                    2 * tab_h + rows_h), 12)
+        for g in range(groups):
+            g_first = g * per_group + 1
+            g_page = Node(GROUP, (0, tab_h, clip_area, tab_h + rows_h),
+                          name=f"group{g + 1}", background=False,
+                          outline=False,
+                          tab_label=f"CLIPS {g_first}-{g_first + per_group - 1}")
+            inner = tabs(f"banks{g + 1}", (0, 0, clip_area, tab_h + rows_h),
+                         11)
+            for b in range(banks):
+                b_first = g_first + b * clips
+                bank = Node(GROUP, (0, tab_h, clip_area, rows_h),
+                            name=f"g{g + 1}bank{b + 1}", background=False,
+                            outline=False,
+                            tab_label=f"{b_first}-{b_first + clips - 1}")
+                for r, layer in enumerate(layers):
+                    n = layer["layer"]
+                    for i in range(clips):
+                        clip = b_first + i
+                        self.add_button(
+                            bank, (i * (clip_w + pad), r * row_h, clip_w,
+                                   row_h - pad),
+                            f"layer{n}_clip{clip}",
+                            addr["clip_connect"].format(layer=n, clip=clip),
+                            self.res_conn, color="panel", text=str(clip),
+                            text_size=14, constant_args=(1.0,))
+                inner.add(bank)
+            g_page.add(inner)
+            outer.add(g_page)
+        page.add(outer)
+
         for r, layer in enumerate(layers):
             n = layer["layer"]
             y = rows_top + r * row_h
             h = row_h - pad
-            page.add(self.caption((0, y, name_w, h), layer["name"], 13,
-                                  "resolume", name=f"layer{n}_name"))
-            if layer.get("opacity_only"):
-                # No clips, no clear and no bypass: nothing to mistap.
-                page.add(self.caption((clip_x, y, clip_area, h),
-                                      layer["note"], 13, "text"))
+            if layer.get("note"):
+                page.add(self.caption((0, y, name_w, h * 2 // 3),
+                                      layer["name"], 13, "resolume",
+                                      name=f"layer{n}_name"))
+                page.add(self.caption((0, y + h // 2, name_w, h // 2),
+                                      layer["note"], 10, "text"))
+            elif len(layer["name"]) > 12:
+                # Too long for one line at this width: TouchOSC clips, it
+                # does not wrap.
+                self.stacked_caption(page, (0, y + h // 4, name_w, h // 2),
+                                     layer["name"], 13, "resolume")
             else:
-                for i in range(clips):
-                    clip = i + 1
-                    self.add_button(page, clip_frame(i, y, h),
-                                    f"layer{n}_clip{clip}",
-                                    addr["clip_connect"].format(layer=n,
-                                                                clip=clip),
-                                    self.res_conn, color="panel",
-                                    text=str(clip), text_size=14,
-                                    constant_args=(1.0,))
-                self.add_button(page, (main_w - clear_w - pad, y, clear_w, h),
+                page.add(self.caption((0, y, name_w, h), layer["name"], 13,
+                                      "resolume", name=f"layer{n}_name"))
+            half = (h - pad) // 2
+            for i, (key, text) in enumerate((("clip_prev", "◀ PREV"),
+                                             ("clip_next", "NEXT ▶"))):
+                self.add_button(page, (nav_x, y + i * (half + pad), nav_w,
+                                       half),
+                                f"layer{n}_{key}", addr[key].format(layer=n),
+                                self.res_conn, color="panel", text=text,
+                                text_size=11, constant_args=(1.0,))
+            # Never a bypass button on any row; Side Audios has no CLEAR.
+            if not layer.get("no_clear"):
+                self.add_button(page, (clear_x, y, clear_w, h),
                                 f"layer{n}_clear",
                                 addr["layer_clear"].format(layer=n),
                                 self.res_conn, color="panel", text="CLEAR",
                                 text_size=11, constant_args=(1.0,))
-            page.add(self.fader((clip_x + clip_area + pad, y, opacity_w, h),
+            page.add(self.fader((opacity_x, y, opacity_w, h),
                                 f"layer{n}_opacity",
                                 addr["layer_opacity"].format(layer=n),
                                 self.res_conn, horizontal=True,
@@ -288,18 +404,30 @@ class BorisBuilder(Builder):
                             addr["crossfader"], self.res_conn, horizontal=True,
                             color="resolume"))
 
-        # --- master column: master / blackout, then tempo ---
+        # --- master column: master, saturation, blackout, tempo ---
         x = main_w + pad
         col_w = right_w - 2 * pad
         btn_h = 56
-        page.add(self.caption((x, pad, col_w, 22), "MASTER / BLACKOUT", 12,
-                              "master"))
+        sat_h = 64
+        label_h = 22
+        page.add(self.caption((x, pad, col_w, label_h), "MASTER / BLACKOUT",
+                              12, "master"))
         tempo_y = height - pad - btn_h
         blackout_y = tempo_y - pad - btn_h
-        master_top = pad + 24
+        sat_y = blackout_y - 2 * pad - sat_h
+        master_top = pad + label_h + 2
         page.add(self.fader((x, master_top, col_w,
-                             blackout_y - pad - master_top), "master",
+                             sat_y - label_h - 2 * pad - master_top), "master",
                             addr["master"], self.res_conn, color="master"))
+
+        # Beside master: whole-output saturation, grey (B&W) to full colour.
+        sat = show["saturation"]
+        page.add(self.caption((x, sat_y - label_h - 2, col_w, label_h),
+                              sat["label"], 11, "resolume"))
+        self.banded_fader(page, (x, sat_y, col_w, sat_h), "res_saturation",
+                          sat["address"], self.res_conn, outline="resolume",
+                          band=lambda t: desaturate(self.colors["resolume"], t),
+                          default=1.0, scale=(0.0, float(sat["top"])))
 
         blackout = Node(BUTTON, (x, blackout_y, col_w, btn_h), name="blackout",
                         color=self.colors["danger"], button_type=MOMENTARY,
@@ -323,7 +451,60 @@ class BorisBuilder(Builder):
                             text=text, text_size=12, constant_args=(1.0,))
         return page
 
-    # -- page 2: TD ------------------------------------------------------------
+    # -- page 2: FX ------------------------------------------------------------
+
+    def fx_page(self, width: int, height: int) -> Node:
+        """Layers down, effects across, one drag-only dial per cell.
+
+        The generic FX page's rules: no bypass buttons (dial to zero), wide
+        gutters, relative response so a tap does nothing, and grabFocus so a
+        drag never jumps to the neighbouring dial.
+        """
+        fx = self.spec["fx"]
+        effects = fx["effects"]
+        comp_sat = self.spec["show"]["saturation"]["address"]
+        page = Node(GROUP, (0, 0, width, height), name="FX",
+                    color=self.colors["accent"], background=False,
+                    outline=False)
+        pad = 8
+        head_h = 24
+        gutter = 140
+        rows = [(f"layer{l['layer']}", l["name"], "resolume",
+                 lambda e, n=l["layer"]: fx["layer_param"].format(
+                     layer=n, fx=e["fx"], param=e["param"]))
+                for l in self.spec["show"]["layers"]]
+        rows.append(("comp", "COMPOSITION", "accent",
+                     lambda e: fx["comp_param"].format(fx=e["fx"],
+                                                       param=e["param"])))
+        col_w = (width - gutter) // len(effects)
+        row_h = (height - head_h) // len(rows)
+
+        for c, e in enumerate(effects):
+            page.add(self.caption((gutter + c * col_w, 0, col_w, head_h),
+                                  e["name"], 14, "resolume"))
+        for r, (key, caption, color, address) in enumerate(rows):
+            y = head_h + r * row_h
+            page.add(self.caption((pad, y, gutter - pad, row_h), caption, 13,
+                                  color))
+            for c, e in enumerate(effects):
+                x = gutter + c * col_w
+                path = address(e)
+                if path == comp_sat:
+                    # Owned by the SHOW page's saturation fader.
+                    page.add(self.caption((x, y, col_w, row_h),
+                                          "ON SHOW PAGE", 11, "text"))
+                    continue
+                size = min(col_w, row_h) - 2 * pad
+                page.add(self.radial((x + (col_w - size) // 2,
+                                      y + (row_h - size) // 2, size, size),
+                                     f"{key}_{e['fx']}", path, self.res_conn,
+                                     color="accent" if key == "comp"
+                                     else "fx_low",
+                                     script=self.fx_script,
+                                     response=Response.RELATIVE))
+        return page
+
+    # -- page 3: TD ------------------------------------------------------------
 
     def fader_bank(self, parent, x, y, h, faders, color, *, fader_w=56,
                    gap=8, caption_h=30):
@@ -344,8 +525,10 @@ class BorisBuilder(Builder):
                     outline=False)
         pad = 10
         header_h = 28
-        hue_h = 100
-        top_h = height - hue_h - 3 * pad
+        label_h = 22
+        strip_fader_h = 60
+        master_h = 2 * (label_h + strip_fader_h) + pad
+        top_h = height - master_h - 3 * pad
 
         spider_w, side_w = 480, 452
         boris_w = width - spider_w - side_w - 4 * pad
@@ -363,17 +546,14 @@ class BorisBuilder(Builder):
                                "spiderweb")
         px = sx + used + pad + 6
         pw = sx + spider_w - px
-        toggle_h = 92
-        pad_h = body_h - toggle_h - pad - 24
+        # The whole column below the header is the pad: the old Panorama
+        # toggle that shared it (/td/toggle/4) is retired, on no page at all.
+        pad_h = body_h - 24
         page.add(self.xy((px, body_y, pw, pad_h), "camera_orbit",
                          sw["pad"]["x"], sw["pad"]["y"], self.td_conn,
                          color="spiderweb"))
         page.add(self.caption((px, body_y + pad_h, pw, 24), sw["pad"]["label"],
                               12, "spiderweb"))
-        self.state_toggle(page, (px, body_y + body_h - toggle_h, pw, toggle_h),
-                          "panorama", sw["toggle"]["address"], self.td_conn,
-                          on_color="spiderweb", on_text=sw["toggle"]["on_text"],
-                          off_text=sw["toggle"]["off_text"], text_size=13)
 
         # --- SIDE AUDIOS ---
         sd = td["side"]
@@ -437,38 +617,25 @@ class BorisBuilder(Builder):
                               text_size=16 if wgt > 1 else 13)
             y += h + pad
 
-        # --- HUE strip, over a rainbow ---
-        hu = td["hue"]
-        hy = top_h + 2 * pad
-        page.add(self.caption((pad, hy, width - 2 * pad, 24), hu["label"], 14,
-                              "hue"))
-        fy = hy + 26
+        # --- MASTER strip (pink): hue over a rainbow, saturation over grey
+        # to pink, stacked full width. Both follow TD and the APC40.
+        ms = td["master"]
         fw = width - 2 * pad
-        fh = hue_h - 26
-        # TouchOSC draws no gradients, so the rainbow is a run of thin boxes.
-        segments = 60
-        seg_w = fw / segments
-        for i in range(segments):
-            r, g, b = colorsys.hsv_to_rgb(i / segments, 0.75, 0.85)
-            x0 = pad + round(i * seg_w)
-            x1 = pad + round((i + 1) * seg_w)
-            page.add(Node(BOX, (x0, fy, x1 - x0, fh), name=f"hue_band_{i}",
-                          color=(r, g, b, 1.0), shape=Shape.RECTANGLE,
-                          background=True, outline=False, interactive=False))
-        # The fader draws only its cursor, so the rainbow stays visible: a
-        # coloured bar would cover the very colours it selects between. The
-        # cursor is white so it reads against every hue, the pink outline
-        # carries the part colour.
-        hue = self.fader((pad, fy, fw, fh), "hue", hu["address"], self.td_conn,
-                         horizontal=True, color="master")
-        hue.background = False
-        hue.outline = False
-        hue.extra_props = {"bar": ("b", False), "cursor": ("b", True)}
-        page.add(Node(BOX, (pad, fy, fw, fh), name="hue_frame",
-                      color=self.colors["hue"], shape=Shape.RECTANGLE,
-                      background=False, outline=True,
-                      outline_style=tosc.Outline.FULL, interactive=False))
-        page.add(hue)
+        y = top_h + 2 * pad
+        hu, sa = ms["hue"], ms["saturation"]
+        page.add(self.caption((pad, y, fw, label_h), hu["label"], 14, "hue"))
+        y += label_h
+        self.banded_fader(page, (pad, y, fw, strip_fader_h), "hue",
+                          hu["address"], self.td_conn, outline="hue",
+                          band=lambda t: colorsys.hsv_to_rgb(t, 0.75, 0.85)
+                          + (1.0,))
+        y += strip_fader_h + pad
+        page.add(self.caption((pad, y, fw, label_h), sa["label"], 14, "hue"))
+        y += label_h
+        self.banded_fader(page, (pad, y, fw, strip_fader_h), "saturation",
+                          sa["address"], self.td_conn, outline="hue",
+                          band=lambda t: desaturate(self.colors["hue"], t),
+                          default=float(sa.get("default", 1.0)))
         return page
 
     # -- assembly --------------------------------------------------------------
@@ -491,6 +658,7 @@ class BorisBuilder(Builder):
                      })
         page_h = h - tab_h
         for page, tab in ((self.show_page(w, page_h), "SHOW"),
+                          (self.fx_page(w, page_h), "FX"),
                           (self.td_page(w, page_h), "TD")):
             page.frame = (0, tab_h, w, page_h)
             page.tab_label = tab

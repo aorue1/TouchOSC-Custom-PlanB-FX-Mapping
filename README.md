@@ -87,6 +87,13 @@ with the same builder pieces — so every format fix applies to them too.
 make boris      # just the Boris layout, verified
 ```
 
+Boris has three pages: **SHOW** (scenes, banked clips with PREV/NEXT on every
+layer, crossfader, master, a whole-output saturation fader, tempo), **FX**
+(the five layers and the composition against four effects) and **TD** (the
+Spiderweb, Side Audios and Boris blocks, over a pink strip of hue and
+saturation that drives all three). Side Audios never gets a bypass button:
+its Bypass must stay on in Resolume.
+
 ---
 
 ## Transport
@@ -179,6 +186,7 @@ the address it reports into the spec.
 | Tempo | `/composition/tempocontroller/tempo`, sent normalised across 20-500 BPM | Tempo jumps somewhere absurd |
 | Speed range | `speed.param_min` / `param_max`, 0-10 | 1x is not normal speed |
 | Clip / layer names | `.../clips/{n}/name`, `.../layers/{n}/name` | Captions keep showing numbers |
+| Boris composition saturation | `/composition/video/effects/saturation/effect/saturation`; full right = normal only if normal is the top of its range (`show.saturation.top`) | Fader does nothing, or oversaturates at full |
 
 Effects must already exist in the layer's (or composition's) chain in Arena —
 Resolume addresses effects by their name in the chain.

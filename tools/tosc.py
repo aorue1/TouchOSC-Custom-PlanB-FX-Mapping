@@ -173,16 +173,19 @@ class OscMessage:
     receive_key: str | None = None   # control value an incoming argument fills
     value_key: str = "x"             # which value this message sends
     conversion: str = "FLOAT"        # FLOAT | STRING | BOOLEAN
+    # What the control's 0..1 is sent as. Incoming values are mapped back
+    # through the same range, so feedback still lands in the right place.
+    scale: tuple = (0.0, 1.0)
 
     @staticmethod
     def _partial(parent: ET.Element, ptype: str, conversion: str,
-                 value: str) -> None:
+                 value: str, scale: tuple = (0.0, 1.0)) -> None:
         p = ET.SubElement(parent, "partial")
         ET.SubElement(p, "type").text = ptype
         ET.SubElement(p, "conversion").text = conversion
         ET.SubElement(p, "value").text = value
-        ET.SubElement(p, "scaleMin").text = "0"
-        ET.SubElement(p, "scaleMax").text = "1"
+        ET.SubElement(p, "scaleMin").text = f"{scale[0]:g}"
+        ET.SubElement(p, "scaleMax").text = f"{scale[1]:g}"
 
     def to_xml(self, parent: ET.Element) -> None:
         osc = ET.SubElement(parent, "osc")
@@ -209,7 +212,7 @@ class OscMessage:
         for const in self.constant_args:
             self._partial(args, "CONSTANT", "FLOAT", str(const))
         if self.send_value or self.receive_key:
-            self._partial(args, "VALUE", self.conversion, key)
+            self._partial(args, "VALUE", self.conversion, key, self.scale)
 
 
 class Raw:

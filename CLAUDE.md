@@ -57,23 +57,39 @@ than the camera itself.
 ## Boris Brejcha gig · Pedregal · 09 Oct 2026
 
 A show-specific layout built next to the generic one (`make boris`), from the
-brief: SHOW page (5 Resolume layers, 9 scenes, crossfader Panorama A ◀ ▶ B
-Mirror, master/blackout, tap/resync) and TD page (Spiderweb, Side Audios,
-Boris, hue strip). It reuses the generic builder's factories and writer.
+brief. Three pages:
+- **SHOW**: 9 scenes; 5 layer rows of clips, banked like the generic layout
+  (group tabs 1-36 / 37-72 over bank tabs of 9 → 72 clips per layer); per
+  layer PREV/NEXT, CLEAR, opacity; crossfader Panorama A ◀ ▶ B Mirror;
+  master/blackout; **SATURATION · Resolume** (composition Saturation effect,
+  grey→colour strip, default full = normal); tap/resync.
+- **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY/DATAMOSH, drag-only
+  dials. Composition SAT is the SHOW fader, so that cell is a caption.
+- **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
+  auto height, 7 palettes), Boris toggles, and a pink MASTER strip: HUE
+  `/td/scene` over a rainbow, SATURATION `/td/saturation` (default 1) below.
+
+It reuses the generic builder's factories and writer.
 
 - The TD addresses are exactly the ones TD routes on. Changing one breaks TD.
 - Every TD value control sends *and* receives, so the iPad follows the APC40.
-- Side Audios (layer 3) has opacity only, deliberately: its Bypass must stay
-  ON in Resolume, so nothing on the iPad can touch it.
+- `/td/toggle/4` (Panorama / wide) is **retired**: on no page, never re-add it.
+- Side Audios (layer 3) never gets a bypass button: its Bypass must stay ON in
+  Resolume. It has its own clips and PREV/NEXT but no CLEAR, deliberately.
+- Resolume saturation's top is `show.saturation.top` in the spec, sent as the
+  VALUE partial's `scaleMax` (feedback maps back through it). If "normal" is
+  not the top of Arena's range, set `top` to normal's normalised value.
 - Toggles show state as a solid colour chip repainted by script on any value
   change, touch or feedback. LABELS starts ON; its OFF state is danger red.
 - `on_text`/`off_text` in the YAML, never bare `on:`/`off:`: YAML reads those
   keys as booleans.
 
 **Check at soundcheck** (none confirmed against a running Resolume yet):
-crossfader direction (A = Panorama on the left), scene/clip/clear/opacity
-addresses, BLACKOUT dropping master, and TD feedback moving the iPad
-(`/td/toggle/2 1` sent to the iPad on 9001 lights BORIS LOCK).
+crossfader direction (A = Panorama on the left), scene/clip/clear/opacity and
+PREV/NEXT addresses, the composition saturation address and its range
+(Shortcuts → Edit OSC), FX effect names, BLACKOUT dropping master, and TD
+feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights
+BORIS LOCK).
 
 ## Format rules learned the hard way
 
