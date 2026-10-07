@@ -687,8 +687,7 @@ class BorisBuilder(Builder):
                               f"saturation_{key}", sa["address"], self.td_conn,
                               outline=color,
                               # Grey into a strong version of the part's
-                              # own hue: bone is too pale to show
-                              # saturation by itself, so it runs to gold.
+                              # own hue.
                               band=lambda t, c=color: saturated(
                                   self.colors[c], t),
                               default=float(sa.get("default", 1.0)))

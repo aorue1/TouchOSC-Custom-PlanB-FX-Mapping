@@ -69,8 +69,8 @@ brief. Three pages:
   dials. Composition SAT is the SHOW fader, so that cell is a caption.
 - **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
   auto height, 7 palettes; TREBLE left, BASS right), Boris toggles, and a COLOUR strip in two halves:
-  SPIDERWEB (steel blue) `/td/hue/web` + `/td/saturation/web`, and SIDE + BORIS
-  (bone) `/td/hue/side` + `/td/saturation/side`; hue over a rainbow,
+  SPIDERWEB (blue) `/td/hue/web` + `/td/saturation/web`, and SIDE + BORIS
+  (yellow) `/td/hue/side` + `/td/saturation/side`; hue over a rainbow,
   saturation over grey→strong part hue, saturations default 1.
 
 It reuses the generic builder's factories and writer.

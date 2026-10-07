@@ -31,11 +31,10 @@ colors:
   master:    [0.96, 0.96, 0.98, 1.0]
   accent:    [0.95, 0.80, 0.20, 1.0]
   # One colour per part of the TD rig.
-  # Off the brief's purple/green on request: that pairing read as generic.
-  # Steel blue and bone, next to Boris's orange, are calmer and still tell
-  # the three parts apart at a glance.
-  spiderweb: [0.42, 0.62, 0.80, 1.0]     # steel blue
-  side:      [0.86, 0.83, 0.74, 1.0]     # bone
+  # Off the brief's purple/green on request: Andrés picked blue and yellow.
+  # The yellow leans lemon so it stays apart from Boris's orange.
+  spiderweb: [0.28, 0.55, 0.95, 1.0]     # blue
+  side:      [0.98, 0.88, 0.22, 1.0]     # yellow
   boris:     [1.00, 0.71, 0.28, 1.0]
 
 # FX dials repaint themselves by value between these stops, as in the
