@@ -68,7 +68,7 @@ brief. Three pages:
 - **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY/DATAMOSH, drag-only
   dials. Composition SAT is the SHOW fader, so that cell is a caption.
 - **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
-  auto height, 7 palettes), Boris toggles, and a COLOUR strip in two halves:
+  auto height, 6 palettes; TREBLE left, BASS right; no JOKER), Boris toggles, and a COLOUR strip in two halves:
   SPIDERWEB (purple) `/td/hue/web` + `/td/saturation/web`, and SIDE + BORIS
   (green) `/td/hue/side` + `/td/saturation/side`; hue over a rainbow,
   saturation over grey→part colour, saturations default 1.

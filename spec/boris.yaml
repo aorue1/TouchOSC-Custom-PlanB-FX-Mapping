@@ -134,9 +134,11 @@ td:
   side:
     label: SIDE AUDIOS
     faders:
-      - {label: BASS,        address: /td/fader/4}
+      # Treble on the left, bass on the right: positions swapped on
+      # request, addresses unchanged (TD routes on them).
+      - {label: TREBLE,      address: /td/fader/6}
       - {label: MID,         address: /td/fader/5}
-      - {label: HIGH,        address: /td/fader/6}
+      - {label: BASS,        address: /td/fader/4}
       - {label: BRIGHTNESS,  address: /td/fader/7}
       - {label: PEAK HEIGHT, address: /td/fader/8}
     toggle:
@@ -144,8 +146,8 @@ td:
       on_text:  AUTO HEIGHT ON
       off_text: AUTO HEIGHT OFF
     # Momentary, each sending 1 on press; the last one pressed stays lit.
+    # JOKER (/td/trigger/1) is dropped from the iPad on request; TD keeps it.
     palettes:
-      - {name: JOKER,        address: /td/trigger/1}
       - {name: RED LASER,    address: /td/trigger/2}
       - {name: ULTRAVIOLET,  address: /td/trigger/3}
       - {name: GOLD MASK,    address: /td/trigger/4}
