@@ -147705,41 +147705,7 @@ end</value>
                   </property>
                   <property type="s">
                     <key>script</key>
-                    <value>local MULT = { 0.25, 0.5, 1, 2, 4 }
-local MIN, MAX = 0.00, 10.00
-local CONNS = { true, false, false, false, false }
-local PATH = '/composition/speed'
-
-local function stop()
-  return MULT[math.floor(self.values.x * (#MULT - 1) + 0.5) + 1]
-end
-
-local function caption(m)
-  local lbl = self.parent.children.speed_label
-  if lbl then lbl.values.text = string.format('SPEED %gx', m) end
-end
-
-function init()
-  -- Label only: pushing a speed at load would stamp on whatever Resolume
-  -- already has.
-  caption(stop())
-end
-
-function onValueChanged(key)
-  if key == 'x' then
-    local m = stop()
-    caption(m)
-    sendOSC(PATH, (m - MIN) / (MAX - MIN), CONNS)
-  end
-end</value>
-                  </property>
-                  <property type="b">
-                    <key>grid</key>
-                    <value>1</value>
-                  </property>
-                  <property type="i">
-                    <key>gridSteps</key>
-                    <value>4</value>
+                    <value />
                   </property>
                 </properties>
                 <values>
@@ -147754,11 +147720,64 @@ end</value>
                     <key>x</key>
                     <locked>0</locked>
                     <lockedDefaultCurrent>0</lockedDefaultCurrent>
-                    <default>0.500000</default>
+                    <default>0.100000</default>
                     <defaultPull>0</defaultPull>
                   </value>
                 </values>
-                <messages />
+                <messages>
+                  <osc>
+                    <enabled>1</enabled>
+                    <send>1</send>
+                    <receive>1</receive>
+                    <feedback>0</feedback>
+                    <connections>00001</connections>
+                    <triggers>
+                      <trigger>
+                        <var>x</var>
+                        <condition>ANY</condition>
+                      </trigger>
+                    </triggers>
+                    <path>
+                      <partial>
+                        <type>CONSTANT</type>
+                        <conversion>STRING</conversion>
+                        <value>/</value>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </partial>
+                      <partial>
+                        <type>CONSTANT</type>
+                        <conversion>STRING</conversion>
+                        <value>composition</value>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </partial>
+                      <partial>
+                        <type>CONSTANT</type>
+                        <conversion>STRING</conversion>
+                        <value>/</value>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </partial>
+                      <partial>
+                        <type>CONSTANT</type>
+                        <conversion>STRING</conversion>
+                        <value>speed</value>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </partial>
+                    </path>
+                    <arguments>
+                      <partial>
+                        <type>VALUE</type>
+                        <conversion>FLOAT</conversion>
+                        <value>x</value>
+                        <scaleMin>0</scaleMin>
+                        <scaleMax>1</scaleMax>
+                      </partial>
+                    </arguments>
+                  </osc>
+                </messages>
               </node>
               <node ID="75bad97c-e070-5a69-bd87-6c344e2d9558" type="LABEL">
                 <properties>

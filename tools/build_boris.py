@@ -22,8 +22,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tosc  # noqa: E402
 from build_tosc import (Builder, bake, fx_color_script, load_spec,  # noqa: E402
-                        MOMENTARY, SPEED_SCRIPT, TOGGLE)
-from tosc import (BOX, BUTTON, FADER, GROUP, LABEL, PAGER, Node,  # noqa: E402
+                        MOMENTARY, TOGGLE)
+from tosc import (BOX, BUTTON, GROUP, LABEL, PAGER, Node,  # noqa: E402
                   OscMessage, Response, Shape)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -462,24 +462,15 @@ class BorisBuilder(Builder):
         fader_h = sat_y - label_h - 2 * pad - master_top
 
         # Speed and master are narrow columns side by side, in different
-        # colours so neither gets grabbed for the other, as on the generic
-        # layout. Speed snaps to tempo multiples and sends from its script,
-        # so it carries no message; its label shows the current multiple.
+        # colours so neither gets grabbed for the other. Speed is a plain
+        # two-way fader over the full range, like the APC40's mapping.
         speed = show["speed"]
-        stops = speed["multiples"]
         page.add(self.caption((x, pad, half, label_h), "SPEED", 12, "accent",
                               name="speed_label"))
-        page.add(Node(FADER, (x, master_top, half, fader_h), name="speed",
-                      color=self.colors["accent"],
-                      grid_steps=len(stops) - 1,
-                      value_default=stops.index(speed["default"])
-                      / (len(stops) - 1),
-                      script=bake(SPEED_SCRIPT,
-                                  mult=", ".join(str(m) for m in stops),
-                                  pmin=float(speed["param_min"]),
-                                  pmax=float(speed["param_max"]),
-                                  path=speed["address"],
-                                  conns=tosc.lua_connections(self.res_slot))))
+        spd = self.fader((x, master_top, half, fader_h), "speed",
+                         speed["address"], self.res_conn, color="accent")
+        spd.value_default = float(speed.get("start", 0.0))
+        page.add(spd)
 
         mx = x + half + pad
         page.add(self.caption((mx, pad, half, label_h), "MASTER", 12,

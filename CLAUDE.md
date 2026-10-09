@@ -63,7 +63,7 @@ brief. Three pages:
   holds its own column buttons above its 5 layer rows of clips, so the column
   row always follows the bank (no fixed scenes row, per the brief); per
   layer PREV/NEXT, CLEAR, opacity; crossfader Panorama A ◀ ▶ B Mirror;
-  SPEED (snaps 0.25-4x, generic script) beside master/blackout;
+  SPEED (continuous, full range, two-way: matches the APC40) beside master/blackout;
   **SATURATION · Resolume** (composition Saturation effect,
   grey→colour strip, default full = normal); tap/resync.
 - **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY/DATAMOSH, drag-only
@@ -93,7 +93,7 @@ It reuses the generic builder's factories and writer.
 
 **Check at soundcheck** (none confirmed against a running Resolume yet):
 crossfader direction (A = Panorama on the left), column/clip/clear/opacity and
-PREV/NEXT addresses, SPEED 1x = normal speed, the bank `<` `>` arrows (script sets pager pages), the composition saturation address and its range
+PREV/NEXT addresses, SPEED tracking the APC40, the bank `<` `>` arrows (script sets pager pages), the composition saturation address and its range
 (Shortcuts → Edit OSC), FX effect names, BLACKOUT dropping master, and TD
 feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights
 BORIS LOCK).

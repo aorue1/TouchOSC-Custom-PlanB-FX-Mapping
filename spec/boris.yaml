@@ -83,17 +83,14 @@ show:
     tempo_tap:      /composition/tempocontroller/tempotap
     tempo_resync:   /composition/tempocontroller/resync
 
-  # Composition speed, as on the generic layout: snaps to tempo multiples
-  # and shows the current one on its label. It sends from its script, so it
-  # does not follow Resolume. If 1x does not come out as normal speed, the
-  # param range is what to correct (unverified, as on the generic layout).
+  # Composition speed, matched to the APC40: a plain continuous fader over
+  # the parameter's whole range, sent normalised exactly as the APC's MIDI
+  # mapping does, so the same position is the same speed on both. It sends
+  # and receives, so it follows the APC40 (and Arena) when Resolume's OSC
+  # output reaches the iPad. No snapping, no rescaling.
   speed:
     address: /composition/speed
-    multiples: [0.25, 0.5, 1, 2, 4]
-    param_min: 0.0
-    param_max: 10.0
-    default: 1
-
+    start: 0.1     # where the fader sits before Resolume reports; sends nothing
   # Desaturates the whole Resolume output, TD clips included -- so it stacks
   # with TD's own saturation. Needs a Saturation effect in the composition's
   # chain (Arena: Composition -> drop Saturation in -> save).
