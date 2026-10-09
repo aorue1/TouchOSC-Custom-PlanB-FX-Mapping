@@ -93,6 +93,12 @@ show:
   speed:
     address: /composition/speed
     start: 0.1     # where the fader sits before Resolume reports; sends nothing
+  # Rotates the hue of the whole Resolume output (needs a Hue Rotate effect
+  # in the composition's chain). Unverified, like the saturation address.
+  hue_rotate:
+    label: "HUE ROTATE · Resolume"
+    address: /composition/video/effects/huerotate/effect/rotation
+
   # Desaturates the whole Resolume output, TD clips included -- so it stacks
   # with TD's own saturation. Needs a Saturation effect in the composition's
   # chain (Arena: Composition -> drop Saturation in -> save).
@@ -111,8 +117,8 @@ show:
 #
 # Layers down, effects across, drag-only dials, as on the generic FX page.
 # Each effect must already sit in that layer's chain in Arena. Composition
-# saturation is the SHOW page's fader, so its dial here is left out rather
-# than having two controls fight over one value.
+# hue rotate and saturation are SHOW page faders, so their dials here are
+# left out rather than having two controls fight over one value.
 # ---------------------------------------------------------------------------
 fx:
   layer_param: /composition/layers/{layer}/video/effects/{fx}/effect/{param}

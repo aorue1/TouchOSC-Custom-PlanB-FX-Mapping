@@ -468,8 +468,9 @@ class BorisBuilder(Builder):
         tempo_y = height - pad - btn_h
         blackout_y = tempo_y - pad - btn_h
         sat_y = blackout_y - 2 * pad - sat_h
+        hue_y = sat_y - label_h - 2 * pad - sat_h
         master_top = pad + label_h + 2
-        fader_h = sat_y - label_h - 2 * pad - master_top
+        fader_h = hue_y - label_h - 2 * pad - master_top
 
         # Speed and master are narrow columns side by side, in different
         # colours so neither gets grabbed for the other. Speed is a plain
@@ -488,7 +489,16 @@ class BorisBuilder(Builder):
         page.add(self.fader((mx, master_top, half, fader_h), "master",
                             addr["master"], self.res_conn, color="master"))
 
-        # Beside master: whole-output saturation, grey (B&W) to full colour.
+        # Under master: whole-output hue rotate over a rainbow, then
+        # saturation, grey (B&W) to full colour.
+        hr = show["hue_rotate"]
+        page.add(self.caption((x, hue_y - label_h - 2, col_w, label_h),
+                              hr["label"], 11, "resolume"))
+        self.banded_fader(page, (x, hue_y, col_w, sat_h), "res_hue_rotate",
+                          hr["address"], self.res_conn, outline="resolume",
+                          band=lambda t: colorsys.hsv_to_rgb(t, 0.75, 0.85)
+                          + (1.0,))
+
         sat = show["saturation"]
         page.add(self.caption((x, sat_y - label_h - 2, col_w, label_h),
                               sat["label"], 11, "resolume"))
@@ -530,7 +540,9 @@ class BorisBuilder(Builder):
         """
         fx = self.spec["fx"]
         effects = fx["effects"]
-        comp_sat = self.spec["show"]["saturation"]["address"]
+        # Composition controls that live on the SHOW page.
+        on_show = {self.spec["show"]["saturation"]["address"],
+                   self.spec["show"]["hue_rotate"]["address"]}
         page = Node(GROUP, (0, 0, width, height), name="FX",
                     color=self.colors["accent"], background=False,
                     outline=False)
@@ -570,8 +582,8 @@ class BorisBuilder(Builder):
             for c, e in enumerate(effects):
                 x = gutter + c * col_w
                 path = address(e)
-                if path == comp_sat:
-                    # Owned by the SHOW page's saturation fader.
+                if path in on_show:
+                    # Owned by a SHOW page fader: one control per value.
                     page.add(self.caption((x, y, col_w, band_h),
                                           "ON SHOW PAGE", 11, "text"))
                     continue

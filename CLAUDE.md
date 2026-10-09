@@ -65,10 +65,11 @@ brief. Three pages:
   row always follows the bank (no fixed scenes row, per the brief); per
   layer PREV/NEXT, CLEAR, opacity; crossfader Panorama A ◀ ▶ B Mirror;
   SPEED (continuous, full range, two-way: matches the APC40) beside master/blackout;
+  **HUE ROTATE · Resolume** (composition Hue Rotate, rainbow strip) and
   **SATURATION · Resolume** (composition Saturation effect,
   grey→colour strip, default full = normal); tap/resync.
 - **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY (no datamosh), drag-only
-  dials. Composition SAT is the SHOW fader, so that cell is a caption.
+  dials. Composition HUE and SAT are SHOW faders, so those cells are captions.
 - **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
   auto height, 7 palettes; TREBLE left, BASS right), Boris toggles, and a COLOUR strip in two halves:
   SPIDERWEB (blue) `/td/hue/web` + `/td/saturation/web`, and SIDE + BORIS
@@ -94,7 +95,7 @@ It reuses the generic builder's factories and writer.
 
 **Check at soundcheck** (none confirmed against a running Resolume yet):
 crossfader direction (A = Panorama on the left), column/clip/clear/opacity and
-PREV/NEXT addresses, SPEED tracking the APC40, the bank `<` `>` arrows (script sets pager pages), the composition saturation address and its range
+PREV/NEXT addresses, SPEED tracking the APC40, the bank `<` `>` arrows (script sets pager pages), the composition hue rotate and saturation addresses (and saturation's range)
 (Shortcuts → Edit OSC), FX effect names, BLACKOUT dropping master, and TD
 feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights
 BORIS LOCK).
