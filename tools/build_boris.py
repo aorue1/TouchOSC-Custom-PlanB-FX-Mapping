@@ -458,19 +458,21 @@ class BorisBuilder(Builder):
                             addr["crossfader"], self.res_conn, horizontal=True,
                             color="resolume"))
 
-        # --- master column: speed beside master, saturation, blackout, tempo
+        # --- master column: speed beside master, then the whole-output
+        # strips (hue rotate, RGB delay, saturation), blackout, tempo
         x = main_w + pad
         col_w = right_w - 2 * pad
         half = (col_w - pad) // 2
         btn_h = 56
-        sat_h = 64
+        strip_h = 52
         label_h = 22
         tempo_y = height - pad - btn_h
         blackout_y = tempo_y - pad - btn_h
-        sat_y = blackout_y - 2 * pad - sat_h
-        hue_y = sat_y - label_h - 2 * pad - sat_h
+        strips = ("hue_rotate", "rgb_delay", "saturation")
+        step = label_h + 2 + strip_h + pad
+        strips_top = blackout_y - pad - len(strips) * step
         master_top = pad + label_h + 2
-        fader_h = hue_y - label_h - 2 * pad - master_top
+        fader_h = strips_top - pad - master_top
 
         # Speed and master are narrow columns side by side, in different
         # colours so neither gets grabbed for the other. Speed is a plain
@@ -489,23 +491,33 @@ class BorisBuilder(Builder):
         page.add(self.fader((mx, master_top, half, fader_h), "master",
                             addr["master"], self.res_conn, color="master"))
 
-        # Under master: whole-output hue rotate over a rainbow, then
-        # saturation, grey (B&W) to full colour.
-        hr = show["hue_rotate"]
-        page.add(self.caption((x, hue_y - label_h - 2, col_w, label_h),
-                              hr["label"], 11, "resolume"))
-        self.banded_fader(page, (x, hue_y, col_w, sat_h), "res_hue_rotate",
-                          hr["address"], self.res_conn, outline="resolume",
-                          band=lambda t: colorsys.hsv_to_rgb(t, 0.75, 0.85)
-                          + (1.0,))
-
-        sat = show["saturation"]
-        page.add(self.caption((x, sat_y - label_h - 2, col_w, label_h),
-                              sat["label"], 11, "resolume"))
-        self.banded_fader(page, (x, sat_y, col_w, sat_h), "res_saturation",
-                          sat["address"], self.res_conn, outline="resolume",
-                          band=lambda t: desaturate(self.colors["resolume"], t),
-                          default=1.0, scale=(0.0, float(sat["top"])))
+        # Under master, one strip per whole-output effect. Hue rotate draws
+        # over a rainbow and saturation over grey-to-colour, so the position
+        # reads as a look; RGB delay is a plain amount.
+        for i, key in enumerate(strips):
+            st = show[key]
+            y = strips_top + i * step
+            page.add(self.caption((x, y, col_w, label_h), st["label"], 11,
+                                  "resolume"))
+            frame = (x, y + label_h + 2, col_w, strip_h)
+            if key == "hue_rotate":
+                self.banded_fader(page, frame, "res_hue_rotate",
+                                  st["address"], self.res_conn,
+                                  outline="resolume",
+                                  band=lambda t: colorsys.hsv_to_rgb(
+                                      t, 0.75, 0.85) + (1.0,))
+            elif key == "saturation":
+                self.banded_fader(page, frame, "res_saturation",
+                                  st["address"], self.res_conn,
+                                  outline="resolume",
+                                  band=lambda t: desaturate(
+                                      self.colors["resolume"], t),
+                                  default=1.0,
+                                  scale=(0.0, float(st["top"])))
+            else:
+                page.add(self.fader(frame, f"res_{key}", st["address"],
+                                    self.res_conn, horizontal=True,
+                                    color="resolume"))
 
         blackout = Node(BUTTON, (x, blackout_y, col_w, btn_h), name="blackout",
                         color=self.colors["danger"], button_type=MOMENTARY,
@@ -540,9 +552,6 @@ class BorisBuilder(Builder):
         """
         fx = self.spec["fx"]
         effects = fx["effects"]
-        # Composition controls that live on the SHOW page.
-        on_show = {self.spec["show"]["saturation"]["address"],
-                   self.spec["show"]["hue_rotate"]["address"]}
         page = Node(GROUP, (0, 0, width, height), name="FX",
                     color=self.colors["accent"], background=False,
                     outline=False)
@@ -554,9 +563,6 @@ class BorisBuilder(Builder):
                  lambda e, n=l["layer"]: fx["layer_param"].format(
                      layer=n, fx=e["fx"], param=e["param"]))
                 for l in self.spec["show"]["layers"]]
-        rows.append(("comp", "COMPOSITION", "accent",
-                     lambda e: fx["comp_param"].format(fx=e["fx"],
-                                                       param=e["param"])))
         col_w = (width - gutter - pad) // len(effects)
         row_h = (height - head_h) // len(rows)
         size = row_h - gap - 2 * pad            # dials as big as a row allows
@@ -568,13 +574,9 @@ class BorisBuilder(Builder):
             y = head_h + r * row_h
             band_h = row_h - gap
             # One quiet band per row, so each layer reads as a line across
-            # its effects; the composition's band is tinted to set it apart.
-            panel = self.colors["panel"]
-            fill = (tuple(0.88 * p + 0.12 * a for p, a in
-                          zip(panel[:3], self.colors["accent"][:3])) + (1.0,)
-                    if key == "comp" else panel)
+            # its effects.
             page.add(Node(BOX, (pad, y, width - 2 * pad, band_h),
-                          name=f"{key}_band", color=fill,
+                          name=f"{key}_band", color=self.colors["panel"],
                           shape=Shape.RECTANGLE, background=True,
                           outline=False, interactive=False))
             page.add(self.caption((pad + 12, y, gutter - pad - 12, band_h),
@@ -582,16 +584,10 @@ class BorisBuilder(Builder):
             for c, e in enumerate(effects):
                 x = gutter + c * col_w
                 path = address(e)
-                if path in on_show:
-                    # Owned by a SHOW page fader: one control per value.
-                    page.add(self.caption((x, y, col_w, band_h),
-                                          "ON SHOW PAGE", 11, "text"))
-                    continue
                 page.add(self.radial((x + (col_w - size) // 2, y + pad,
                                       size, size),
                                      f"{key}_{e['fx']}", path, self.res_conn,
-                                     color="accent" if key == "comp"
-                                     else "fx_low",
+                                     color="fx_low",
                                      script=self.fx_script,
                                      response=Response.RELATIVE))
         return page

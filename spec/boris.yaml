@@ -100,6 +100,13 @@ show:
     label: "HUE ROTATE · Resolume"
     address: /composition/video/effects/huerotate/effect/huerotate
 
+  # RGB delay on the whole Resolume output: the Delay RGB effect's opacity,
+  # 0 = off, 1 = full. Confirmed in Arena's Edit OSC (the effect is
+  # delayrgb, and opacity has no effect/ in its path).
+  rgb_delay:
+    label: "RGB DELAY · Resolume"
+    address: /composition/video/effects/delayrgb/opacity
+
   # Desaturates the whole Resolume output, TD clips included -- so it stacks
   # with TD's own saturation. Needs a Saturation effect in the composition's
   # chain (Arena: Composition -> drop Saturation in -> save).
@@ -117,17 +124,20 @@ show:
 # Page 2 · FX (Resolume effects)
 #
 # Layers down, effects across, drag-only dials, as on the generic FX page.
-# Each effect must already sit in that layer's chain in Arena. Composition
-# hue rotate and saturation are SHOW page faders, so their dials here are
-# left out rather than having two controls fight over one value.
+# Each effect must already sit in that layer's chain in Arena. The
+# composition's hue rotate, RGB delay and saturation are SHOW page faders,
+# so this page is layers only.
 # ---------------------------------------------------------------------------
 fx:
-  layer_param: /composition/layers/{layer}/video/effects/{fx}/effect/{param}
-  comp_param:  /composition/video/effects/{fx}/effect/{param}
+  # {param} is the path after the effect name: usually effect/<name>, but
+  # Delay RGB's amount is the effect's own opacity, with no effect/ part.
+  layer_param: /composition/layers/{layer}/video/effects/{fx}/{param}
   effects:
-    - {name: HUE,       fx: huerotate,  param: huerotate}   # confirmed in Arena
-    - {name: SAT,       fx: saturation, param: saturation}
-    - {name: RGB DELAY, fx: rgbdelay,   param: delay}
+    # Confirmed in Arena's Edit OSC on the composition; the layer versions
+    # follow the same pattern.
+    - {name: HUE,       fx: huerotate,  param: effect/huerotate}
+    - {name: SAT,       fx: saturation, param: effect/saturation}
+    - {name: RGB DELAY, fx: delayrgb,   param: opacity}
 
 # ---------------------------------------------------------------------------
 # Page 3 · TD (TouchDesigner)

@@ -65,11 +65,12 @@ brief. Three pages:
   row always follows the bank (no fixed scenes row, per the brief); per
   layer PREV/NEXT, CLEAR, opacity; crossfader Panorama A ◀ ▶ B Mirror;
   SPEED (continuous, full range, two-way: matches the APC40) beside master/blackout;
-  **HUE ROTATE · Resolume** (composition Hue Rotate, rainbow strip) and
-  **SATURATION · Resolume** (composition Saturation effect,
+  **HUE ROTATE**, **RGB DELAY** and **SATURATION · Resolume** strips (whole
+  output; hue over a rainbow; RGB delay = Delay RGB's `opacity`;
+  saturation (composition Saturation effect,
   grey→colour strip, default full = normal); tap/resync.
-- **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY (no datamosh), drag-only
-  dials. Composition HUE and SAT are SHOW faders, so those cells are captions.
+- **FX**: the 5 layers × HUE/SAT/RGB DELAY, drag-only dials. No
+  composition row: the whole-output versions are the SHOW strips.
 - **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
   auto height, 7 palettes; TREBLE left, BASS right), Boris toggles, and a COLOUR strip in two halves:
   SPIDERWEB (blue) `/td/hue/web` + `/td/saturation/web`, and SIDE + BORIS
@@ -85,6 +86,10 @@ It reuses the generic builder's factories and writer.
   for APC track fader 8 (moves both hues), `/td/saturation` is retired.
 - Side Audios (layer 3) never gets a bypass button: its Bypass must stay ON in
   Resolume. It has its own clips and PREV/NEXT but no CLEAR, deliberately.
+- Resolume effect names are not the obvious ones: Hue Rotate's parameter is
+  `huerotate`, and RGB delay is `delayrgb` with its amount on `opacity` (no
+  `effect/`). Confirmed in Arena; the FX `param` field holds the path after
+  the effect name for exactly this reason.
 - Resolume saturation's top is `show.saturation.top` in the spec, sent as the
   VALUE partial's `scaleMax` (feedback maps back through it). If "normal" is
   not the top of Arena's range, set `top` to normal's normalised value.
@@ -95,7 +100,8 @@ It reuses the generic builder's factories and writer.
 
 **Check at soundcheck** (none confirmed against a running Resolume yet):
 crossfader direction (A = Panorama on the left), column/clip/clear/opacity and
-PREV/NEXT addresses, SPEED tracking the APC40, the bank `<` `>` arrows (script sets pager pages), the composition saturation address and range (hue rotate is confirmed: `…/huerotate/effect/huerotate`)
+PREV/NEXT addresses, SPEED tracking the APC40, the bank `<` `>` arrows (script sets pager pages), saturation's range (addresses confirmed in Edit OSC: `…/huerotate/effect/huerotate`,
+`…/delayrgb/opacity`, `…/saturation/effect/saturation`; layer versions assumed to follow)
 (Shortcuts → Edit OSC), FX effect names, BLACKOUT dropping master, and TD
 feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights
 BORIS LOCK).
