@@ -83,6 +83,17 @@ show:
     tempo_tap:      /composition/tempocontroller/tempotap
     tempo_resync:   /composition/tempocontroller/resync
 
+  # Composition speed, as on the generic layout: snaps to tempo multiples
+  # and shows the current one on its label. It sends from its script, so it
+  # does not follow Resolume. If 1x does not come out as normal speed, the
+  # param range is what to correct (unverified, as on the generic layout).
+  speed:
+    address: /composition/speed
+    multiples: [0.25, 0.5, 1, 2, 4]
+    param_min: 0.0
+    param_max: 10.0
+    default: 1
+
   # Desaturates the whole Resolume output, TD clips included -- so it stacks
   # with TD's own saturation. Needs a Saturation effect in the composition's
   # chain (Arena: Composition -> drop Saturation in -> save).
