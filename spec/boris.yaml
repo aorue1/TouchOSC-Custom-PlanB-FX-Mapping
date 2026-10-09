@@ -54,12 +54,12 @@ show:
   # Banked as on the generic layout: the first tab row picks a group, the
   # second a bank within it, and < > step through banks in order. Each bank
   # shows its own column buttons over its clips, so the column row follows
-  # the bank (no fixed scenes row). 9 x 4 x 3 covers the 94 columns; the
-  # last bank shows 91-94 and nothing past column 94 is built.
-  columns_total: 94      # columns in the composition
+  # the bank (no fixed scenes row). 9 x 4 x 4 covers the 127 columns; the
+  # last bank shows only 127 and nothing past it is built.
+  columns_total: 127     # columns in the composition
   clips: 9               # columns and clips per bank
   banks: 4               # banks per group (second tab row)
-  bank_groups: 3         # groups (first tab row): 1-36, 37-72, 73-94
+  bank_groups: 4         # groups (first tab row): 1-36, 37-72, 73-108, 109-127
   # Top to bottom as Resolume draws them: layer 1 sits at the bottom.
   layers:
     - {layer: 5, name: MIRROR L/R}

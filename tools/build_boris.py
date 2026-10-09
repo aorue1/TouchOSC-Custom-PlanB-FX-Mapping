@@ -382,7 +382,8 @@ class BorisBuilder(Builder):
                 bank = Node(GROUP, (0, tab_h, clip_area, bank_h),
                             name=f"g{g + 1}bank{b + 1}", background=False,
                             outline=False,
-                            tab_label=f"{b_first}-{b_first + shown - 1}")
+                            tab_label=(f"{b_first}" if shown == 1 else
+                                       f"{b_first}-{b_first + shown - 1}"))
                 for i in range(shown):
                     column = b_first + i
                     self.add_button(

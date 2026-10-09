@@ -58,9 +58,9 @@ than the camera itself.
 
 A show-specific layout built next to the generic one (`make boris`), from the
 brief. Three pages:
-- **SHOW**: banked like the generic layout over the composition's **94
-  columns** (group tabs 1-36 / 37-72 / 73-94 over bank tabs of 9; the last
-  bank is 91-94; `<` `>` step through banks). Each bank page
+- **SHOW**: banked like the generic layout over the composition's **127
+  columns** (group tabs 1-36 / 37-72 / 73-108 / 109-127 over bank tabs of 9;
+  the last bank is just 127; `<` `>` step through banks). Each bank page
   holds its own column buttons above its 5 layer rows of clips, so the column
   row always follows the bank (no fixed scenes row, per the brief); per
   layer PREV/NEXT, CLEAR, opacity; crossfader Panorama A ◀ ▶ B Mirror;
