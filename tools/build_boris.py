@@ -475,16 +475,18 @@ class BorisBuilder(Builder):
         master_top = pad + label_h + 2
         fader_h = strips_top - pad - master_top
 
-        # Speed and master are narrow columns side by side, in different
-        # colours so neither gets grabbed for the other. Speed is a plain
-        # two-way fader over the full range, like the APC40's mapping.
-        speed = show["speed"]
-        page.add(self.caption((x, pad, half, label_h), "SPEED", 12, "accent",
-                              name="speed_label"))
-        spd = self.fader((x, master_top, half, fader_h), "speed",
-                         speed["address"], self.res_conn, color="accent")
-        spd.value_default = float(speed.get("start", 0.0))
-        page.add(spd)
+        # Beside master, where speed was: tempo x2 over tempo /2, as on the
+        # APC40's arrows. Clips run in BPM sync, so the tempo is what changes
+        # playback speed. Up on top, down below, like the arrows.
+        page.add(self.caption((x, pad, half, label_h), "BPM", 12, "accent"))
+        tempo_h = (fader_h - pad) // 2
+        for i, (name, key, text) in enumerate(
+                (("tempo_double", "tempo_double", "▲ ×2"),
+                 ("tempo_halve", "tempo_halve", "▼ ÷2"))):
+            self.add_button(page, (x, master_top + i * (tempo_h + pad), half,
+                                   tempo_h),
+                            name, show[key], self.res_conn, color="accent",
+                            text=text, text_size=18, constant_args=(1.0,))
 
         mx = x + half + pad
         page.add(self.caption((mx, pad, half, label_h), "MASTER", 12,

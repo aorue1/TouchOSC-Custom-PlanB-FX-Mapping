@@ -85,14 +85,12 @@ show:
     tempo_tap:      /composition/tempocontroller/tempotap
     tempo_resync:   /composition/tempocontroller/resync
 
-  # Composition speed, matched to the APC40: a plain continuous fader over
-  # the parameter's whole range, sent normalised exactly as the APC's MIDI
-  # mapping does, so the same position is the same speed on both. It sends
-  # and receives, so it follows the APC40 (and Arena) when Resolume's OSC
-  # output reaches the iPad. No snapping, no rescaling.
-  speed:
-    address: /composition/speed
-    start: 0.1     # where the fader sits before Resolume reports; sends nothing
+  # Tempo halve / double, as on the APC40's arrows. They replace the speed
+  # fader: every clip is in BPM sync, so composition speed does nothing and
+  # the tempo is what moves playback. Each sends 1 on press.
+  tempo_double: /composition/tempocontroller/tempo/multiply   # APC up
+  tempo_halve:  /composition/tempocontroller/tempo/divide     # APC down
+
   # Rotates the hue of the whole Resolume output (needs a Hue Rotate effect
   # in the composition's chain). Address confirmed in Arena's Edit OSC: the
   # parameter is named huerotate, not rotation.

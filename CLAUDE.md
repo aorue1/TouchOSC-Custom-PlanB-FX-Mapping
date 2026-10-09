@@ -64,7 +64,8 @@ brief. Three pages:
   holds its own column buttons above its 5 layer rows of clips, so the column
   row always follows the bank (no fixed scenes row, per the brief); per
   layer PREV/NEXT, CLEAR, opacity; crossfader Panorama A ◀ ▶ B Mirror;
-  SPEED (continuous, full range, two-way: matches the APC40) beside master/blackout;
+  BPM ▲ ×2 / ▼ ÷2 buttons (tempo multiply/divide, as the APC arrows; clips run
+  in BPM sync so there is no speed fader) beside master/blackout;
   **HUE ROTATE**, **RGB DELAY** and **SATURATION · Resolume** strips (whole
   output; hue over a rainbow; RGB delay = Delay RGB's `opacity`;
   saturation (composition Saturation effect,
@@ -100,7 +101,7 @@ It reuses the generic builder's factories and writer.
 
 **Check at soundcheck** (none confirmed against a running Resolume yet):
 crossfader direction (A = Panorama on the left), column/clip/clear/opacity and
-PREV/NEXT addresses, SPEED tracking the APC40, the bank `<` `>` arrows (script sets pager pages), saturation's range (addresses confirmed in Edit OSC: `…/huerotate/effect/huerotate`,
+PREV/NEXT addresses, the BPM ×2/÷2 buttons, the bank `<` `>` arrows (script sets pager pages), saturation's range (addresses confirmed in Edit OSC: `…/huerotate/effect/huerotate`,
 `…/delayrgb/opacity`, `…/saturation/effect/saturation`; layer versions assumed to follow)
 (Shortcuts → Edit OSC), FX effect names, BLACKOUT dropping master, and TD
 feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights
