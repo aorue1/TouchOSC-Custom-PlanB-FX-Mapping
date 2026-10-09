@@ -115,7 +115,7 @@ end
 BANK_ARROW_SCRIPT = """
 local DIR = @DIR@
 local BANKS = @BANKS@
-local GROUPS = @GROUPS@
+local LAST = @LAST@   -- index of the last bank that holds any columns
 
 local function banks_of(outer, g)
   local n = math.floor(g) + 1
@@ -127,7 +127,7 @@ function onValueChanged(key)
   local outer = self.parent.children.clipgroups
   local g = math.floor(outer.values.page)
   local i = g * BANKS + math.floor(banks_of(outer, g).values.page) + DIR
-  if i < 0 or i >= BANKS * GROUPS then return end
+  if i < 0 or i > LAST then return end
   local ng = math.floor(i / BANKS)
   outer.values.page = ng
   banks_of(outer, ng).values.page = i % BANKS
@@ -286,6 +286,7 @@ class BorisBuilder(Builder):
         show = self.spec["show"]
         addr = show["addresses"]
         clips, banks, groups = show["clips"], show["banks"], show["bank_groups"]
+        total = show["columns_total"]
         page = Node(GROUP, (0, 0, width, height), name="SHOW",
                     color=self.colors["resolume"], background=False,
                     outline=False)
@@ -341,7 +342,8 @@ class BorisBuilder(Builder):
             page.add(Node(BUTTON, frame, name=name,
                           color=self.colors["accent"], button_type=MOMENTARY,
                           script=bake(BANK_ARROW_SCRIPT, dir=direction,
-                                      banks=banks, groups=groups)))
+                                      banks=banks,
+                                      last=(total - 1) // clips)))
             page.add(self.caption(frame, text, 22))
 
         def tabs(name, frame, size):
@@ -356,24 +358,32 @@ class BorisBuilder(Builder):
                             "textSizeOn": ("i", size),
                         })
 
+        # Groups, banks and buttons stop at the composition's last column:
+        # the final bank shows only what exists, and nothing past it is built.
         per_group = clips * banks
         outer = tabs("clipgroups", (clip_x, tabs_y, clip_area,
                                     2 * tab_h + bank_h), 12)
         for g in range(groups):
             g_first = g * per_group + 1
+            if g_first > total:
+                break
             g_page = Node(GROUP, (0, tab_h, clip_area, tab_h + bank_h),
                           name=f"group{g + 1}", background=False,
                           outline=False,
-                          tab_label=f"CLIPS {g_first}-{g_first + per_group - 1}")
+                          tab_label=f"CLIPS {g_first}-"
+                          f"{min(g_first + per_group - 1, total)}")
             inner = tabs(f"banks{g + 1}", (0, 0, clip_area, tab_h + bank_h),
                          11)
             for b in range(banks):
                 b_first = g_first + b * clips
+                if b_first > total:
+                    break
+                shown = min(clips, total - b_first + 1)
                 bank = Node(GROUP, (0, tab_h, clip_area, bank_h),
                             name=f"g{g + 1}bank{b + 1}", background=False,
                             outline=False,
-                            tab_label=f"{b_first}-{b_first + clips - 1}")
-                for i in range(clips):
+                            tab_label=f"{b_first}-{b_first + shown - 1}")
+                for i in range(shown):
                     column = b_first + i
                     self.add_button(
                         bank, (i * (clip_w + pad), 0, clip_w, col_h),
@@ -383,7 +393,7 @@ class BorisBuilder(Builder):
                         text_size=12, constant_args=(1.0,))
                 for r, layer in enumerate(layers):
                     n = layer["layer"]
-                    for i in range(clips):
+                    for i in range(shown):
                         clip = b_first + i
                         self.add_button(
                             bank, (i * (clip_w + pad), col_h + pad + r * row_h,
