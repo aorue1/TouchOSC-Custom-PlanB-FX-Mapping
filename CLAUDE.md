@@ -67,7 +67,7 @@ brief. Three pages:
   SPEED (continuous, full range, two-way: matches the APC40) beside master/blackout;
   **SATURATION · Resolume** (composition Saturation effect,
   grey→colour strip, default full = normal); tap/resync.
-- **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY/DATAMOSH, drag-only
+- **FX**: the 5 layers + composition × HUE/SAT/RGB DELAY (no datamosh), drag-only
   dials. Composition SAT is the SHOW fader, so that cell is a caption.
 - **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
   auto height, 7 palettes; TREBLE left, BASS right), Boris toggles, and a COLOUR strip in two halves:

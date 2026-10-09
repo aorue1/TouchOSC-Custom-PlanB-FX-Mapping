@@ -121,7 +121,6 @@ fx:
     - {name: HUE,       fx: huerotate,  param: rotation}
     - {name: SAT,       fx: saturation, param: saturation}
     - {name: RGB DELAY, fx: rgbdelay,   param: delay}
-    - {name: DATAMOSH,  fx: datamosh,   param: amount}
 
 # ---------------------------------------------------------------------------
 # Page 3 · TD (TouchDesigner)

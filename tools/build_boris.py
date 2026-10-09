@@ -535,8 +535,9 @@ class BorisBuilder(Builder):
                     color=self.colors["accent"], background=False,
                     outline=False)
         pad = 8
-        head_h = 24
-        gutter = 140
+        head_h = 30
+        gutter = 170              # layer names
+        gap = 6                   # between row bands
         rows = [(f"layer{l['layer']}", l["name"], "resolume",
                  lambda e, n=l["layer"]: fx["layer_param"].format(
                      layer=n, fx=e["fx"], param=e["param"]))
@@ -544,27 +545,38 @@ class BorisBuilder(Builder):
         rows.append(("comp", "COMPOSITION", "accent",
                      lambda e: fx["comp_param"].format(fx=e["fx"],
                                                        param=e["param"])))
-        col_w = (width - gutter) // len(effects)
+        col_w = (width - gutter - pad) // len(effects)
         row_h = (height - head_h) // len(rows)
+        size = row_h - gap - 2 * pad            # dials as big as a row allows
 
         for c, e in enumerate(effects):
             page.add(self.caption((gutter + c * col_w, 0, col_w, head_h),
-                                  e["name"], 14, "resolume"))
+                                  e["name"], 15, "resolume"))
         for r, (key, caption, color, address) in enumerate(rows):
             y = head_h + r * row_h
-            page.add(self.caption((pad, y, gutter - pad, row_h), caption, 13,
-                                  color))
+            band_h = row_h - gap
+            # One quiet band per row, so each layer reads as a line across
+            # its effects; the composition's band is tinted to set it apart.
+            panel = self.colors["panel"]
+            fill = (tuple(0.88 * p + 0.12 * a for p, a in
+                          zip(panel[:3], self.colors["accent"][:3])) + (1.0,)
+                    if key == "comp" else panel)
+            page.add(Node(BOX, (pad, y, width - 2 * pad, band_h),
+                          name=f"{key}_band", color=fill,
+                          shape=Shape.RECTANGLE, background=True,
+                          outline=False, interactive=False))
+            page.add(self.caption((pad + 12, y, gutter - pad - 12, band_h),
+                                  caption, 14, color))
             for c, e in enumerate(effects):
                 x = gutter + c * col_w
                 path = address(e)
                 if path == comp_sat:
                     # Owned by the SHOW page's saturation fader.
-                    page.add(self.caption((x, y, col_w, row_h),
+                    page.add(self.caption((x, y, col_w, band_h),
                                           "ON SHOW PAGE", 11, "text"))
                     continue
-                size = min(col_w, row_h) - 2 * pad
-                page.add(self.radial((x + (col_w - size) // 2,
-                                      y + (row_h - size) // 2, size, size),
+                page.add(self.radial((x + (col_w - size) // 2, y + pad,
+                                      size, size),
                                      f"{key}_{e['fx']}", path, self.res_conn,
                                      color="accent" if key == "comp"
                                      else "fx_low",
