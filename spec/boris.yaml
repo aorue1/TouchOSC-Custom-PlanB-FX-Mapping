@@ -142,7 +142,6 @@ fx:
     # follow the same pattern.
     - {name: HUE,       fx: huerotate,  param: effect/huerotate}
     - {name: SAT,       fx: saturation, param: effect/saturation}
-    - {name: RGB DELAY, fx: delayrgb,   param: opacity}
 
 # ---------------------------------------------------------------------------
 # Page 3 · TD (TouchDesigner)

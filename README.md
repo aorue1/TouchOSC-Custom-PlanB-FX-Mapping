@@ -90,7 +90,7 @@ make boris      # just the Boris layout, verified
 Boris has three pages: **SHOW** (banked columns and clips that move
 together, with `<` `>` and PREV/NEXT on every layer, crossfader, master,
 BPM ×2 and ÷2, whole-output hue rotate, RGB delay and saturation, tempo), **FX**
-(the five layers against hue, saturation and RGB delay) and **TD** (the
+(the five layers against hue and saturation) and **TD** (the
 Spiderweb, Side Audios and Boris blocks, over a colour strip with hue and
 saturation for the Spiderweb on one half and for Side Audios and Boris on the
 other). Side Audios never gets a bypass button:

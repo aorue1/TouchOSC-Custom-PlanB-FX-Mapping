@@ -70,7 +70,7 @@ brief. Three pages:
   output; hue over a rainbow; RGB delay = Delay RGB's `opacity`;
   saturation (composition Saturation effect,
   grey→colour strip, default full = normal); tap/resync.
-- **FX**: the 5 layers × HUE/SAT/RGB DELAY, drag-only dials. No
+- **FX**: the 5 layers × HUE/SAT, drag-only dials (no RGB delay, no datamosh). No
   composition row: the whole-output versions are the SHOW strips.
 - **TD**: Spiderweb (4 faders + CAMERA ORBIT pad), Side Audios (5 faders,
   auto height, 7 palettes; TREBLE left, BASS right), Boris toggles, and a COLOUR strip in two halves:
