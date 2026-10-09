@@ -29,7 +29,7 @@ One knob and one bypass per layer per effect. The effect must already exist in t
 
 | Knob | Address |
 | --- | --- |
-| Hue | `/composition/layers/{layer}/video/effects/huerotate/effect/rotation` |
+| Hue | `/composition/layers/{layer}/video/effects/huerotate/effect/huerotate` |
 | Sat | `/composition/layers/{layer}/video/effects/saturation/effect/saturation` |
 | RGB Delay | `/composition/layers/{layer}/video/effects/rgbdelay/effect/delay` |
 | Datamosh | `/composition/layers/{layer}/video/effects/datamosh/effect/amount` |

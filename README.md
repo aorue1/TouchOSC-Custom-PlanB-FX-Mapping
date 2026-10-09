@@ -181,7 +181,7 @@ the address it reports into the spec.
 
 | What | Current guess | If wrong |
 | --- | --- | --- |
-| FX effects and parameters | `huerotate/rotation`, `saturation/saturation`, `rgbdelay/delay`, `datamosh/amount` | Dials do nothing |
+| FX effects and parameters | `huerotate/huerotate` (confirmed), `saturation/saturation`, `rgbdelay/delay`, `datamosh/amount` | Dials do nothing |
 | Clip next / previous | `.../connectnextclip`, `.../connectpreviousclip` | Buttons do nothing |
 | Column triggers | `/composition/columns/{n}/connect` | COL row does nothing |
 | Colour | Solid Colour effect's `color/red`, `/green`, `/blue` | Picker does nothing |

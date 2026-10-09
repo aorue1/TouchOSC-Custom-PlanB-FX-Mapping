@@ -94,10 +94,11 @@ show:
     address: /composition/speed
     start: 0.1     # where the fader sits before Resolume reports; sends nothing
   # Rotates the hue of the whole Resolume output (needs a Hue Rotate effect
-  # in the composition's chain). Unverified, like the saturation address.
+  # in the composition's chain). Address confirmed in Arena's Edit OSC: the
+  # parameter is named huerotate, not rotation.
   hue_rotate:
     label: "HUE ROTATE · Resolume"
-    address: /composition/video/effects/huerotate/effect/rotation
+    address: /composition/video/effects/huerotate/effect/huerotate
 
   # Desaturates the whole Resolume output, TD clips included -- so it stacks
   # with TD's own saturation. Needs a Saturation effect in the composition's
@@ -124,7 +125,7 @@ fx:
   layer_param: /composition/layers/{layer}/video/effects/{fx}/effect/{param}
   comp_param:  /composition/video/effects/{fx}/effect/{param}
   effects:
-    - {name: HUE,       fx: huerotate,  param: rotation}
+    - {name: HUE,       fx: huerotate,  param: huerotate}   # confirmed in Arena
     - {name: SAT,       fx: saturation, param: saturation}
     - {name: RGB DELAY, fx: rgbdelay,   param: delay}
 

@@ -121,7 +121,7 @@ resolume:
   # The fx and param names below follow Resolume's naming style but are
   # UNVERIFIED. Confirm each in Shortcuts > Edit OSC and correct it here.
   fx_names:
-    - {name: Hue,       fx: huerotate,  param: rotation}
+    - {name: Hue,       fx: huerotate,  param: huerotate}   # confirmed in Arena
     - {name: Sat,       fx: saturation, param: saturation}
     - {name: RGB Delay, fx: rgbdelay,   param: delay}
     - {name: Datamosh,  fx: datamosh,   param: amount}

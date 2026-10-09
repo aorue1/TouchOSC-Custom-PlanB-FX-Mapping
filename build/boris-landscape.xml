@@ -196341,7 +196341,7 @@ end</value>
                       <partial>
                         <type>CONSTANT</type>
                         <conversion>STRING</conversion>
-                        <value>rotation</value>
+                        <value>huerotate</value>
                         <scaleMin>0</scaleMin>
                         <scaleMax>1</scaleMax>
                       </partial>
@@ -203537,7 +203537,7 @@ end</value>
                       <partial>
                         <type>CONSTANT</type>
                         <conversion>STRING</conversion>
-                        <value>rotation</value>
+                        <value>huerotate</value>
                         <scaleMin>0</scaleMin>
                         <scaleMax>1</scaleMax>
                       </partial>
@@ -204508,7 +204508,7 @@ end</value>
                       <partial>
                         <type>CONSTANT</type>
                         <conversion>STRING</conversion>
-                        <value>rotation</value>
+                        <value>huerotate</value>
                         <scaleMin>0</scaleMin>
                         <scaleMax>1</scaleMax>
                       </partial>
@@ -205479,7 +205479,7 @@ end</value>
                       <partial>
                         <type>CONSTANT</type>
                         <conversion>STRING</conversion>
-                        <value>rotation</value>
+                        <value>huerotate</value>
                         <scaleMin>0</scaleMin>
                         <scaleMax>1</scaleMax>
                       </partial>
@@ -206450,7 +206450,7 @@ end</value>
                       <partial>
                         <type>CONSTANT</type>
                         <conversion>STRING</conversion>
-                        <value>rotation</value>
+                        <value>huerotate</value>
                         <scaleMin>0</scaleMin>
                         <scaleMax>1</scaleMax>
                       </partial>
@@ -207421,7 +207421,7 @@ end</value>
                       <partial>
                         <type>CONSTANT</type>
                         <conversion>STRING</conversion>
-                        <value>rotation</value>
+                        <value>huerotate</value>
                         <scaleMin>0</scaleMin>
                         <scaleMax>1</scaleMax>
                       </partial>
