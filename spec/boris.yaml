@@ -97,6 +97,10 @@ show:
   hue_rotate:
     label: "HUE ROTATE · Resolume"
     address: /composition/video/effects/huerotate/effect/huerotate
+    # Also sent, same value, to Side Audios (layer 3): the LED strips read
+    # that layer directly, so composition effects never reach them.
+    # Send only: the composition is what the fader shows.
+    also: [/composition/layers/3/video/effects/huerotate/effect/huerotate]
 
   # RGB delay on the whole Resolume output: the Delay RGB effect's opacity,
   # 0 = off, 1 = full. Confirmed in Arena's Edit OSC (the effect is
@@ -112,6 +116,9 @@ show:
     label: "SATURATION · Resolume"
     # UNVERIFIED: confirm in Arena with Shortcuts -> Edit OSC.
     address: /composition/video/effects/saturation/effect/saturation
+    # Also sent to Side Audios (layer 3), same value and range, for the LED
+    # strips, which read that layer directly. Send only.
+    also: [/composition/layers/3/video/effects/saturation/effect/saturation]
     # The value sent at the fader's top, which must be the effect's normal
     # colour. If Arena's range runs past normal (e.g. 0-3 with normal at 1,
     # i.e. 0.333 normalised), set `top` to normal's normalised value so full

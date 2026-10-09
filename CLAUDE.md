@@ -91,6 +91,11 @@ It reuses the generic builder's factories and writer.
   `huerotate`, and RGB delay is `delayrgb` with its amount on `opacity` (no
   `effect/`). Confirmed in Arena; the FX `param` field holds the path after
   the effect name for exactly this reason.
+- The SHOW hue rotate and saturation faders also send (send only, receive
+  off) to **layer 3** (`show.<strip>.also`): the LED strips read Side Audios
+  directly, so composition effects never reach them. The verifier treats a
+  receive-off copy as a mirror, not an owner, so FX's layer-3 dials keep the
+  address; they receive, so they follow via Resolume's feedback.
 - Resolume saturation's top is `show.saturation.top` in the spec, sent as the
   VALUE partial's `scaleMax` (feedback maps back through it). If "normal" is
   not the top of Arena's range, set `top` to normal's normalised value.

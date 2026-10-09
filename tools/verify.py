@@ -79,7 +79,8 @@ def address_of(node: ET.Element):
     """Addresses this control sends its own value to.
 
     Messages carrying only constant arguments (a button firing a fixed value,
-    e.g. blackout writing 0 to the master) are excluded: several controls may
+    e.g. blackout writing 0 to the master), and send-only copies of a value
+    to a second target, are excluded: several controls may
     legitimately command one address that way. Two controls streaming their
     own value to the same address is the actual bug, because without feedback
     they drift apart.
@@ -89,6 +90,10 @@ def address_of(node: ET.Element):
         sends_value = any(p.findtext("type") == "VALUE"
                           for p in osc.findall("./arguments/partial"))
         if not sends_value:
+            continue
+        # A send-only copy (receive off) mirrors a value to a second target
+        # on purpose; the control that receives on the address owns it.
+        if osc.findtext("receive") == "0":
             continue
         # Partials concatenate, with each "/" as a partial of its own.
         out.append("".join(p.findtext("value") or ""

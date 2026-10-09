@@ -504,13 +504,13 @@ class BorisBuilder(Builder):
                                   "resolume"))
             frame = (x, y + label_h + 2, col_w, strip_h)
             if key == "hue_rotate":
-                self.banded_fader(page, frame, "res_hue_rotate",
+                fdr = self.banded_fader(page, frame, "res_hue_rotate",
                                   st["address"], self.res_conn,
                                   outline="resolume",
                                   band=lambda t: colorsys.hsv_to_rgb(
                                       t, 0.75, 0.85) + (1.0,))
             elif key == "saturation":
-                self.banded_fader(page, frame, "res_saturation",
+                fdr = self.banded_fader(page, frame, "res_saturation",
                                   st["address"], self.res_conn,
                                   outline="resolume",
                                   band=lambda t: desaturate(
@@ -518,9 +518,17 @@ class BorisBuilder(Builder):
                                   default=1.0,
                                   scale=(0.0, float(st["top"])))
             else:
-                page.add(self.fader(frame, f"res_{key}", st["address"],
-                                    self.res_conn, horizontal=True,
-                                    color="resolume"))
+                fdr = self.fader(frame, f"res_{key}", st["address"],
+                                 self.res_conn, horizontal=True,
+                                 color="resolume")
+                page.add(fdr)
+            # Copies of the same value to other targets (Side Audios, which
+            # the LED strips read directly). Send only: the fader shows the
+            # composition's value, not theirs.
+            for path in st.get("also", ()):
+                fdr.messages.append(OscMessage(path, self.res_conn,
+                                               receive=False,
+                                               scale=fdr.messages[0].scale))
 
         blackout = Node(BUTTON, (x, blackout_y, col_w, btn_h), name="blackout",
                         color=self.colors["danger"], button_type=MOMENTARY,
