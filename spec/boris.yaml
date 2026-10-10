@@ -74,6 +74,9 @@ show:
 
   addresses:
     clip_connect:   /composition/layers/{layer}/clips/{clip}/connect
+    # Clip names (a string). Resolume pushes one when it changes; the iPad
+    # asks for a bank's names by sending "?" here whenever that bank shows.
+    clip_name:      /composition/layers/{layer}/clips/{clip}/name
     column_connect: /composition/columns/{column}/connect
     layer_opacity:  /composition/layers/{layer}/video/opacity
     layer_clear:    /composition/layers/{layer}/clear

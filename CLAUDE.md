@@ -99,6 +99,11 @@ It reuses the generic builder's factories and writer.
 - Resolume saturation's top is `show.saturation.top` in the spec, sent as the
   VALUE partial's `scaleMax` (feedback maps back through it). If "normal" is
   not the top of Arena's range, set `top` to normal's normalised value.
+- **Clip names**: each clip caption (`layer{n}_clip{c}_name`) receives its
+  own `/composition/layers/{n}/clips/{c}/name` as text; it shows the clip
+  number until a name arrives. Resolume only pushes names on change, so each
+  bank pager's script sends `?` to its visible clips' name addresses when its
+  page changes, when the group pager notifies it, and at load (group 1).
 - Toggles show state as a solid colour chip repainted by script on any value
   change, touch or feedback. LABELS starts ON; its OFF state is danger red.
 - `on_text`/`off_text` in the YAML, never bare `on:`/`off:`: YAML reads those
@@ -106,7 +111,7 @@ It reuses the generic builder's factories and writer.
 
 **Check at soundcheck** (none confirmed against a running Resolume yet):
 crossfader direction (A = Panorama on the left), column/clip/clear/opacity and
-PREV/NEXT addresses, the BPM ×2/÷2 buttons, the bank `<` `>` arrows (script sets pager pages), saturation's range (addresses confirmed in Edit OSC: `…/huerotate/effect/huerotate`,
+PREV/NEXT addresses, the BPM ×2/÷2 buttons, clip names appearing (and refreshing on bank change), the bank `<` `>` arrows (script sets pager pages), saturation's range (addresses confirmed in Edit OSC: `…/huerotate/effect/huerotate`,
 `…/delayrgb/opacity`, `…/saturation/effect/saturation`; layer versions assumed to follow)
 (Shortcuts → Edit OSC), FX effect names, BLACKOUT dropping master, and TD
 feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights

@@ -107,6 +107,54 @@ function onValueChanged(key)
 end
 """
 
+# Clip names. Each clip's caption listens on its own name address, so a name
+# Resolume sends lands on the right button by itself. Resolume only pushes a
+# name when it changes, though, so whenever a bank comes into view its
+# captions ask for theirs by sending "?" to each name address; Resolume
+# replies on the iPad's receive port. The inner (bank) pager asks when its
+# page changes, when told to by the group pager, and once at load.
+BANK_NAMES_SCRIPT = """
+local GROUP = @GROUP@
+local PATH = '@PATH@'
+local CONNS = { @CONNS@ }
+
+local function query()
+  local bank = self.children['g' .. GROUP .. 'bank' .. (math.floor(self.values.page) + 1)]
+  if not bank then return end
+  for i = 1, #bank.children do
+    local layer, clip = string.match(bank.children[i].name, '^layer(%d+)_clip(%d+)_name$')
+    if layer then
+      sendOSC(string.format(PATH, tonumber(layer), tonumber(clip)), '?', CONNS)
+    end
+  end
+end
+
+function init()
+  if GROUP == 1 then query() end
+end
+
+function onValueChanged(key)
+  if key == 'page' then query() end
+end
+
+function onReceiveNotify(key)
+  if key == 'query' then query() end
+end
+""".strip()
+
+# The group pager tells the bank pager it now shows to ask for its names.
+GROUP_NAMES_SCRIPT = """
+function onValueChanged(key)
+  if key == 'page' then
+    local n = math.floor(self.values.page) + 1
+    local g = self.children['group' .. n]
+    if g and g.children['banks' .. n] then
+      g.children['banks' .. n]:notify('query')
+    end
+  end
+end
+""".strip()
+
 # The bank arrows step one bank at a time through every bank in order,
 # crossing into the next group tab when a group runs out. Pager pages are
 # 0-based; names are built from floored numbers so a float page index can
@@ -363,6 +411,9 @@ class BorisBuilder(Builder):
         per_group = clips * banks
         outer = tabs("clipgroups", (clip_x, tabs_y, clip_area,
                                     2 * tab_h + bank_h), 12)
+        outer.script = GROUP_NAMES_SCRIPT
+        name_path = addr["clip_name"].replace("{layer}", "%d").replace(
+            "{clip}", "%d")
         for g in range(groups):
             g_first = g * per_group + 1
             if g_first > total:
@@ -374,6 +425,9 @@ class BorisBuilder(Builder):
                           f"{min(g_first + per_group - 1, total)}")
             inner = tabs(f"banks{g + 1}", (0, 0, clip_area, tab_h + bank_h),
                          11)
+            inner.script = bake(BANK_NAMES_SCRIPT, group=g + 1,
+                                path=name_path,
+                                conns=tosc.lua_connections(self.res_slot))
             for b in range(banks):
                 b_first = g_first + b * clips
                 if b_first > total:
@@ -396,13 +450,23 @@ class BorisBuilder(Builder):
                     n = layer["layer"]
                     for i in range(shown):
                         clip = b_first + i
+                        frame = (i * (clip_w + pad), col_h + pad + r * row_h,
+                                 clip_w, row_h - pad)
                         self.add_button(
-                            bank, (i * (clip_w + pad), col_h + pad + r * row_h,
-                                   clip_w, row_h - pad),
-                            f"layer{n}_clip{clip}",
+                            bank, frame, f"layer{n}_clip{clip}",
                             addr["clip_connect"].format(layer=n, clip=clip),
-                            self.res_conn, color="panel", text=str(clip),
-                            text_size=14, constant_args=(1.0,))
+                            self.res_conn, color="panel",
+                            constant_args=(1.0,))
+                        # Shows the clip number until Resolume sends the
+                        # clip's name, which then replaces it.
+                        cap = self.caption(frame, str(clip), 11,
+                                           name=f"layer{n}_clip{clip}_name")
+                        cap.messages.append(OscMessage(
+                            addr["clip_name"].format(layer=n, clip=clip),
+                            self.res_conn, send_value=False, send=False,
+                            receive=True, receive_key="text",
+                            conversion="STRING"))
+                        bank.add(cap)
                 inner.add(bank)
             g_page.add(inner)
             outer.add(g_page)
