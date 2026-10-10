@@ -223,8 +223,9 @@ class BorisBuilder(Builder):
         self.res_slot = spec["connections"]["resolume"]["slot"]
         self.res_conn = tosc.connections(self.res_slot)
         self.td_conn = tosc.connections(spec["connections"]["touchdesigner"]["slot"])
-        self.fx_script = fx_color_script(spec["fx_scale"])
-        self.colors["fx_low"] = tuple(spec["fx_scale"]["low"])
+        if "fx_scale" in spec:
+            self.fx_script = fx_color_script(spec["fx_scale"])
+            self.colors["fx_low"] = tuple(spec["fx_scale"]["low"])
 
     # -- show-specific factories --------------------------------------------
 
@@ -318,6 +319,37 @@ class BorisBuilder(Builder):
                         outline_style=tosc.Outline.FULL, interactive=False))
         parent.add(fdr)
         return fdr
+
+    def palette_group(self, parent, frame, palettes, lit_color):
+        """Radio-style palette buttons: each sends 1 on press, and the last
+        one pressed stays lit (chip repainted by the group's script)."""
+        x, y, w, h = frame
+        pal_h = (h - (len(palettes) - 1) * 6) // len(palettes)
+        lit = self.colors[lit_color]
+        unlit = self.colors["unlit"]
+        group = Node(GROUP, frame,
+                     name="palette", background=False, outline=False,
+                     script=bake(PALETTE_GROUP_SCRIPT, count=len(palettes),
+                                 lit_r=lit[0], lit_g=lit[1],
+                                 lit_b=lit[2], unlit_r=unlit[0],
+                                 unlit_g=unlit[1], unlit_b=unlit[2]))
+        for i, p in enumerate(palettes):
+            frame = (0, i * (pal_h + 6), w, pal_h)
+            group.add(Node(BOX, frame, name=f"pal_chip_{i + 1}", color=unlit,
+                           shape=Shape.RECTANGLE, background=True,
+                           outline=False, interactive=False))
+            btn = Node(BUTTON, frame, name=f"pal_{i + 1}", color=lit,
+                       button_type=MOMENTARY, background=False, outline=True,
+                       script=bake(PALETTE_BUTTON_SCRIPT, index=i + 1))
+            btn.messages.append(OscMessage(p["address"], self.td_conn,
+                                           send_value=False,
+                                           constant_args=(1.0,),
+                                           trigger="RISE"))
+            group.add(btn)
+            group.add(self.caption(frame, p["name"], 12,
+                                   name=f"pal_cap_{i + 1}"))
+        parent.add(group)
+        return group
 
     def block_header(self, parent, frame, text, color):
         parent.add(self.caption(frame, text, 17, color))
@@ -513,12 +545,15 @@ class BorisBuilder(Builder):
 
         # --- crossfader ---
         xf_w = main_w - 2 * pad
+        xf_labels = show.get("crossfader_labels", {})
         page.add(self.caption((pad, xf_y - xf_label_h, 220, xf_label_h),
-                              "◀ PANORAMA  (A)", 15, "resolume"))
+                              xf_labels.get("a", "◀ PANORAMA  (A)"), 15,
+                              "resolume"))
         page.add(self.caption((pad + (xf_w - 200) // 2, xf_y - xf_label_h,
                                200, xf_label_h), "CROSSFADER", 13, "text"))
         page.add(self.caption((pad + xf_w - 220, xf_y - xf_label_h, 220,
-                               xf_label_h), "(B)  MIRROR ▶", 15, "resolume"))
+                               xf_label_h), xf_labels.get("b", "(B)  MIRROR ▶"),
+                              15, "resolume"))
         page.add(self.fader((pad, xf_y, xf_w, xf_h), "crossfader",
                             addr["crossfader"], self.res_conn, horizontal=True,
                             color="resolume"))
@@ -674,8 +709,11 @@ class BorisBuilder(Builder):
         for i, f in enumerate(faders):
             fx = x + i * (fader_w + gap)
             name = "td_" + f["label"].lower().replace(" ", "_")
-            parent.add(self.fader((fx, y, fader_w, h - caption_h), name,
-                                  f["address"], self.td_conn, color=color))
+            fdr = self.fader((fx, y, fader_w, h - caption_h), name,
+                             f["address"], self.td_conn, color=color)
+            if "default" in f:
+                fdr.value_default = float(f["default"])
+            parent.add(fdr)
             self.stacked_caption(parent, (fx - gap // 2, y + h - caption_h + 2,
                                           fader_w + gap, caption_h - 2),
                                  f["label"], 11)
@@ -734,31 +772,8 @@ class BorisBuilder(Builder):
         pal_y = body_y + auto_h + pad
         page.add(self.caption((cx, pal_y, cw, 22), "PALETTE", 12, "side"))
         pal_y += 24
-        pal_h = (body_y + body_h - pal_y - (len(palettes) - 1) * 6) // len(palettes)
-        side_lit = self.colors["side"]
-        unlit = self.colors["unlit"]
-        group = Node(GROUP, (cx, pal_y, cw, body_y + body_h - pal_y),
-                     name="palette", background=False, outline=False,
-                     script=bake(PALETTE_GROUP_SCRIPT, count=len(palettes),
-                                 lit_r=side_lit[0], lit_g=side_lit[1],
-                                 lit_b=side_lit[2], unlit_r=unlit[0],
-                                 unlit_g=unlit[1], unlit_b=unlit[2]))
-        for i, p in enumerate(palettes):
-            frame = (0, i * (pal_h + 6), cw, pal_h)
-            group.add(Node(BOX, frame, name=f"pal_chip_{i + 1}", color=unlit,
-                           shape=Shape.RECTANGLE, background=True,
-                           outline=False, interactive=False))
-            btn = Node(BUTTON, frame, name=f"pal_{i + 1}", color=side_lit,
-                       button_type=MOMENTARY, background=False, outline=True,
-                       script=bake(PALETTE_BUTTON_SCRIPT, index=i + 1))
-            btn.messages.append(OscMessage(p["address"], self.td_conn,
-                                           send_value=False,
-                                           constant_args=(1.0,),
-                                           trigger="RISE"))
-            group.add(btn)
-            group.add(self.caption(frame, p["name"], 12,
-                                   name=f"pal_cap_{i + 1}"))
-        page.add(group)
+        self.palette_group(page, (cx, pal_y, cw, body_y + body_h - pal_y),
+                           palettes, "side")
 
         # --- BORIS ---
         bo = td["boris"]
@@ -841,7 +856,8 @@ class BorisBuilder(Builder):
         return root
 
 
-def address_map(root: Node, out: str) -> None:
+def address_map(root: Node, out: str, *, title="Boris layout",
+                tool="tools/build_boris.py", spec="spec/boris.yaml") -> None:
     """Write every control's name and address, for checking against TD."""
     rows = []
 
@@ -855,8 +871,8 @@ def address_map(root: Node, out: str) -> None:
             walk(child, page)
 
     walk(root, None)
-    lines = ["# Boris layout · OSC address map", "",
-             "Generated by `tools/build_boris.py` from `spec/boris.yaml`.", "",
+    lines = [f"# {title} · OSC address map", "",
+             f"Generated by `{tool}` from `{spec}`.", "",
              "| Page | Control | Address | Sent to |", "| --- | --- | --- | --- |"]
     for page, name, path, conn in rows:
         lines.append(f"| {page} | `{name}` | `{path}` | {conn} |")

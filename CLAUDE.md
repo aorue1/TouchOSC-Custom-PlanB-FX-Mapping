@@ -117,6 +117,33 @@ PREV/NEXT addresses, the BPM ×2/÷2 buttons, clip names appearing (and refreshi
 feedback moving the iPad (`/td/toggle/2 1` sent to the iPad on 9001 lights
 BORIS LOCK).
 
+## Boris Warehouse afterparty · 10 Oct 2026
+
+`spec/warehouse.yaml` + `tools/build_warehouse.py` →
+`build/boris-warehouse-landscape.tosc` (`make warehouse`). Subclasses the
+Boris builder: SHOW is the Boris SHOW page verbatim (minus the layer-3
+copies, which come from `also:` in the spec), so Boris fixes apply here too.
+The Boris layout itself is untouched.
+
+- Two pages, SHOW and TD; no FX page. Visuals: **Spiderweb** and
+  **Acuarela**. No Boris, Side Audios or SIDE + BORIS controls.
+- SHOW layer names are **placeholders** (LAYER 1-5) and the crossfader reads
+  ◀ A / B ▶ until Andrés confirms the warehouse layers.
+- TD: SPIDERWEB faders 1-3 + intensity; a **square** CAMERA · LIQUID pad on
+  `/td/pad/2/x|y` (Spiderweb orbit + Acuarela brush); ACUARELA REACT
+  `/td/fader/5`, SAT `/td/fader/6` (default 0.54 = current look); PALETTE
+  `/td/trigger/1-5` (switches both visuals); colour strip SPIDERWEB HUE
+  `/td/hue/web` + SATURATION `/td/saturation/web` (default 1), ACUARELA HUE
+  `/td/fader/7` (only once on the page).
+- Hue sliders are painted with the **measured** colours each visual shows
+  along its hue control (`stops:` in the spec, linear between, 1.0 wraps to
+  0). They are not theme colours; don't restyle them.
+- Theme: warm amber on black (Andrés's pick). Resolume amber, Spiderweb
+  cream, Acuarela copper, `shared` sand for controls driving both visuals,
+  BLACKOUT red.
+- Hosts in the spec are the home router's PC (192.168.0.53); set them per
+  network on the iPad.
+
 ## Format rules learned the hard way
 
 Each cost a round on the device. They are the reason the writer looks the way

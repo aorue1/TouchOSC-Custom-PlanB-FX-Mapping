@@ -82,9 +82,11 @@ with the same builder pieces — so every format fix applies to them too.
 | Gig | Spec | Layout | Address map |
 | --- | --- | --- | --- |
 | Boris Brejcha · Pedregal · 09 Oct 2026 | `spec/boris.yaml` | `build/boris-landscape.tosc` | [`docs/boris-osc-map.md`](docs/boris-osc-map.md) |
+| Boris Warehouse afterparty · 10 Oct 2026 | `spec/warehouse.yaml` | `build/boris-warehouse-landscape.tosc` | [`docs/warehouse-osc-map.md`](docs/warehouse-osc-map.md) |
 
 ```sh
 make boris      # just the Boris layout, verified
+make warehouse  # just the warehouse afterparty layout, verified
 ```
 
 Boris has three pages: **SHOW** (banked columns and clips that move

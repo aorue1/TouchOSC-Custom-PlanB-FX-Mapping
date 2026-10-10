@@ -1,0 +1,141 @@
+# ---------------------------------------------------------------------------
+# Boris Warehouse afterparty · 10 Oct 2026 — gig-specific layout.
+#
+# Built by tools/build_warehouse.py into build/boris-warehouse-landscape.tosc.
+# Starts from the Boris layout (spec/boris.yaml), which it leaves untouched:
+# same SHOW page, a new TD page for the two visuals running here, Spiderweb
+# and Acuarela. Boris detection, the camera, Side Audios and the FX page are
+# gone.
+# ---------------------------------------------------------------------------
+
+layout:
+  width: 1180            # iPad Air 4, landscape, in points
+  height: 820
+  tabbar_height: 60
+
+# The slot is what the builder uses. Host and port are for setting up the
+# iPad: set the host to the PC's IP on the network in use (192.168.0.53 on
+# the home router; it changes per network).
+connections:
+  resolume:      {slot: 1, host: 192.168.0.53, port: 7000, receive: 9000}
+  touchdesigner: {slot: 2, host: 192.168.0.53, port: 7001, receive: 9001}
+
+# Theme: warm amber on black. Parts are told apart by brightness within the
+# warm range: Resolume amber, Spiderweb cream, Acuarela copper, controls that
+# drive both visuals a muted sand. BLACKOUT stays a loud red. The hue-slider
+# gradients are not theme colours: they are the visuals' measured colours.
+colors:
+  bg:        [0.039, 0.035, 0.027, 1.0]   # #0A0907
+  panel:     [0.086, 0.075, 0.059, 1.0]   # #16130F
+  text:      [0.949, 0.902, 0.816, 1.0]   # #F2E6D0
+  unlit:     [0.165, 0.141, 0.110, 1.0]   # #2A241C, a palette not picked
+  resolume:  [1.000, 0.690, 0.000, 1.0]   # #FFB000 amber
+  accent:    [0.788, 0.541, 0.102, 1.0]   # #C98A1A, columns / BPM / tap
+  master:    [0.949, 0.902, 0.816, 1.0]   # #F2E6D0 cream
+  danger:    [1.000, 0.176, 0.176, 1.0]   # #FF2D2D
+  spiderweb: [1.000, 0.886, 0.659, 1.0]   # #FFE2A8 cream
+  acuarela:  [0.851, 0.416, 0.169, 1.0]   # #D96A2B copper
+  shared:    [0.749, 0.702, 0.627, 1.0]   # #BFB3A0 sand: drives both visuals
+
+# ---------------------------------------------------------------------------
+# Page 1 · SHOW (Resolume): the Boris SHOW page, minus the layer-3 copies on
+# hue rotate and saturation (there is no Side Audios layer here).
+# ---------------------------------------------------------------------------
+show:
+  columns_total: 127     # columns in the composition
+  clips: 9               # columns and clips per bank
+  banks: 4               # banks per group (second tab row)
+  bank_groups: 4         # groups (first tab row): 1-36, 37-72, 73-108, 109-127
+  # PLACEHOLDERS: Andrés confirms the warehouse layers once the pixel map is
+  # in. Top to bottom as Resolume draws them: layer 1 sits at the bottom.
+  layers:
+    - {layer: 5, name: LAYER 5}
+    - {layer: 4, name: LAYER 4}
+    - {layer: 3, name: LAYER 3}
+    - {layer: 2, name: LAYER 2}
+    - {layer: 1, name: LAYER 1}
+  # Neutral until the layers are confirmed.
+  crossfader_labels: {a: "◀ A", b: "B ▶"}
+
+  addresses:
+    clip_connect:   /composition/layers/{layer}/clips/{clip}/connect
+    clip_name:      /composition/layers/{layer}/clips/{clip}/name
+    column_connect: /composition/columns/{column}/connect
+    layer_opacity:  /composition/layers/{layer}/video/opacity
+    layer_clear:    /composition/layers/{layer}/clear
+    clip_next:      /composition/layers/{layer}/connectnextclip       # unverified
+    clip_prev:      /composition/layers/{layer}/connectpreviousclip   # unverified
+    crossfader:     /composition/crossfader/phase
+    master:         /composition/master
+    tempo_tap:      /composition/tempocontroller/tempotap
+    tempo_resync:   /composition/tempocontroller/resync
+
+  tempo_double: /composition/tempocontroller/tempo/multiply
+  tempo_halve:  /composition/tempocontroller/tempo/divide
+
+  # Composition only (confirmed in Arena's Edit OSC).
+  hue_rotate:
+    label: "HUE ROTATE · Resolume"
+    address: /composition/video/effects/huerotate/effect/huerotate
+  rgb_delay:
+    label: "RGB DELAY · Resolume"
+    address: /composition/video/effects/delayrgb/opacity
+  saturation:
+    label: "SATURATION · Resolume"
+    address: /composition/video/effects/saturation/effect/saturation
+    top: 1.0
+
+# ---------------------------------------------------------------------------
+# Page 2 · TD (TouchDesigner). Addresses are exactly the ones TD routes on;
+# every control sends and receives.
+# ---------------------------------------------------------------------------
+td:
+  spiderweb:
+    label: SPIDERWEB
+    faders:
+      - {label: ZOOM,        address: /td/fader/1}
+      - {label: NOISE SPEED, address: /td/fader/2}
+      - {label: RGB DELAY,   address: /td/fader/3}
+      - {label: INTENSITY,   address: /td/intensity}
+
+  acuarela:
+    label: ACUARELA
+    # Also APC40 device knobs 5-7. Ranges are applied in TD.
+    faders:
+      - {label: REACT, address: /td/fader/5}                # 0.5-3 in TD
+      - {label: SAT,   address: /td/fader/6, default: 0.54} # 0-3; 1.63 = current look
+
+  # One square pad drives both: the Spiderweb camera orbit and Acuarela's
+  # finger brush.
+  pad: {label: "CAMERA · LIQUID", x: /td/pad/2/x, y: /td/pad/2/y}
+
+  # Radio-style, 1 on press; each switches both visuals to that palette.
+  # The hue sliders keep rotating whichever palette is active.
+  palettes:
+    - {name: ORIGINAL,    address: /td/trigger/1}
+    - {name: NEON CLUB,   address: /td/trigger/2}
+    - {name: ACID,        address: /td/trigger/3}
+    - {name: DEEP OCEAN,  address: /td/trigger/4}
+    - {name: SUNSET FIRE, address: /td/trigger/5}
+
+  # Colour strip. Each hue slider is painted with the dominant colour each
+  # visual actually shows at 12 points along its hue control (measured in
+  # TD); 1.0 wraps back to the colour at 0.
+  colour:
+    spiderweb:
+      hue:
+        label: SPIDERWEB HUE
+        address: /td/hue/web
+        stops: ["#503FFF", "#AF3FFF", "#FF3FE8", "#FF3F87", "#FF5A3F", "#FFBB3F",
+                "#D0FF3F", "#78FF3F", "#3FFF68", "#3FFFC2", "#3FDFFF", "#3F8DFF"]
+      saturation:
+        label: SPIDERWEB SATURATION
+        address: /td/saturation/web   # 0 = black and white, 1 = normal
+        default: 1.0
+    acuarela:
+      hue:
+        # The only ACUARELA HUE control on the page (TD: 0-360°).
+        label: ACUARELA HUE
+        address: /td/fader/7
+        stops: ["#7A3BFF", "#DE3FFF", "#FF3FBD", "#FF3F62", "#FF7338", "#FFD43A",
+                "#C3FF38", "#69FF3F", "#37FF6C", "#39FFCE", "#37C3FF", "#3F5EFF"]
