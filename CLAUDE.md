@@ -129,8 +129,13 @@ The Boris layout itself is untouched.
   **Acuarela**. No Boris, Side Audios or SIDE + BORIS controls.
 - SHOW layer names are **placeholders** (LAYER 1-5) and the crossfader reads
   ◀ A / B ▶ until Andrés confirms the warehouse layers.
-- TD: SPIDERWEB faders 1-3 + intensity; a **square** CAMERA · LIQUID pad on
-  `/td/pad/2/x|y` (Spiderweb orbit + Acuarela brush); ACUARELA REACT
+- TD: SPIDERWEB faders 1-3 + intensity; **SHAPE** selector on `/td/fader/4`
+  (TUBE · FABRIC TUBE · RING · GLOBE · FABRIC = 0/.25/.5/.75/1; each option
+  sends its own value, a hidden receive-only fader holds TD's feedback and
+  lights the option); two **square** pads side by side: CAMERA · LIQUID on
+  `/td/pad/2/x|y` (Spiderweb orbit + Acuarela brush) and **ROTATION** on
+  `/td/pad/1/x|y` (turns the web; rests at 0.5/0.5; CENTRE button resets it
+  and also sends 0.5 on both axes itself); ACUARELA REACT
   `/td/fader/5`, SAT `/td/fader/6` (default 0.54 = current look); PALETTE
   `/td/trigger/1-5` (switches both visuals); colour strip SPIDERWEB HUE
   `/td/hue/web` + SATURATION `/td/saturation/web` (default 1), ACUARELA HUE

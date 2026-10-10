@@ -255,6 +255,7 @@ class Node:
     orientation: int = Orientation.NORTH
     tab_label: str | None = None       # set on a pager's pages
     value_default: float = 0.0         # starting value for x
+    value_default_y: float | None = None  # starting value for an XY pad's y
     response: int | None = None        # Response.ABSOLUTE / RELATIVE
     grid_steps: int | None = None      # snap to this many divisions
     script: str = ""
@@ -334,7 +335,8 @@ class Node:
         if self.type in (BUTTON, FADER, XY, RADIAL, PAGER):
             _value("x", f"{self.value_default:.6f}")
         if self.type == XY:
-            _value("y", "0.0")
+            _value("y", "0.0" if self.value_default_y is None
+                   else f"{self.value_default_y:.6f}")
 
     def to_xml(self, parent: ET.Element | None = None) -> ET.Element:
         attrs = {"ID": node_id(), "type": self.type}

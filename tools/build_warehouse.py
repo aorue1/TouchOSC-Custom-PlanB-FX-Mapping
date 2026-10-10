@@ -16,9 +16,10 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tosc  # noqa: E402
-from build_boris import (BorisBuilder, address_map, load_spec,  # noqa: E402
-                         saturated)
-from tosc import GROUP, PAGER, Node  # noqa: E402
+from build_boris import (BorisBuilder, address_map, bake,  # noqa: E402
+                         load_spec, saturated, MOMENTARY)
+from tosc import (BOX, BUTTON, FADER, GROUP, PAGER, Node,  # noqa: E402
+                  OscMessage, Shape)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPEC = os.path.join(ROOT, "spec", "warehouse.yaml")
@@ -46,8 +47,114 @@ def stops_band(stops):
     return band
 
 
+# SHAPE selector. A hidden receive-only fader holds the current value: TD's
+# feedback lands on it, and a pressed option sets it too, and either way its
+# script lights the matching option. Each option button sends its own value
+# itself, so nothing depends on a script-moved control sending.
+SHAPE_VALUE_SCRIPT = """
+local N = @N@
+local ON = Color(@ON_R@, @ON_G@, @ON_B@, 1)
+local OFF = Color(@OFF_R@, @OFF_G@, @OFF_B@, 1)
+
+local DARK = Color(0.08, 0.08, 0.10, 1)
+local LIGHT = Color(0.92, 0.92, 0.94, 1)
+
+local function paint()
+  local pick = math.floor(self.values.x * (N - 1) + 0.5) + 1
+  for i = 1, N do
+    local chip = self.parent.children['shape_chip_' .. i]
+    if chip then chip.color = (i == pick) and ON or OFF end
+    -- Dark text on the lit chip, light on the others; a two-word option
+    -- is two caption lines.
+    for _, part in ipairs({'a', 'b'}) do
+      local cap = self.parent.children['shape_cap_' .. i .. '_' .. part]
+      if cap then cap.textColor = (i == pick) and DARK or LIGHT end
+    end
+  end
+end
+
+function init()
+  paint()
+end
+
+function onValueChanged(key)
+  if key == 'x' then paint() end
+end
+""".strip()
+
+SHAPE_OPTION_SCRIPT = """
+local VALUE = @VALUE@
+
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 1 then
+    self.parent.children.shape_value.values.x = VALUE
+  end
+end
+""".strip()
+
+# CENTRE puts the rotation pad's cursor back at the middle. The button also
+# sends 0.5 on both axes itself, like BLACKOUT, so the reset reaches TD even
+# if a script-moved pad turns out not to send.
+CENTRE_SCRIPT = """
+function onValueChanged(key)
+  if key == 'x' and self.values.x == 1 then
+    local pad = self.parent.children.rotation
+    pad.values.x = 0.5
+    pad.values.y = 0.5
+  end
+end
+""".strip()
+
+
 class WarehouseBuilder(BorisBuilder):
     """The Boris SHOW page, with this show's TD page."""
+
+    def shape_selector(self, parent, frame, shape, color):
+        """One segment per option; the lit one follows TD."""
+        x, y, w, h = frame
+        opts = shape["options"]
+        n = len(opts)
+        gap = 6
+        seg_w = (w - (n - 1) * gap) // n
+        on, off = self.colors[color], self.colors["unlit"]
+        group = Node(GROUP, frame, name="shape", background=False,
+                     outline=False)
+        value = Node(FADER, (0, 0, w, h), name="shape_value",
+                     visible=False, interactive=False,
+                     script=bake(SHAPE_VALUE_SCRIPT, n=n,
+                                 on_r=on[0], on_g=on[1], on_b=on[2],
+                                 off_r=off[0], off_g=off[1], off_b=off[2]))
+        value.messages.append(OscMessage(shape["address"], self.td_conn,
+                                         send=False, receive=True))
+        group.add(value)
+        for i, label in enumerate(opts):
+            v = i / (n - 1)
+            seg = (i * (seg_w + gap), 0, seg_w, h)
+            group.add(Node(BOX, seg, name=f"shape_chip_{i + 1}",
+                           color=on if i == 0 else off,
+                           shape=Shape.RECTANGLE, background=True,
+                           outline=False, interactive=False))
+            btn = Node(BUTTON, seg, name=f"shape_{i + 1}", color=on,
+                       button_type=MOMENTARY, background=False, outline=True,
+                       script=bake(SHAPE_OPTION_SCRIPT, value=v))
+            btn.messages.append(OscMessage(shape["address"], self.td_conn,
+                                           send_value=False,
+                                           constant_args=(v,),
+                                           trigger="RISE", receive=False))
+            group.add(btn)
+            sx, sy, sw, sh = seg
+            # TouchOSC clips rather than wraps, so two words go on two lines.
+            words = label.split(" ", 1)
+            line_h = sh // 4
+            top = sy + (sh - line_h * len(words)) // 2
+            for k, word in enumerate(words):
+                cap = self.caption((sx, top + k * line_h, sw, line_h), word,
+                                   11, name=f"shape_cap_{i + 1}_{'ab'[k]}")
+                if i == 0:
+                    cap.text_color = (0.08, 0.08, 0.10, 1.0)
+                group.add(cap)
+        parent.add(group)
+        return group
 
     def td_page(self, width: int, height: int) -> Node:
         td = self.spec["td"]
@@ -57,35 +164,73 @@ class WarehouseBuilder(BorisBuilder):
         pad = 10
         header_h = 28
         label_h = 22
-        strip_fader_h = 60
+        strip_fader_h = 75
         strip_h = 2 * (label_h + strip_fader_h) + pad
         top_h = height - strip_h - 3 * pad
         body_y = pad + header_h
         body_h = top_h - header_h
-        gap = pad + 6
+        gap = 14
+        fader_w, fader_gap = 48, 6
+        pal_w = 150
+
+        sw, ac = td["spiderweb"], td["acuarela"]
+
+        def bank_w(faders):
+            return len(faders) * fader_w + (len(faders) - 1) * fader_gap
+
+        # Two square pads share what the fader banks and palettes leave.
+        side = (width - 2 * pad - bank_w(sw["faders"]) - bank_w(ac["faders"])
+                - pal_w - 4 * gap) // 2
+        under_y = body_y + side + 12
+        under_h = min(110, body_y + body_h - under_y - label_h)
 
         # --- SPIDERWEB faders ---
-        sw = td["spiderweb"]
         x = pad
         used = self.fader_bank(page, x, body_y, body_h, sw["faders"],
-                               "spiderweb")
+                               "spiderweb", fader_w=fader_w, gap=fader_gap)
         self.block_header(page, (x, pad, used, header_h), sw["label"],
                           "spiderweb")
         x += used + gap
 
-        # --- the square pad: Spiderweb camera orbit and Acuarela's brush ---
-        side = body_h
+        # --- CAMERA · LIQUID pad (Spiderweb orbit + Acuarela brush), with
+        # the Spiderweb SHAPE selector under it ---
         pd = td["pad"]
         self.block_header(page, (x, pad, side, header_h), pd["label"],
                           "shared")
         page.add(self.xy((x, body_y, side, side), "camera_liquid",
                          pd["x"], pd["y"], self.td_conn, color="shared"))
+        shape = sw["shape"]
+        page.add(self.caption((x, under_y, side, label_h),
+                              f"SPIDERWEB {shape['label']}", 12, "spiderweb"))
+        self.shape_selector(page, (x, under_y + label_h, side, under_h),
+                            shape, "spiderweb")
+        x += side + gap
+
+        # --- ROTATION pad (turns the web itself), CENTRE under it ---
+        rt = td["rotation"]
+        self.block_header(page, (x, pad, side, header_h), rt["label"],
+                          "spiderweb")
+        rot = self.xy((x, body_y, side, side), "rotation", rt["x"], rt["y"],
+                      self.td_conn, color="spiderweb")
+        rot.value_default = 0.5
+        rot.value_default_y = 0.5
+        page.add(rot)
+        centre = Node(BUTTON, (x, under_y + label_h, side, under_h),
+                      name="rotation_centre", color=self.colors["spiderweb"],
+                      button_type=MOMENTARY, script=CENTRE_SCRIPT)
+        for path in (rt["x"], rt["y"]):
+            centre.messages.append(OscMessage(path, self.td_conn,
+                                              send_value=False,
+                                              constant_args=(0.5,),
+                                              trigger="RISE", receive=False))
+        page.add(centre)
+        page.add(self.caption((x, under_y + label_h, side, under_h),
+                              "CENTRE", 14))
         x += side + gap
 
         # --- ACUARELA faders (its hue is in the colour strip) ---
-        ac = td["acuarela"]
         used = self.fader_bank(page, x, body_y, body_h, ac["faders"],
-                               "acuarela")
+                               "acuarela", fader_w=fader_w, gap=fader_gap)
         self.block_header(page, (x - 20, pad, used + 40, header_h),
                           ac["label"], "acuarela")
         x += used + gap

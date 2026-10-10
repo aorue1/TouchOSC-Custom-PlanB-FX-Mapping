@@ -97,6 +97,13 @@ td:
       - {label: NOISE SPEED, address: /td/fader/2}
       - {label: RGB DELAY,   address: /td/fader/3}
       - {label: INTENSITY,   address: /td/intensity}
+    # 5-position stepped selector on /td/fader/4 (was "Bass"; also APC device
+    # knob 4): each option sends its own value, 0 / 0.25 / 0.5 / 0.75 / 1,
+    # and the lit option follows feedback.
+    shape:
+      label: SHAPE
+      address: /td/fader/4
+      options: [TUBE, FABRIC TUBE, RING, GLOBE, FABRIC]
 
   acuarela:
     label: ACUARELA
@@ -108,6 +115,11 @@ td:
   # One square pad drives both: the Spiderweb camera orbit and Acuarela's
   # finger brush.
   pad: {label: "CAMERA · LIQUID", x: /td/pad/2/x, y: /td/pad/2/y}
+
+  # Rotates the Spiderweb object itself (TD smooths it). x: 0 = -180°,
+  # 0.5 = straight, 1 = +180°; y: 0 = -90°, 0.5 = straight, 1 = +90°.
+  # Rests at the centre; CENTRE puts it back there.
+  rotation: {label: ROTATION, x: /td/pad/1/x, y: /td/pad/1/y}
 
   # Radio-style, 1 on press; each switches both visuals to that palette.
   # The hue sliders keep rotating whichever palette is active.
