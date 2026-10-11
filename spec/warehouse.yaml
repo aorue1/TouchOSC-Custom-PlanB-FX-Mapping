@@ -135,13 +135,12 @@ td:
     - {name: DEEP OCEAN,  address: /td/trigger/4}
     - {name: SUNSET FIRE, address: /td/trigger/5}
 
-  # PROGRAM buttons: each fires its trigger (1 on press) and is lit by TD on
-  # its toggle address. Names are placeholders until Andrés gives the real
-  # ones (his hand-edited .tosc has them).
+  # PROGRAM buttons (from Andrés's hand-edited layout): each fires its
+  # trigger (1 on press) and is lit by TD on its toggle address.
   programs:
-    - {name: PROGRAM 1, address: /td/trigger/6, state: /td/toggle/6}
-    - {name: PROGRAM 2, address: /td/trigger/7, state: /td/toggle/7}
-    - {name: PROGRAM 3, address: /td/trigger/8, state: /td/toggle/8}
+    - {name: SPIDERWEB, address: /td/trigger/6, state: /td/toggle/6}
+    - {name: ACUARELA,  address: /td/trigger/7, state: /td/toggle/7}
+    - {name: MASK,      address: /td/trigger/8, state: /td/toggle/8}
 
   # Colour strip. Each hue slider is painted with the dominant colour each
   # visual actually shows at 12 points along its hue control (measured in

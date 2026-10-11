@@ -158,18 +158,19 @@ class WarehouseBuilder(BorisBuilder):
         return xy
 
     def program_group(self, parent, frame, programs, color):
-        """Momentary buttons that fire a TD trigger; each lights from TD."""
+        """A row of momentary buttons that fire TD triggers; each lights
+        from TD. Named prog_<n> after the trigger, as in the hand-made
+        version these replace."""
         x, y, w, h = frame
-        bh = (h - (len(programs) - 1) * 6) // len(programs)
+        gap = 3
+        bw = (w - (len(programs) - 1) * gap) // len(programs)
         on, off = self.colors[color], self.colors["unlit"]
-        group = Node(GROUP, frame, name="programs", background=False,
-                     outline=False)
         for i, p in enumerate(programs):
-            n = i + 1
-            f = (0, i * (bh + 6), w, bh)
-            group.add(Node(BOX, f, name=f"prog_chip_{n}", color=off,
-                           shape=Shape.RECTANGLE, background=True,
-                           outline=False, interactive=False))
+            n = p["address"].rsplit("/", 1)[-1]
+            f = (x + i * (bw + gap), y, bw, h)
+            parent.add(Node(BOX, f, name=f"prog_chip_{n}", color=off,
+                            shape=Shape.RECTANGLE, background=True,
+                            outline=False, interactive=False))
             state = Node(FADER, f, name=f"prog_state_{n}", visible=False,
                          interactive=False,
                          script=bake(PROGRAM_STATE_SCRIPT, i=n,
@@ -178,17 +179,15 @@ class WarehouseBuilder(BorisBuilder):
                                      off_b=off[2]))
             state.messages.append(OscMessage(p["state"], self.td_conn,
                                              send=False, receive=True))
-            group.add(state)
+            parent.add(state)
             btn = Node(BUTTON, f, name=f"prog_{n}", color=on,
                        button_type=MOMENTARY, background=False, outline=True)
             btn.messages.append(OscMessage(p["address"], self.td_conn,
                                            send_value=False,
                                            constant_args=(1.0,),
                                            trigger="RISE", receive=False))
-            group.add(btn)
-            group.add(self.caption(f, p["name"], 12, name=f"prog_cap_{n}"))
-        parent.add(group)
-        return group
+            parent.add(btn)
+            parent.add(self.caption(f, p["name"], 12, name=f"prog_cap_{n}"))
 
     def shape_selector(self, parent, frame, shape, color):
         """One segment per option; the lit one follows TD."""
@@ -291,8 +290,19 @@ class WarehouseBuilder(BorisBuilder):
         rt = td["rotation"]
         self.block_header(page, (x, pad, side, header_h), rt["label"],
                           "spiderweb")
+        # Under it: the PROGRAM row, then a slim CENTRE, as Andrés laid
+        # them out by hand.
+        progs = td.get("programs", [])
+        prog_h = 72 if progs else 0
+        cy = under_y + label_h
+        if progs:
+            page.add(self.caption((x, under_y, side, label_h), "PROGRAM", 12,
+                                  "shared"))
+            self.program_group(page, (x, cy, side, prog_h), progs, "shared")
+            cy += prog_h + 4
         self.centred_pad(page, (x, body_y, side, side), "rotation", rt,
-                         "spiderweb", (x, under_y + label_h, side, under_h))
+                         "spiderweb",
+                         (x, cy, side, under_y + label_h + under_h - cy))
         x += side + gap
 
         # --- ACUARELA faders (its hue is in the colour strip) ---
@@ -305,21 +315,8 @@ class WarehouseBuilder(BorisBuilder):
         # --- PALETTE: switches both visuals ---
         pw = width - pad - x
         self.block_header(page, (x, pad, pw, header_h), "PALETTE", "shared")
-        # PALETTE above PROGRAM in one column, every button the same height.
-        pals, progs = td["palettes"], td.get("programs", [])
-        btn_gap = 6
-        n_btn = len(pals) + len(progs)
-        prog_head = header_h if progs else 0
-        bh = (body_h - prog_head - (n_btn - 1) * btn_gap) // n_btn
-        pal_h = len(pals) * bh + (len(pals) - 1) * btn_gap
-        self.palette_group(page, (x, body_y, pw, pal_h), pals, "shared")
-        if progs:
-            py = body_y + pal_h + btn_gap
-            self.block_header(page, (x, py, pw, prog_head), "PROGRAM",
-                              "shared")
-            py += prog_head
-            self.program_group(page, (x, py, pw, body_y + body_h - py),
-                               progs, "shared")
+        self.palette_group(page, (x, body_y, pw, body_h), td["palettes"],
+                           "shared")
 
         # --- COLOUR strip: Spiderweb hue over saturation on the left,
         # Acuarela hue, full height, on the right. Hue sliders show the

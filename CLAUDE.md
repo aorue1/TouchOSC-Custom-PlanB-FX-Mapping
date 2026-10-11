@@ -138,10 +138,11 @@ The Boris layout itself is untouched.
   97-124; clip C = bank*8 + pad); clip pads send **1 on press, 0 on
   release** (`show.clip_release`); crossfader ◀ PANORAMA / CENTER + BOOTH +
   MIRROR ▶.
-- TD: **PROGRAM 1-3** under PALETTE fire `/td/trigger/6-8` (1 on press) and
-  light from `/td/toggle/6-8` via hidden receive-only faders (a light on the
-  button itself would re-fire the trigger). Names are placeholders until
-  Andrés gives the ones from his hand-edited .tosc.
+- TD: **PROGRAM** row under the ROTATION pad (Andrés's hand-made layout,
+  now in the spec): SPIDERWEB · ACUARELA · MASK fire `/td/trigger/6-8`
+  (1 on press) and light from `/td/toggle/6-8` through hidden receive-only
+  faders `prog_state_<n>` (a light on the button itself would re-fire the
+  trigger). CENTRE is the slim strip below them.
 - TD: SPIDERWEB faders 1-3 + intensity; **SHAPE** selector on `/td/fader/4`
   (TUBE · FABRIC TUBE · RING · GLOBE · FABRIC = 0/.25/.5/.75/1; each option
   sends its own value, a hidden receive-only fader holds TD's feedback and
