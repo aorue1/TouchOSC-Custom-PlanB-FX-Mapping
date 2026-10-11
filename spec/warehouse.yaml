@@ -166,7 +166,6 @@ mask:
     - {label: ZOOM,        address: /td/fader/9}    # camera zoom
     - {label: AUDIO REACT, address: /td/fader/10}   # how much the bass warps it
     - {label: WARP,        address: /td/fader/11}   # deformation amount
-    - {label: WARP SPEED,  address: /td/fader/12}   # deformation speed
   apply_color: {label: APPLY COLOR, address: /td/fader/13}  # 0 = own colours, 1 = A/B
   color_a:     {label: COLOR A,     address: /td/fader/14}  # hue, 0 = red, full circle
   color_b:     {label: COLOR B,     address: /td/fader/15}

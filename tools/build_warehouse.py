@@ -309,6 +309,8 @@ class WarehouseBuilder(BorisBuilder):
 
         # --- MOVE and ROTATE, square, each with CENTRE below ---
         side = min(body_h - btn_h - pad, (width - pad - x - gap) // 2)
+        # Height limits the pads, so centre them in the width they leave.
+        x += (width - pad - x - (2 * side + gap)) // 2
         for key in ("move", "rotate"):
             pd = mk[key]
             self.block_header(page, (x, pad, side, header_h), pd["label"],
