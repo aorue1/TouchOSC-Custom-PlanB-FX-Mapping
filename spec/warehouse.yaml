@@ -36,6 +36,7 @@ colors:
   spiderweb: [1.000, 0.886, 0.659, 1.0]   # #FFE2A8 cream
   acuarela:  [0.851, 0.416, 0.169, 1.0]   # #D96A2B copper
   shared:    [0.749, 0.702, 0.627, 1.0]   # #BFB3A0 sand: drives both visuals
+  mask:      [0.910, 0.600, 0.553, 1.0]   # #E8998D dusty rose: MASK page
 
 # ---------------------------------------------------------------------------
 # Page 1 · SHOW (Resolume): the Boris SHOW page, minus the layer-3 copies on
@@ -151,3 +152,21 @@ td:
         address: /td/fader/7
         stops: ["#7A3BFF", "#DE3FFF", "#FF3FBD", "#FF3F62", "#FF7338", "#FFD43A",
                 "#C3FF38", "#69FF3F", "#37FF6C", "#39FFCE", "#37C3FF", "#3F5EFF"]
+
+# ---------------------------------------------------------------------------
+# Page 3 · MASK (Boris mask point cloud, PCSD, in TouchDesigner). Extends the
+# TD bank: faders 9-15 and pads 3-4. Every control sends and receives. No
+# palettes: the mask uses its own PLY and these colour controls.
+# ---------------------------------------------------------------------------
+mask:
+  # Both pads rest at the centre and each gets a CENTRE button.
+  move:   {label: MOVE,   x: /td/pad/3/x, y: /td/pad/3/y}  # centre = middle of screen
+  rotate: {label: ROTATE, x: /td/pad/4/x, y: /td/pad/4/y}  # X ±180°, Y ±90°; centre = front
+  faders:
+    - {label: ZOOM,        address: /td/fader/9}    # camera zoom
+    - {label: AUDIO REACT, address: /td/fader/10}   # how much the bass warps it
+    - {label: WARP,        address: /td/fader/11}   # deformation amount
+    - {label: WARP SPEED,  address: /td/fader/12}   # deformation speed
+  apply_color: {label: APPLY COLOR, address: /td/fader/13}  # 0 = own colours, 1 = A/B
+  color_a:     {label: COLOR A,     address: /td/fader/14}  # hue, 0 = red, full circle
+  color_b:     {label: COLOR B,     address: /td/fader/15}

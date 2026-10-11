@@ -92,13 +92,13 @@ function onValueChanged(key)
 end
 """.strip()
 
-# CENTRE puts the rotation pad's cursor back at the middle. The button also
+# CENTRE puts a pad's cursor back at the middle. The button also
 # sends 0.5 on both axes itself, like BLACKOUT, so the reset reaches TD even
 # if a script-moved pad turns out not to send.
 CENTRE_SCRIPT = """
 function onValueChanged(key)
   if key == 'x' and self.values.x == 1 then
-    local pad = self.parent.children.rotation
+    local pad = self.parent.children.@PAD@
     pad.values.x = 0.5
     pad.values.y = 0.5
   end
@@ -108,6 +108,25 @@ end
 
 class WarehouseBuilder(BorisBuilder):
     """The Boris SHOW page, with this show's TD page."""
+
+    def centred_pad(self, parent, frame, name, pad, color, button_frame):
+        """A square pad resting at 0.5 / 0.5, with a CENTRE button."""
+        xy = self.xy(frame, name, pad["x"], pad["y"], self.td_conn,
+                     color=color)
+        xy.value_default = 0.5
+        xy.value_default_y = 0.5
+        parent.add(xy)
+        centre = Node(BUTTON, button_frame, name=f"{name}_centre",
+                      color=self.colors[color], button_type=MOMENTARY,
+                      script=bake(CENTRE_SCRIPT, pad=name))
+        for path in (pad["x"], pad["y"]):
+            centre.messages.append(OscMessage(path, self.td_conn,
+                                              send_value=False,
+                                              constant_args=(0.5,),
+                                              trigger="RISE", receive=False))
+        parent.add(centre)
+        parent.add(self.caption(button_frame, "CENTRE", 14))
+        return xy
 
     def shape_selector(self, parent, frame, shape, color):
         """One segment per option; the lit one follows TD."""
@@ -210,22 +229,8 @@ class WarehouseBuilder(BorisBuilder):
         rt = td["rotation"]
         self.block_header(page, (x, pad, side, header_h), rt["label"],
                           "spiderweb")
-        rot = self.xy((x, body_y, side, side), "rotation", rt["x"], rt["y"],
-                      self.td_conn, color="spiderweb")
-        rot.value_default = 0.5
-        rot.value_default_y = 0.5
-        page.add(rot)
-        centre = Node(BUTTON, (x, under_y + label_h, side, under_h),
-                      name="rotation_centre", color=self.colors["spiderweb"],
-                      button_type=MOMENTARY, script=CENTRE_SCRIPT)
-        for path in (rt["x"], rt["y"]):
-            centre.messages.append(OscMessage(path, self.td_conn,
-                                              send_value=False,
-                                              constant_args=(0.5,),
-                                              trigger="RISE", receive=False))
-        page.add(centre)
-        page.add(self.caption((x, under_y + label_h, side, under_h),
-                              "CENTRE", 14))
+        self.centred_pad(page, (x, body_y, side, side), "rotation", rt,
+                         "spiderweb", (x, under_y + label_h, side, under_h))
         x += side + gap
 
         # --- ACUARELA faders (its hue is in the colour strip) ---
@@ -278,6 +283,64 @@ class WarehouseBuilder(BorisBuilder):
                           band=stops_band(ach["stops"]))
         return page
 
+    def mask_page(self, width: int, height: int) -> Node:
+        """Boris mask point cloud: pads for position and rotation, the
+        deformation faders, and the colourize controls along the foot."""
+        mk = self.spec["mask"]
+        page = Node(GROUP, (0, 0, width, height), name="MASK",
+                    color=self.colors["mask"], background=False,
+                    outline=False)
+        pad = 10
+        header_h = 28
+        label_h = 22
+        strip_fader_h = 75
+        strip_h = 2 * (label_h + strip_fader_h) + pad
+        top_h = height - strip_h - 3 * pad
+        body_y = pad + header_h
+        body_h = top_h - header_h
+        gap = 14
+        btn_h = 56
+
+        # --- faders ---
+        x = pad
+        used = self.fader_bank(page, x, body_y, body_h, mk["faders"], "mask")
+        self.block_header(page, (x, pad, used, header_h), "MASK", "mask")
+        x += used + gap
+
+        # --- MOVE and ROTATE, square, each with CENTRE below ---
+        side = min(body_h - btn_h - pad, (width - pad - x - gap) // 2)
+        for key in ("move", "rotate"):
+            pd = mk[key]
+            self.block_header(page, (x, pad, side, header_h), pd["label"],
+                              "mask")
+            self.centred_pad(page, (x, body_y, side, side),
+                             f"mask_{key}", pd, "mask",
+                             (x, body_y + side + pad, side, btn_h))
+            x += side + gap
+
+        # --- colour strip: APPLY COLOR full width, COLOR A / B below ---
+        fw = width - 2 * pad
+        y = top_h + 2 * pad
+        ap = mk["apply_color"]
+        page.add(self.caption((pad, y, fw, label_h), ap["label"], 13, "mask"))
+        page.add(self.fader((pad, y + label_h, fw, strip_fader_h),
+                            "mask_apply_color", ap["address"], self.td_conn,
+                            horizontal=True, color="mask"))
+        y += label_h + strip_fader_h + pad
+        half_w = (width - 3 * pad) // 2
+        for i, key in enumerate(("color_a", "color_b")):
+            c = mk[key]
+            cx = pad + i * (half_w + pad)
+            page.add(self.caption((cx, y, half_w, label_h), c["label"], 13,
+                                  "mask"))
+            # 0 = red, round the full hue circle.
+            self.banded_fader(page, (cx, y + label_h, half_w, strip_fader_h),
+                              f"mask_{key}", c["address"], self.td_conn,
+                              outline="mask",
+                              band=lambda t: colorsys.hsv_to_rgb(
+                                  t, 0.75, 0.85) + (1.0,))
+        return page
+
     def build(self) -> Node:
         w, h = self.width, self.height
         tab_h = self.spec["layout"]["tabbar_height"]
@@ -296,7 +359,8 @@ class WarehouseBuilder(BorisBuilder):
                      })
         page_h = h - tab_h
         for page, tab in ((self.show_page(w, page_h), "SHOW"),
-                          (self.td_page(w, page_h), "TD")):
+                          (self.td_page(w, page_h), "TD"),
+                          (self.mask_page(w, page_h), "MASK")):
             page.frame = (0, tab_h, w, page_h)
             page.tab_label = tab
             pager.add(page)

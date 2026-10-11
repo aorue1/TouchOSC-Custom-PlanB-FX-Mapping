@@ -125,8 +125,14 @@ Boris builder: SHOW is the Boris SHOW page verbatim (minus the layer-3
 copies, which come from `also:` in the spec), so Boris fixes apply here too.
 The Boris layout itself is untouched.
 
-- Two pages, SHOW and TD; no FX page. Visuals: **Spiderweb** and
-  **Acuarela**. No Boris, Side Audios or SIDE + BORIS controls.
+- Three pages, SHOW, TD and MASK; no FX page. Visuals: **Spiderweb** and
+  **Acuarela**, plus the Boris mask point cloud (PCSD) on MASK. No Boris
+  detection, Side Audios or SIDE + BORIS controls.
+- MASK extends the TD bank: square MOVE `/td/pad/3` and ROTATE `/td/pad/4`
+  pads (rest at centre, each with CENTRE), ZOOM / AUDIO REACT / WARP /
+  WARP SPEED `/td/fader/9-12`, APPLY COLOR `/td/fader/13`, COLOR A / B
+  `/td/fader/14-15` over rainbows (0 = red). Part colour: dusty rose. No
+  palettes.
 - SHOW layer names are **placeholders** (LAYER 1-5) and the crossfader reads
   ◀ A / B ▶ until Andrés confirms the warehouse layers.
 - TD: SPIDERWEB faders 1-3 + intensity; **SHAPE** selector on `/td/fader/4`
