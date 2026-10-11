@@ -484,11 +484,18 @@ class BorisBuilder(Builder):
                         clip = b_first + i
                         frame = (i * (clip_w + pad), col_h + pad + r * row_h,
                                  clip_w, row_h - pad)
-                        self.add_button(
+                        btn = self.add_button(
                             bank, frame, f"layer{n}_clip{clip}",
                             addr["clip_connect"].format(layer=n, clip=clip),
                             self.res_conn, color="panel",
                             constant_args=(1.0,))
+                        if show.get("clip_release"):
+                            # Send the button's own value: 1 on press, 0
+                            # on release, as a hardware clip pad does.
+                            msg = btn.messages[0]
+                            msg.constant_args = ()
+                            msg.send_value = True
+                            msg.trigger = "ANY"
                         # Shows the clip number until Resolume sends the
                         # clip's name, which then replaces it.
                         cap = self.caption(frame, str(clip), 11,
@@ -546,12 +553,13 @@ class BorisBuilder(Builder):
         # --- crossfader ---
         xf_w = main_w - 2 * pad
         xf_labels = show.get("crossfader_labels", {})
-        page.add(self.caption((pad, xf_y - xf_label_h, 220, xf_label_h),
+        xf_lw = xf_labels.get("width", 220)
+        page.add(self.caption((pad, xf_y - xf_label_h, xf_lw, xf_label_h),
                               xf_labels.get("a", "◀ PANORAMA  (A)"), 15,
                               "resolume"))
         page.add(self.caption((pad + (xf_w - 200) // 2, xf_y - xf_label_h,
                                200, xf_label_h), "CROSSFADER", 13, "text"))
-        page.add(self.caption((pad + xf_w - 220, xf_y - xf_label_h, 220,
+        page.add(self.caption((pad + xf_w - xf_lw, xf_y - xf_label_h, xf_lw,
                                xf_label_h), xf_labels.get("b", "(B)  MIRROR ▶"),
                               15, "resolume"))
         page.add(self.fader((pad, xf_y, xf_w, xf_h), "crossfader",

@@ -133,8 +133,15 @@ The Boris layout itself is untouched.
   `/td/fader/9-11` (no WARP SPEED; `/td/fader/12` unused), APPLY COLOR `/td/fader/13`, COLOR A / B
   `/td/fader/14-15` over rainbows (0 = red). Part colour: dusty rose. No
   palettes.
-- SHOW layer names are **placeholders** (LAYER 1-5) and the crossfader reads
-  ◀ A / B ▶ until Andrés confirms the warehouse layers.
+- SHOW: **4 layers**, MIRROR (4), DJ BOOTH (3), CENTER (2), PANORAMA (1);
+  **8 per bank, 16 banks over 124 columns** (groups 1-32 / 33-64 / 65-96 /
+  97-124; clip C = bank*8 + pad); clip pads send **1 on press, 0 on
+  release** (`show.clip_release`); crossfader ◀ PANORAMA / CENTER + BOOTH +
+  MIRROR ▶.
+- TD: **PROGRAM 1-3** under PALETTE fire `/td/trigger/6-8` (1 on press) and
+  light from `/td/toggle/6-8` via hidden receive-only faders (a light on the
+  button itself would re-fire the trigger). Names are placeholders until
+  Andrés gives the ones from his hand-edited .tosc.
 - TD: SPIDERWEB faders 1-3 + intensity; **SHAPE** selector on `/td/fader/4`
   (TUBE · FABRIC TUBE · RING · GLOBE · FABRIC = 0/.25/.5/.75/1; each option
   sends its own value, a hidden receive-only fader holds TD's feedback and

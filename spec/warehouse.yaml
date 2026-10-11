@@ -43,20 +43,24 @@ colors:
 # hue rotate and saturation (there is no Side Audios layer here).
 # ---------------------------------------------------------------------------
 show:
-  columns_total: 127     # columns in the composition
-  clips: 9               # columns and clips per bank
+  # 8 columns per bank x 4 banks x 4 groups = 16 banks over the 124
+  # columns: groups 1-32, 33-64, 65-96, 97-124; the last bank is 121-124.
+  # Clip C on a bank = bank * 8 + pad (bank from 0, pad 1-8).
+  columns_total: 124     # columns in the composition
+  clips: 8               # columns and clips per bank
   banks: 4               # banks per group (second tab row)
-  bank_groups: 4         # groups (first tab row): 1-36, 37-72, 73-108, 109-127
-  # PLACEHOLDERS: Andrés confirms the warehouse layers once the pixel map is
-  # in. Top to bottom as Resolume draws them: layer 1 sits at the bottom.
+  bank_groups: 4         # groups (first tab row)
+  # Clip pads send 1 on press and 0 on release.
+  clip_release: true
+  # Top to bottom as Resolume draws them: layer 1 sits at the bottom.
   layers:
-    - {layer: 5, name: LAYER 5}
-    - {layer: 4, name: LAYER 4}
-    - {layer: 3, name: LAYER 3}
-    - {layer: 2, name: LAYER 2}
-    - {layer: 1, name: LAYER 1}
-  # Neutral until the layers are confirmed.
-  crossfader_labels: {a: "◀ A", b: "B ▶"}
+    - {layer: 4, name: MIRROR}
+    - {layer: 3, name: DJ BOOTH}
+    - {layer: 2, name: CENTER}
+    - {layer: 1, name: PANORAMA}
+  # A = Panorama on the left, B = the other three on the right.
+  crossfader_labels: {a: "◀ PANORAMA", b: "CENTER + BOOTH + MIRROR ▶",
+                      width: 330}
 
   addresses:
     clip_connect:   /composition/layers/{layer}/clips/{clip}/connect
@@ -130,6 +134,14 @@ td:
     - {name: ACID,        address: /td/trigger/3}
     - {name: DEEP OCEAN,  address: /td/trigger/4}
     - {name: SUNSET FIRE, address: /td/trigger/5}
+
+  # PROGRAM buttons: each fires its trigger (1 on press) and is lit by TD on
+  # its toggle address. Names are placeholders until Andrés gives the real
+  # ones (his hand-edited .tosc has them).
+  programs:
+    - {name: PROGRAM 1, address: /td/trigger/6, state: /td/toggle/6}
+    - {name: PROGRAM 2, address: /td/trigger/7, state: /td/toggle/7}
+    - {name: PROGRAM 3, address: /td/trigger/8, state: /td/toggle/8}
 
   # Colour strip. Each hue slider is painted with the dominant colour each
   # visual actually shows at 12 points along its hue control (measured in
